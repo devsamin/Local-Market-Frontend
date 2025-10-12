@@ -1,0 +1,122 @@
+[
+  {
+    "id": 1,
+    "name": "Samsung Galaxy M14",
+    "price": 18000,
+    "category": "ইলেকট্রনিক্স",
+    "rating": 4.5,
+    "image": "https://i.ibb.co.com/JjT2kW78/images.jpg"
+  },
+  {
+    "id": 2,
+    "name": "পুরুষের শার্ট",
+    "price": 950,
+    "category": "পোশাক",
+    "rating": 4.3,
+    "image": "https://i.ibb.co.com/chY6MqJW/photo-1441984904996-e0b6ba687e04-crop-entropy-cs-tinysrgb-fit-max-fm-jpg-ixid-M3w3-Nzg4-Nzd8-MHwxf-H.jpg"
+  },
+  {
+    "id": 3,
+    "name": "চাল - মিনিকেট",
+    "price": 65,
+    "category": "মুদি",
+    "rating": 4.8,
+    "image": "https://chaldn.com/_mpimage/miniket-rice-premium-loose-1-kg.jpg?output-quality=70"
+  },
+  {
+    "id": 4,
+    "name": "চুলের শ্যাম্পু",
+    "price": 120,
+    "category": "সৌন্দর্য",
+    "rating": 4.1,
+    "image": "https://static-01.daraz.com.bd/p/406d3cbf5aafc86a987ac57b7ff3b1d0.jpg"
+  },
+  {
+    "id": 5,
+    "name": "খেলনা গাড়ি",
+    "price": 450,
+    "category": "খেলনা",
+    "rating": 4.4,
+    "image": "https://static-01.daraz.com.bd/p/ea2b26f0e94edfe785ae92a3058652f1.jpg"
+  },
+  {
+    "id": 6,
+    "name": "উপন্যাস - দেবদাস",
+    "price": 320,
+    "category": "বই",
+    "rating": 4.9,
+    "image": "https://cdn.amarbooks.com/wp-content/uploads/2020/10/devdas.jpg"
+  },
+  {
+    "id": 7,
+    "name": "ডাইনিং চেয়ার সেট (৪টি)",
+    "price": 8200,
+    "category": "আসবাব",
+    "rating": 4.6,
+    "image": "https://static-01.daraz.com.bd/p/52d1f0a351a4f1e0d48a1c8d57314285.jpg"
+  },
+  {
+    "id": 8,
+    "name": "ফুটবল বল",
+    "price": 850,
+    "category": "খেলাধুলা",
+    "rating": 4.2,
+    "image": "https://static-01.daraz.com.bd/p/39c2b595bd9dbdd0f690b4780ee2356b.jpg"
+  },
+  {
+    "id": 9,
+    "name": "সোনার নেকলেস সেট",
+    "price": 12500,
+    "category": "গহনা",
+    "rating": 4.7,
+    "image": "https://static-01.daraz.com.bd/p/9a024fb9b3ad2c96e218eced71c4dd58.jpg"
+  },
+  {
+    "id": 10,
+    "name": "HP Laptop 15s",
+    "price": 58500,
+    "category": "ইলেকট্রনিক্স",
+    "rating": 4.8,
+    "image": "https://i.ibb.co.com/1hMBMQF/maxresdefault.jpg"
+  },
+  {
+    "id": 11,
+    "name": "মহিলাদের শাড়ি (সিল্ক)",
+    "price": 1450,
+    "category": "পোশাক",
+    "rating": 4.5,
+    "image": "https://static-01.daraz.com.bd/p/7b1b8c2a0e6c252f9917da46d18d9f1b.jpg"
+  },
+  {
+    "id": 12,
+    "name": "আলু - দেশি",
+    "price": 35,
+    "category": "মুদি",
+    "rating": 4.6,
+    "image": "https://chaldn.com/_mpimage/deshi-potato-loose-1-kg.jpg?output-quality=70"
+  },
+  {
+    "id": 13,
+    "name": "পারফিউম (পুরুষদের)",
+    "price": 890,
+    "category": "সৌন্দর্য",
+    "rating": 4.3,
+    "image": "https://static-01.daraz.com.bd/p/49de0a7b9df9b9b1b7342d6e0132c12e.jpg"
+  },
+  {
+    "id": 14,
+    "name": "ক্রিকেট ব্যাট",
+    "price": 2150,
+    "category": "খেলাধুলা",
+    "rating": 4.5,
+    "image": "https://static-01.daraz.com.bd/p/564ee53ccba2c83c6e8cbf4c165fd33a.jpg"
+  },
+  {
+    "id": 15,
+    "name": "টেডি বিয়ার",
+    "price": 750,
+    "category": "খেলনা",
+    "rating": 4.7,
+    "image": "https://static-01.daraz.com.bd/p/2b15d0a2dc1d5c63f4edbd9b3e30a2b9.jpg"
+  }
+]
