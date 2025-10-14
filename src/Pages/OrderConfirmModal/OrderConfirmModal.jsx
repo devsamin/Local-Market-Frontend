@@ -29,38 +29,65 @@ const OrderConfirmModal = ({ isOpen, onClose }) => {
           <FiX />
         </button>
 
-        {/* Title */}
-        <h2 className="text-xl font-bold mb-2 text-gray-900">অর্ডার সম্পূর্ণ করুন</h2>
-        <p className="text-gray-500 mb-5">
-          আপনার অর্ডারের তথ্য পূরণ করুন
-        </p>
+        <h2 className="text-xl font-bold mb-2 text-gray-900">
+          অর্ডার সম্পূর্ণ করুন
+        </h2>
+        <p className="text-gray-500 mb-5">আপনার অর্ডারের তথ্য পূরণ করুন</p>
 
         {/* Step Indicator */}
-        <div className="flex items-center justify-between mb-6">
-          {["তথ্য", "পেমেন্ট", "নিশ্চিতকরণ"].map((label, index) => (
+        <div className="relative mb-6">
+          {/* Progress underline */}
+          <div className="absolute top-4 left-0 w-full h-[3px] bg-gray-200 rounded-full">
             <div
-              key={index}
-              className={`flex flex-col items-center text-sm font-medium ${
-                step === index + 1
-                  ? "text-blue-600"
-                  : "text-gray-400"
-              }`}
-            >
-              <div
-                className={`w-8 h-8 flex items-center justify-center rounded-full border-2 mb-1 ${
-                  step === index + 1
-                    ? "border-blue-600 bg-blue-100"
-                    : "border-gray-300"
-                }`}
-              >
-                {index + 1}
-              </div>
-              {label}
-            </div>
-          ))}
+              className={`h-[3px] bg-green-500 rounded-full transition-all duration-500`}
+              style={{
+                width:
+                  step === 1
+                    ? "0%"
+                    : step === 2
+                    ? "50%"
+                    : step === 3
+                    ? "100%"
+                    : "100%",
+              }}
+            ></div>
+          </div>
+
+          <div className="flex items-center justify-between relative z-10">
+            {["তথ্য", "পেমেন্ট", "নিশ্চিতকরণ"].map((label, index) => {
+              const isCompleted = step > index + 1;
+              const isActive = step === index + 1;
+
+              return (
+                <div
+                  key={index}
+                  className={`flex flex-col items-center text-sm font-medium ${
+                    isCompleted
+                      ? "text-green-600"
+                      : isActive
+                      ? "text-blue-600"
+                      : "text-gray-400"
+                  }`}
+                >
+                  <div
+                    className={`w-8 h-8 flex items-center justify-center rounded-full mb-1 border-2 transition-all duration-300 ${
+                      isCompleted
+                        ? "border-green-500 bg-green-500 text-white"
+                        : isActive
+                        ? "border-blue-600 bg-blue-100"
+                        : "border-gray-300 bg-white"
+                    }`}
+                  >
+                    {isCompleted ? <FiCheckCircle /> : index + 1}
+                  </div>
+                  {label}
+                </div>
+              );
+            })}
+          </div>
         </div>
 
-        {/* Step 1: তথ্য */}
+        {/* Step 1 */}
         {step === 1 && (
           <div>
             <h3 className="font-semibold text-gray-700 flex items-center gap-2 mb-3">
@@ -95,7 +122,9 @@ const OrderConfirmModal = ({ isOpen, onClose }) => {
 
             {/* Delivery Type */}
             <div className="mt-6">
-              <h4 className="font-semibold text-gray-700 mb-2">ডেলিভারির পদ্ধতি</h4>
+              <h4 className="font-semibold text-gray-700 mb-2">
+                ডেলিভারির পদ্ধতি
+              </h4>
 
               <div className="space-y-2">
                 <label
@@ -124,7 +153,6 @@ const OrderConfirmModal = ({ isOpen, onClose }) => {
               </div>
             </div>
 
-            {/* Delivery Address */}
             <div className="mt-5">
               <textarea
                 rows="3"
@@ -144,11 +172,10 @@ const OrderConfirmModal = ({ isOpen, onClose }) => {
           </div>
         )}
 
-        {/* Step 2: পেমেন্ট */}
+        {/* Step 2 */}
         {step === 2 && (
           <div>
             <h3 className="font-semibold text-gray-700 mb-3">💳 পেমেন্ট অপশন</h3>
-
             <div className="space-y-3">
               {["বিকাশ", "নগদ", "ক্যাশ অন ডেলিভারি"].map((method) => (
                 <label
@@ -178,15 +205,19 @@ const OrderConfirmModal = ({ isOpen, onClose }) => {
           </div>
         )}
 
-        {/* Step 3: নিশ্চিতকরণ */}
+        {/* Step 3 */}
         {step === 3 && (
           <div>
             <h3 className="font-semibold text-gray-700 mb-3">✅ অর্ডার নিশ্চিতকরণ</h3>
-
             <ul className="text-sm text-gray-600 mb-5 space-y-2">
               <li>📦 পণ্য সংখ্যা: ২ টি</li>
               <li>💰 মোট মূল্য: ৳৪৫,৮৬০</li>
-              <li>🚚 ডেলিভারি: {deliveryType === "home" ? "হোম ডেলিভারি (৳৬০)" : "নিজে নিয়ে যাবেন (ফ্রি)"}</li>
+              <li>
+                🚚 ডেলিভারি:{" "}
+                {deliveryType === "home"
+                  ? "হোম ডেলিভারি (৳৬০)"
+                  : "নিজে নিয়ে যাবেন (ফ্রি)"}
+              </li>
             </ul>
 
             <div className="flex justify-between">
@@ -206,7 +237,7 @@ const OrderConfirmModal = ({ isOpen, onClose }) => {
           </div>
         )}
 
-        {/* Step 4: Success Message */}
+        {/* Step 4: Success */}
         {step === 4 && (
           <div className="text-center py-10">
             <FiCheckCircle className="text-green-500 text-6xl mx-auto mb-3" />

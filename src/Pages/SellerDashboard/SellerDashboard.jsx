@@ -1,220 +1,396 @@
+// import React from "react";
+// import {
+//   FiShoppingCart,
+//   FiPackage,
+//   FiUsers,
+//   FiStar,
+//   FiTrendingUp,
+//   FiMessageSquare,
+//   FiBox,
+//   FiBarChart2,
+// } from "react-icons/fi";
+// import { MdTrendingUp } from "react-icons/md";
+
+// const SellerDashboard = () => {
+//   const summary = [
+//     {
+//       title: "মোট আয়",
+//       value: "৳89,180",
+//       icon: <FiTrendingUp />,
+//       color: "bg-blue-500",
+//     },
+//     {
+//       title: "পণ্য বিক্রি",
+//       value: "8",
+//       icon: <FiShoppingCart />,
+//       color: "bg-green-500",
+//     },
+//     {
+//       title: "অর্ডার সংখ্যা",
+//       value: "7",
+//       icon: <FiPackage />,
+//       color: "bg-purple-500",
+//     },
+//     {
+//       title: "গড় রেটিং",
+//       value: "4.2",
+//       icon: <FiStar />,
+//       color: "bg-orange-500",
+//     },
+//   ];
+
+//   const orders = [
+//     {
+//       id: "Order#1",
+//       product: "পণ্য নাম ১",
+//       amount: "৳1,650",
+//       status: "ডেলিভারী সম্পন্ন",
+//       date: "১২ অক্টোবর ২০২৫",
+//     },
+//     {
+//       id: "Order#2",
+//       product: "পণ্য নাম ২",
+//       amount: "৳2,100",
+//       status: "অপেক্ষমান",
+//       date: "১৩ অক্টোবর ২০২৫",
+//     },
+//   ];
+
+//   const reviews = [
+//     {
+//       user: "মাহিন আহমেদ",
+//       rating: 5,
+//       comment: "খুবই ভালো পণ্য, দ্রুত ডেলিভারি পেয়েছি!",
+//       date: "১২ অক্টোবর ২০২৫",
+//     },
+//     {
+//       user: "তানিয়া ইসলাম",
+//       rating: 4,
+//       comment: "গুণগত মান ভালো ছিল, ধন্যবাদ বিক্রেতা!",
+//       date: "১১ অক্টোবর ২০২৫",
+//     },
+//   ];
+
+//   return (
+//     <div className="min-h-screen bg-gray-50 py-6 px-4 md:px-8">
+//       {/* ==== Top Menu Tabs ==== */}
+      
+
+//       {/* ==== Header (Seller Info) ==== */}
+//       <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6">
+//         <div className="flex items-center gap-4">
+//           <div className="w-16 h-16 bg-indigo-600 text-white flex items-center justify-center rounded-full text-xl font-bold">
+//           <img src="" alt="Samin" />
+//           </div>
+//           <div>
+//             <h2 className="text-xl font-semibold">আবদুল্লাহ আল চামিন</h2>
+//             <p className="text-gray-500 text-sm">বিক্রেতা অ্যাকাউন্ট</p>
+//             <div className="flex items-center gap-2 text-sm mt-1">
+//               <span className="text-gray-600">⭐ 4.2 রেটিং</span>
+//               <span className="text-gray-400">•</span>
+//               <span className="text-gray-600">৮ পণ্য</span>
+//             </div>
+//           </div>
+//         </div>
+//       </div>
+
+//       <div className="flex justify-between gap-9 bg-white shadow-sm rounded-xl mx-4 py-3 mb-6">
+//         <button className="flex items-center m-2 gap-2 text-gray-800 font-medium border-primary pb-1 ">
+//           <MdTrendingUp className="text-lg" /> ওভারভিউ
+//         </button>
+//         <button className="flex items-center gap-2 text-gray-700 hover:text-primary transition">
+//           <FiBox className="text-lg" /> পণ্য
+//         </button>
+//         <button className="flex items-center gap-2 text-gray-700 hover:text-primary transition">
+//           <FiShoppingCart className="text-lg" /> অর্ডার
+//         </button>
+//         <button className="flex items-center m-2 gap-2 text-gray-700 hover:text-primary transition">
+//           <FiBarChart2 className="text-lg" /> অ্যানালিটিক্স
+//         </button>
+//       </div>
+
+//       {/* ==== Summary Cards ==== */}
+//       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+//         {summary.map((item, index) => (
+//           <div
+//             key={index}
+//             className={`p-5 rounded-xl text-white flex flex-col gap-2 shadow ${item.color}`}
+//           >
+//             <div className="flex justify-between items-center">
+//               <span className="text-sm opacity-90">{item.title}</span>
+//               <span className="text-2xl">{item.icon}</span>
+//             </div>
+//             <h3 className="text-2xl font-semibold">{item.value}</h3>
+//           </div>
+//         ))}
+//       </div>
+
+//       {/* ==== Status Section ==== */}
+//       <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-6">
+//         {/* === অর্ডার স্ট্যাটাস === */}
+//         <div className="bg-white p-5 rounded-xl shadow-md hover:shadow-lg transition">
+//           <h3 className="font-semibold text-lg mb-4">অর্ডার স্ট্যাটাস</h3>
+//           <div className="space-y-2 text-sm">
+//             <div className="flex justify-between items-center">
+//               <span>অপেক্ষমাণ</span>
+//               <span className="bg-red-500 text-white px-2 py-1 rounded-full text-xs">1</span>
+//             </div>
+//             <div className="flex justify-between items-center">
+//               <span>নিশ্চিত</span>
+//               <span className="bg-blue-500 text-white px-2 py-1 rounded-full text-xs">1</span>
+//             </div>
+//             <div className="flex justify-between items-center">
+//               <span>সম্পন্ন</span>
+//               <span className="bg-green-500 text-white px-2 py-1 rounded-full text-xs">3</span>
+//             </div>
+//             <div className="flex justify-between items-center">
+//               <span>বাতিল</span>
+//               <span className="bg-red-400 text-white px-2 py-1 rounded-full text-xs">1</span>
+//             </div>
+//           </div>
+//         </div>
+
+//         {/* === পণ্য স্ট্যাটাস === */}
+//         <div className="bg-white p-5 rounded-xl shadow-md hover:shadow-lg transition">
+//           <h3 className="font-semibold text-lg mb-4">পণ্য স্ট্যাটাস</h3>
+//           <div className="space-y-2 text-sm">
+//             <div className="flex justify-between items-center">
+//               <span>মোট</span>
+//               <span className="bg-gray-800 text-white px-2 py-1 rounded-full text-xs">7</span>
+//             </div>
+//             <div className="flex justify-between items-center">
+//               <span>সক্রিয়</span>
+//               <span className="bg-green-500 text-white px-2 py-1 rounded-full text-xs">6</span>
+//             </div>
+//             <div className="flex justify-between items-center">
+//               <span>স্টক শেষ</span>
+//               <span className="bg-red-500 text-white px-2 py-1 rounded-full text-xs">1</span>
+//             </div>
+//             <div className="flex justify-between items-center">
+//               <span>অপেক্ষমাণ অনুমোদন</span>
+//               <span className="bg-gray-200 text-gray-700 px-2 py-1 rounded-full text-xs">1</span>
+//             </div>
+//           </div>
+//         </div>
+
+//         {/* === আর্থিক তথ্য === */}
+//         <div className="bg-white p-5 rounded-xl shadow-md hover:shadow-lg transition">
+//           <h3 className="font-semibold text-lg mb-4">আর্থিক তথ্য</h3>
+//           <div className="space-y-2 text-sm">
+//             <div className="flex justify-between items-center">
+//               <span>মোট আয়</span>
+//               <span className="bg-blue-500 text-white px-3 py-1 rounded-full text-xs">
+//                 ৳89,180
+//               </span>
+//             </div>
+//             <div className="flex justify-between items-center">
+//               <span>এই মাসে</span>
+//               <span className="bg-green-500 text-white px-3 py-1 rounded-full text-xs">৳0</span>
+//             </div>
+//             <div className="flex justify-between items-center">
+//               <span>গড় অর্ডার মূল্য</span>
+//               <span className="bg-purple-500 text-white px-3 py-1 rounded-full text-xs">
+//                 ৳29726
+//               </span>
+//             </div>
+//             <div className="flex justify-between items-center">
+//               <span>মোট রিভিউ</span>
+//               <span className="bg-orange-500 text-white px-3 py-1 rounded-full text-xs">10</span>
+//             </div>
+//           </div>
+//         </div>
+//       </div>
+
+//       {/* ==== Orders, Products & Reviews ==== */}
+//       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+//         {/* Orders + Products */}
+//         <div className="lg:col-span-2 space-y-6">
+//           {/* Recent Orders */}
+//           <div className="bg-white p-5 rounded-xl shadow-sm">
+//             <div className="flex justify-between items-center mb-4">
+//               <h3 className="font-semibold text-gray-800">সাম্প্রতিক অর্ডার</h3>
+//               <button className="text-sm text-blue-600 hover:underline">সব দেখুন</button>
+//             </div>
+//             <div className="space-y-4">
+//               {orders.map((order, index) => (
+//                 <div
+//                   key={index}
+//                   className="p-4 rounded-lg border flex justify-between items-center hover:bg-gray-50 transition"
+//                 >
+//                   <div>
+//                     <h4 className="font-semibold text-gray-700">{order.product}</h4>
+//                     <p className="text-sm text-gray-500">{order.date}</p>
+//                   </div>
+//                   <div className="text-right">
+//                     <p className="text-sm font-medium">{order.amount}</p>
+//                     <span
+//                       className={`text-xs px-2 py-1 rounded-full ${
+//                         order.status === "ডেলিভারী সম্পন্ন"
+//                           ? "bg-green-100 text-green-700"
+//                           : "bg-yellow-100 text-yellow-700"
+//                       }`}
+//                     >
+//                       {order.status}
+//                     </span>
+//                   </div>
+//                 </div>
+//               ))}
+//             </div>
+//           </div>
+
+//           {/* Products */}
+//           <div className="bg-white p-5 rounded-xl shadow-sm">
+//             <div className="flex justify-between items-center mb-4">
+//               <h3 className="font-semibold text-gray-800">পণ্য বিবরণ</h3>
+//               <button className="text-sm text-blue-600 hover:underline">
+//                 নতুন পণ্য যোগ করুন
+//               </button>
+//             </div>
+//             <div className="flex flex-wrap gap-3">
+//               <span className="px-3 py-1 bg-blue-100 text-blue-700 text-sm rounded-full">
+//                 সক্রিয় ৫
+//               </span>
+//               <span className="px-3 py-1 bg-green-100 text-green-700 text-sm rounded-full">
+//                 বিক্রি হয়েছে ৩
+//               </span>
+//               <span className="px-3 py-1 bg-red-100 text-red-700 text-sm rounded-full">
+//                 স্টক আউট ১
+//               </span>
+//             </div>
+//           </div>
+//         </div>
+
+//         {/* Reviews */}
+//         <div className="bg-white p-5 rounded-xl shadow-sm">
+//           <h3 className="font-semibold text-gray-800 mb-4 flex items-center gap-2">
+//             <FiMessageSquare /> সাম্প্রতিক রিভিউ
+//           </h3>
+//           <div className="space-y-4">
+//             {reviews.map((rev, index) => (
+//               <div key={index} className="border-b pb-3 last:border-none">
+//                 <div className="flex justify-between">
+//                   <h4 className="font-medium text-gray-700">{rev.user}</h4>
+//                   <span className="text-sm text-gray-500">{rev.date}</span>
+//                 </div>
+//                 <div className="text-yellow-500 text-sm">
+//                   {"⭐".repeat(rev.rating)}{" "}
+//                   <span className="text-gray-600">{rev.comment}</span>
+//                 </div>
+//               </div>
+//             ))}
+//           </div>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default SellerDashboard;
+
+
+
+
+
 import React, { useState } from "react";
 import {
-  FiHome,
-  FiPackage,
-  FiUser,
   FiShoppingCart,
-  FiLogOut,
-  FiPlusCircle,
+  FiPackage,
+  FiStar,
+  FiTrendingUp,
+  FiMessageSquare,
+  FiBox,
+  FiBarChart2,
 } from "react-icons/fi";
-import { FiEdit, FiTrash2 } from "react-icons/fi";
+import { MdTrendingUp } from "react-icons/md";
+
+// ==== Import Child Components (You will create these files) ====
+import Overview from "./Overview";
+import Products from "./Products";
+import Orders from "./Orders";
+import Analytics from "./Analytics";
 
 const SellerDashboard = () => {
-  const [activeTab, setActiveTab] = useState("dashboard");
+  const [activeTab, setActiveTab] = useState("overview"); // overview, products, orders, analytics
 
   const renderContent = () => {
     switch (activeTab) {
-      case "dashboard":
-        return (
-          <div className="p-6">
-            <h2 className="text-2xl font-bold mb-4">Welcome, Seller!</h2>
-            <p className="text-gray-600">
-              Here’s a quick overview of your shop activity.
-            </p>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6">
-              <div className="bg-white shadow-md rounded-xl p-5 text-center">
-                <h3 className="text-gray-500 text-sm">Total Products</h3>
-                <p className="text-2xl font-bold mt-2">45</p>
-              </div>
-              <div className="bg-white shadow-md rounded-xl p-5 text-center">
-                <h3 className="text-gray-500 text-sm">Pending Orders</h3>
-                <p className="text-2xl font-bold mt-2">12</p>
-              </div>
-              <div className="bg-white shadow-md rounded-xl p-5 text-center">
-                <h3 className="text-gray-500 text-sm">Total Earnings</h3>
-                <p className="text-2xl font-bold mt-2">৳120,000</p>
-              </div>
-            </div>
-          </div>
-        );
-
       case "products":
-        return (
-          <div className="p-6">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold">My Products</h2>
-              <button className="flex items-center gap-2 bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition">
-                <FiPlusCircle /> Add Product
-              </button>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {[1, 2, 3, 4].map((p) => (
-                <div
-                  key={p}
-                  className="bg-white shadow-lg rounded-xl overflow-hidden hover:shadow-2xl transition relative"
-                >
-                  {/* Product Image */}
-                  <div className="h-48 bg-gray-200 flex items-center justify-center text-gray-400 text-xl font-semibold">
-                    Product Image
-                  </div>
-
-                  {/* Product Info */}
-                  <div className="p-4">
-                    <h3 className="font-semibold text-lg mb-1">Product {p}</h3>
-                    <p className="text-gray-500 mb-3">৳500</p>
-
-                    {/* Action Buttons */}
-                    <div className="flex justify-start items-center gap-3">
-                      <FiEdit
-                        size={20}
-                        className="text-blue-600 hover:text-blue-800 cursor-pointer transition"
-                        title="Edit"
-                      />
-                      <FiTrash2
-                        size={20}
-                        className="text-red-600 hover:text-red-800 cursor-pointer transition"
-                        title="Delete"
-                      />
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        );
-
+        return <Products />;
       case "orders":
-        return (
-          <div className="p-6">
-            <h2 className="text-2xl font-bold mb-4">Orders</h2>
-            <div className="overflow-x-auto">
-              <table className="min-w-full bg-white shadow-md rounded-xl overflow-hidden">
-                <thead className="bg-gray-100">
-                  <tr>
-                    <th className="text-left p-3">Order ID</th>
-                    <th className="text-left p-3">Customer</th>
-                    <th className="text-left p-3">Status</th>
-                    <th className="text-left p-3">Amount</th>
-                    <th className="text-left p-3">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {[1, 2, 3].map((order) => (
-                    <tr key={order} className="border-b">
-                      <td className="p-3">#100{order}</td>
-                      <td className="p-3">Customer {order}</td>
-                      <td className="p-3 text-yellow-600">Pending</td>
-                      <td className="p-3">৳500</td>
-                      <td className="p-3">
-                        <button className="text-blue-600 hover:underline">
-                          View
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        );
-
-      case "profile":
-        return (
-          <div className="p-6">
-            <h2 className="text-2xl font-bold mb-4">Profile</h2>
-            <div className="bg-white shadow-md rounded-xl p-6 max-w-md">
-              <div className="mb-4">
-                <label className="block text-gray-600 text-sm mb-1">Name</label>
-                <input
-                  className="input input-bordered w-full"
-                  type="text"
-                  placeholder="Seller Name"
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block text-gray-600 text-sm mb-1">
-                  Email
-                </label>
-                <input
-                  className="input input-bordered w-full"
-                  type="email"
-                  placeholder="seller@example.com"
-                />
-              </div>
-              <div>
-                <button className="bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition">
-                  Save Changes
-                </button>
-              </div>
-            </div>
-          </div>
-        );
-
+        return <Orders />;
+      case "analytics":
+        return <Analytics />;
       default:
-        return null;
+        return <Overview />;
     }
   };
 
   return (
-    <div className="flex h-screen bg-gray-50">
-      {/* Sidebar */}
-      <div className="w-64 bg-white shadow-lg flex flex-col">
-        <div className="p-6 border-b">
-          <h1 className="text-xl font-bold">Seller Dashboard</h1>
+    <div className="min-h-screen bg-gray-50 py-6 px-4 md:px-8">
+      {/* ==== Header (Seller Info) ==== */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6">
+        <div className="flex items-center gap-4">
+          <div className="w-16 h-16 bg-indigo-600 text-white flex items-center justify-center rounded-full text-xl font-bold">
+            <img src="" alt="Samin" />
+          </div>
+          <div>
+            <h2 className="text-xl font-semibold">আবদুল্লাহ আল চামিন</h2>
+            <p className="text-gray-500 text-sm">বিক্রেতা অ্যাকাউন্ট</p>
+            <div className="flex items-center gap-2 text-sm mt-1">
+              <span className="text-gray-600">⭐ 4.2 রেটিং</span>
+              <span className="text-gray-400">•</span>
+              <span className="text-gray-600">৮ পণ্য</span>
+            </div>
+          </div>
         </div>
-        <nav className="flex-1 px-4 py-6 space-y-2">
-          <button
-            className={`flex items-center gap-3 p-3 rounded-lg w-full text-left transition ${
-              activeTab === "dashboard"
-                ? "bg-black text-white"
-                : "text-gray-700 hover:bg-gray-100"
-            }`}
-            onClick={() => setActiveTab("dashboard")}
-          >
-            <FiHome /> Dashboard
-          </button>
-          <button
-            className={`flex items-center gap-3 p-3 rounded-lg w-full text-left transition ${
-              activeTab === "products"
-                ? "bg-black text-white"
-                : "text-gray-700 hover:bg-gray-100"
-            }`}
-            onClick={() => setActiveTab("products")}
-          >
-            <FiPackage /> Products
-          </button>
-          <button
-            className={`flex items-center gap-3 p-3 rounded-lg w-full text-left transition ${
-              activeTab === "orders"
-                ? "bg-black text-white"
-                : "text-gray-700 hover:bg-gray-100"
-            }`}
-            onClick={() => setActiveTab("orders")}
-          >
-            <FiShoppingCart /> Orders
-          </button>
-          <button
-            className={`flex items-center gap-3 p-3 rounded-lg w-full text-left transition ${
-              activeTab === "profile"
-                ? "bg-black text-white"
-                : "text-gray-700 hover:bg-gray-100"
-            }`}
-            onClick={() => setActiveTab("profile")}
-          >
-            <FiUser /> Profile
-          </button>
-          <button
-            className="flex items-center gap-3 p-3 rounded-lg w-full text-left text-red-600 hover:bg-red-100 transition mt-6"
-            onClick={() => alert("Logged out!")}
-          >
-            <FiLogOut /> Logout
-          </button>
-        </nav>
       </div>
 
-      {/* Main Content */}
-      <div className="flex-1 overflow-y-auto">{renderContent()}</div>
+      {/* ==== Top Tabs ==== */}
+      <div className="flex justify-between gap-9 bg-white shadow-sm rounded-xl mx-4 py-3 mb-6">
+        <button
+          onClick={() => setActiveTab("overview")}
+          className={`flex items-center m-2 gap-2 font-medium ${
+            activeTab === "overview"
+              ? "text-primary border-b-2 border-primary"
+              : "text-gray-700 hover:text-primary"
+          }`}
+        >
+          <MdTrendingUp className="text-lg" /> ওভারভিউ
+        </button>
+        <button
+          onClick={() => setActiveTab("products")}
+          className={`flex items-center gap-2 ${
+            activeTab === "products"
+              ? "text-primary border-b-2 border-primary"
+              : "text-gray-700 hover:text-primary"
+          }`}
+        >
+          <FiBox className="text-lg" /> পণ্য
+        </button>
+        <button
+          onClick={() => setActiveTab("orders")}
+          className={`flex items-center gap-2 ${
+            activeTab === "orders"
+              ? "text-primary border-b-2 border-primary"
+              : "text-gray-700 hover:text-primary"
+          }`}
+        >
+          <FiShoppingCart className="text-lg" /> অর্ডার
+        </button>
+        <button
+          onClick={() => setActiveTab("analytics")}
+          className={`flex items-center m-2 gap-2 ${
+            activeTab === "analytics"
+              ? "text-primary border-b-2 border-primary"
+              : "text-gray-700 hover:text-primary"
+          }`}
+        >
+          <FiBarChart2 className="text-lg" /> অ্যানালিটিক্স
+        </button>
+      </div>
+
+      {/* ==== Render Selected Tab ==== */}
+      {renderContent()}
     </div>
   );
 };
