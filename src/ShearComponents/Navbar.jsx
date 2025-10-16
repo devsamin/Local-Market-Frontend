@@ -12,7 +12,7 @@ const Navbar = () => {
   const [open, setOpen] = useState(false);
   const { user, logoutUser } = UseAuth();
   console.log(user?.email || "Guest");
-
+  console.log(user?.profilePhoto || "No Photo");
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -57,6 +57,11 @@ const Navbar = () => {
         {user ? (
           // Profile Dropdown
           <div className="relative profile-dropdown">
+            <img
+  src={user?.photoURL || "https://i.ibb.co/2ypYw9Y/default-avatar.png"}
+  alt="User"
+  className="w-10 h-10 rounded-full object-cover border"
+/>
             <button onClick={() => setOpen(!open)} className="btn btn-ghost btn-circle text-xl">
               <FaRegUser />
             </button>

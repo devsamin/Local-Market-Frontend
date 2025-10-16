@@ -1,66 +1,132 @@
 import React, { useState } from "react";
-import { FiShoppingCart, FiFilter, FiX } from "react-icons/fi";
+import {
+  FiShoppingCart,
+  FiFilter,
+  FiX,
+  FiMapPin,
+  FiCheckCircle,
+  FiStar,
+} from "react-icons/fi";
 import { Link } from "react-router-dom";
 
 const CategoryProductSection = ({ products, category = "সব" }) => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [priceRange, setPriceRange] = useState(20000);
+  const [priceRange, setPriceRange] = useState(50000);
   const [rating, setRating] = useState(0);
 
-  // Filter products by category
   const filteredProducts =
     category === "সব"
       ? products
       : products.filter((p) => p.category === category);
 
-  // Apply additional filters
   const finalProducts = filteredProducts.filter(
     (p) => p.price <= priceRange && p.rating >= rating
   );
 
   return (
-    <div className="relative p-4">
-      {/* Header bar */}
-      <div className="flex items-center justify-between mb-4">
+    <div className="relative p-3 sm:p-4">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-3 sm:mb-4">
         <div>
-          <h2 className="text-2xl font-bold">{category}</h2>
-          <p className="text-gray-800 font-semibold">
+          <h2 className="text-xl sm:text-2xl font-bold">{category}</h2>
+          <p className="text-gray-800 font-semibold text-sm sm:text-base">
             মোট: {finalProducts.length} টি পণ্য
           </p>
         </div>
 
-        <div className="flex gap-3">
+        <div className="flex gap-2 sm:gap-3">
           <button
             onClick={() => setIsFilterOpen(true)}
-            className="flex items-center gap-2 bg-gray-100 border px-4 py-2 rounded hover:bg-[#b5ee08] transition"
+            className="flex items-center gap-1 sm:gap-2 bg-gray-100 border px-3 py-1.5 sm:px-4 sm:py-2 rounded hover:bg-[#b5ee08] transition text-sm sm:text-base"
           >
             <FiFilter /> ফিল্টার
           </button>
-          <Link to={'/cart'} className="flex items-center gap-2 bg-black text-white px-4 py-2 rounded hover:bg-gray-800 transition">
+          <Link
+            to={"/cart"}
+            className="flex items-center gap-1 sm:gap-2 bg-black text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded hover:bg-gray-800 transition text-sm sm:text-base"
+          >
             <FiShoppingCart /> কার্ট
           </Link>
         </div>
       </div>
 
-      {/* Product grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      {/* Product Grid */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
         {finalProducts.length > 0 ? (
           finalProducts.map((product) => (
             <div
               key={product.id}
-              className="bg-white rounded shadow p-4 hover:shadow-lg transition-shadow duration-300"
+              className="bg-white border rounded-lg shadow-sm hover:shadow-lg transition-all overflow-hidden flex flex-col"
             >
-              <img
-                src={product.image}
-                alt={product.name}
-                className="w-full h-56 object-cover rounded"
-              />
-              <h3 className="font-semibold mt-2">{product.name}</h3>
-              <p className="text-yellow-500 mt-1">⭐ {product.rating}</p>
-              <p className="font-bold mt-1">৳{product.price}</p>
-              <button className="flex gap-2 items-center bg-black text-white py-2 px-4 rounded mt-3 w-full justify-center hover:bg-gray-800 transition-colors duration-300">
-                <FiShoppingCart /> Add to Cart
-              </button>
+              {/* Image */}
+              <div className="aspect-square overflow-hidden bg-gray-100">
+                <img
+                  src={product.image}
+                  alt={product.name}
+                  className="object-cover w-full h-full hover:scale-105 transition-transform duration-300"
+                />
+              </div>
+
+              {/* Card Content */}
+              <div className="p-3 space-y-2">
+                <div>
+                  <h3 className="font-medium text-sm sm:text-base line-clamp-2 mb-1">
+                    {product.name}
+                  </h3>
+                  <p className="text-xs sm:text-sm text-gray-500 line-clamp-1">
+                    {product.shortDesc || "৫জি স্মার্টফোন, ১২৮জিবি স্টোরেজ"}
+                  </p>
+                </div>
+
+                {/* Price & Rating */}
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="flex items-center gap-1 sm:gap-2">
+                      <span className="font-semibold text-base sm:text-lg">
+                        ৳{product.price}
+                      </span>
+                      {product.oldPrice && (
+                        <span className="text-xs sm:text-sm text-gray-400 line-through">
+                          ৳{product.oldPrice}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-1 text-xs sm:text-sm">
+                    <FiStar className="w-3.5 h-3.5 fill-yellow-400 text-yellow-400" />
+                    <span>{product.rating}</span>
+                    <span className="text-gray-400">
+                      ({product.reviews || 0})
+                    </span>
+                  </div>
+                </div>
+
+                {/* Location + Verified */}
+                <div className="flex items-center justify-between text-xs sm:text-sm">
+                  <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1 text-gray-500">
+                      <FiMapPin className="w-3 h-3" />
+                      <span>{product.location || "ঢাকা"}</span>
+                    </div>
+                    {product.verified && (
+                      <FiCheckCircle
+                        className="w-4 h-4 text-blue-500"
+                        title="যাচাইকৃত বিক্রেতা"
+                      />
+                    )}
+                  </div>
+                </div>
+
+                {/* Seller + Add to Cart */}
+                <div className="flex items-center gap-2 pt-1">
+                  <span className="text-xs sm:text-sm text-gray-600 flex-1">
+                    {product.seller || "অজানা বিক্রেতা"}
+                  </span>
+                  <button className="justify-center whitespace-nowrap text-xs sm:text-sm font-medium bg-black text-white hover:bg-gray-800 h-7 sm:h-8 rounded-md px-2.5 sm:px-3 flex items-center gap-1 transition">
+                    <FiShoppingCart className="w-3.5 h-3.5" /> কার্টে যোগ করুন
+                  </button>
+                </div>
+              </div>
             </div>
           ))
         ) : (
@@ -72,30 +138,28 @@ const CategoryProductSection = ({ products, category = "সব" }) => {
 
       {/* Filter Drawer */}
       <div
-        className={`fixed top-0 right-0 h-full w-80 bg-white shadow-lg transform transition-transform duration-300 z-50 ${
+        className={`fixed top-0 right-0 h-full w-72 sm:w-80 bg-white shadow-lg transform transition-transform duration-300 z-50 ${
           isFilterOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
-        {/* Drawer Header */}
         <div className="flex justify-between items-center px-4 py-3 border-b">
           <h3 className="text-lg font-bold">ফিল্টার অপশন</h3>
           <button
             onClick={() => setIsFilterOpen(false)}
             className="text-gray-600 hover:text-black"
           >
-            <FiX size={22} />
+            <FiX size={20} />
           </button>
         </div>
 
-        {/* Filter Content */}
-        <div className="p-5 space-y-6 overflow-y-auto h-[calc(100%-60px)]">
+        <div className="p-4 space-y-5 overflow-y-auto h-[calc(100%-60px)]">
           {/* Price Filter */}
           <div>
             <h4 className="font-semibold mb-2">মূল্য পরিসীমা</h4>
             <input
               type="range"
               min="0"
-              max="20000"
+              max="50000"
               value={priceRange}
               onChange={(e) => setPriceRange(Number(e.target.value))}
               className="w-full accent-black"
@@ -124,7 +188,7 @@ const CategoryProductSection = ({ products, category = "সব" }) => {
           {/* Sort Filter */}
           <div>
             <h4 className="font-semibold mb-2">সাজান</h4>
-            <select className="w-full border rounded px-3 py-2">
+            <select className="w-full border rounded px-3 py-2 text-sm">
               <option>জনপ্রিয়তা অনুযায়ী</option>
               <option>মূল্য (কম থেকে বেশি)</option>
               <option>মূল্য (বেশি থেকে কম)</option>
@@ -132,17 +196,15 @@ const CategoryProductSection = ({ products, category = "সব" }) => {
             </select>
           </div>
 
-          {/* Apply Filter Button */}
           <button
             onClick={() => setIsFilterOpen(false)}
-            className="w-full bg-black text-white py-2 rounded hover:bg-gray-800 transition"
+            className="w-full bg-black text-white py-2 rounded hover:bg-gray-800 transition text-sm"
           >
             সব ফিল্টার প্রয়োগ করুন
           </button>
         </div>
       </div>
 
-      {/* Overlay (Background blur when open) */}
       {isFilterOpen && (
         <div
           onClick={() => setIsFilterOpen(false)}

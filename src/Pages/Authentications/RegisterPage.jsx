@@ -16,7 +16,10 @@ import UseAuth from "../../hooks/UseAuth";
 
 const RegisterPage = () => {
   const [role, setRole] = useState("buyer");
-  const {createUser} = UseAuth();
+  const { createUser, UserUpdateProfile, setUser } = UseAuth();
+
+  // updated code
+  const [preview, setPreview] = useState(null);
 
   // ✅ React Hook Form Setup
   const {
@@ -26,18 +29,39 @@ const RegisterPage = () => {
     formState: { errors },
   } = useForm();
 
-  const onSubmit = (data) => {
-    console.log("Form Data:", data);
-    createUser(data.email, data.password)
-    .then(result=>{
-      const user = result.user;
-      console.log(user);
-    })
-    .catch(error=>{
-      console.log(error.message);
-    })
+//   const photoUrl = watch("profilePhoto");
+//   const name = watch("fullName");
+//   console.log("Profile Photo URL:", photoUrl);
+ const onSubmit = (data) => {
+  console.log("Form Data:", data);
+  console.log("photo url ", data.profilePhoto);
 
-  };
+  const photoFile = data.profilePhoto?.[0];
+  const photoUrl = photoFile ? URL.createObjectURL(photoFile) : null;
+
+  createUser(data.email, data.password)
+    .then((result) => {
+      const user = result.user;
+      UserUpdateProfile({
+        displayName: data.fullName,
+        photoURL: photoUrl, // ✅ Correct property name
+      })
+        .then(() => {
+          setUser({
+            ...user,
+            displayName: data.fullName,
+            photoURL: photoUrl, // ✅ Store as photoURL
+          });
+        })
+        .catch((error) => {
+          console.log(error.message);
+          setUser(user);
+        });
+    })
+    .catch((error) => {
+      console.log(error.message);
+    });
+};
 
   // ✅ To compare password and confirmPassword
   const password = watch("password");
@@ -199,7 +223,9 @@ const RegisterPage = () => {
               />
             </div>
             {errors.confirmPassword && (
-              <p className="text-red-600 text-sm">{errors.confirmPassword.message}</p>
+              <p className="text-red-600 text-sm">
+                {errors.confirmPassword.message}
+              </p>
             )}
           </div>
 
@@ -344,6 +370,33 @@ const RegisterPage = () => {
               </div>
             </>
           )}
+
+          {/* ✅ Profile Picture */}
+          <div className="col-span-2">
+            <label className="block text-sm font-medium mb-1">
+              প্রোফাইল ছবি (ঐচ্ছিক)
+            </label>
+            <div className="flex items-center gap-3 border rounded-md p-3">
+              <FiUploadCloud className="text-xl text-gray-500" />
+              <input
+                type="file"
+                {...register("profilePhoto")}
+                accept=".jpg,.jpeg,.png"
+                className="file-input file-input-bordered file-input-sm w-full"
+              />
+            </div>
+
+            {/* Preview */}
+            {watch("profilePhoto") && watch("profilePhoto")[0] && (
+              <div className="mt-3">
+                <img
+                  src={URL.createObjectURL(watch("profilePhoto")[0])}
+                  alt="Preview"
+                  className="w-20 h-20 object-cover rounded-full border"
+                />
+              </div>
+            )}
+          </div>
 
           {/* Submit Button */}
           <div className="col-span-2 mt-4">
