@@ -11,7 +11,8 @@ import UseAuth from "../hooks/UseAuth";
 const Navbar = () => {
   const [open, setOpen] = useState(false);
   const { user, logoutUser } = UseAuth();
-
+  console.log(user)
+  console.log("user role:", user?.role || "No role assigned");
   console.log("User Email:", user?.email || "Guest");
   console.log("User Photo URL:", user?.photoURL || "No Photo");
 

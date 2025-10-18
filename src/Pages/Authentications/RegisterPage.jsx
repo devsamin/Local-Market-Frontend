@@ -25,35 +25,38 @@ const RegisterPage = () => {
     formState: { errors },
   } = useForm();
   const password = watch("password");
-const onSubmit = (data) => {
-  console.log("Form Data:", data);
+  const onSubmit = (data) => {
+    console.log("Form Data:", data);
 
-  createUser(data.email, data.password)
-    .then(() => {
-      // User created successfully
-      UserUpdateProfile({
-        displayName: data.fullName,
-      })
-        .then(() => {
-          // ✅ Force refresh from Firebase Auth
-          const updatedUser = auth.currentUser;
-
-          // ✅ Update context
-          setUser({
-            ...updatedUser,
-            displayName: updatedUser.displayName,
-          });
-
-          console.log("User Updated:", updatedUser);
+    createUser(data.email, data.password)
+      .then((res) => {
+        const user = res.user;
+        // User created successfully
+        UserUpdateProfile({
+          displayName: data.fullName,
+          photoURL: data.photoURL || "https://i.ibb.co/2ypYw9Y/default-avatar.png",
         })
-        .catch((error) => {
-          console.log("Profile Update Error:", error.message);
-        });
-    })
-    .catch((error) => {
-      console.log("Registration Error:", error.message);
-    });
-};
+          .then(() => {
+            // ✅ Force refresh from Firebase Auth
+            const updatedUser = auth.currentUser;
+
+            // ✅ Update context
+            setUser({
+              ...updatedUser,
+              displayName: updatedUser.displayName,
+            });
+
+            console.log("User Updated:", updatedUser);
+          })
+          .catch((error) => {
+            console.log("Profile Update Error:", error.message);
+            setUser(user);
+          });
+      })
+      .catch((error) => {
+        console.log("Registration Error:", error.message);
+      });
+  };
 
   const roleDescription = {
     buyer:
@@ -106,10 +109,15 @@ const onSubmit = (data) => {
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-2 gap-4">
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="grid grid-cols-2 gap-4"
+        >
           {/* Full Name */}
           <div>
-            <label className="block text-sm font-medium mb-1">পূর্ণ নাম *</label>
+            <label className="block text-sm font-medium mb-1">
+              পূর্ণ নাম *
+            </label>
             <div className="relative">
               <FiUser className="absolute left-3 top-3 text-gray-400" />
               <input
@@ -126,7 +134,9 @@ const onSubmit = (data) => {
 
           {/* Phone */}
           <div>
-            <label className="block text-sm font-medium mb-1">মোবাইল নাম্বার *</label>
+            <label className="block text-sm font-medium mb-1">
+              মোবাইল নাম্বার *
+            </label>
             <div className="relative">
               <FiPhone className="absolute left-3 top-3 text-gray-400" />
               <input
@@ -172,7 +182,9 @@ const onSubmit = (data) => {
 
           {/* Password */}
           <div>
-            <label className="block text-sm font-medium mb-1">পাসওয়ার্ড *</label>
+            <label className="block text-sm font-medium mb-1">
+              পাসওয়ার্ড *
+            </label>
             <div className="relative">
               <FiLock className="absolute left-3 top-3 text-gray-400" />
               <input
@@ -218,7 +230,7 @@ const onSubmit = (data) => {
             )}
           </div>
           {/* Profile Photo */}
-<div className="col-span-2">
+          {/* <div className="col-span-2">
   <label className="block text-sm font-medium mb-1">প্রোফাইল ছবি</label>
   <input
     {...register("photoURL")}
@@ -226,7 +238,28 @@ const onSubmit = (data) => {
     accept="image/*"
     className="file-input file-input-bordered w-full"
   />
-</div>
+</div> */}
+
+          {/* Profile Photo URL */}
+          <div className="col-span-2">
+            <label className="block text-sm font-medium mb-1">
+              প্রোফাইল ছবি URL
+            </label>
+            <div className="relative">
+              <FiUser className="absolute left-3 top-3 text-gray-400" />
+              <input
+                {...register("photoURL", {
+                  
+                })}
+                type="text"
+                placeholder="প্রোফাইল ছবির লিংক দিন"
+                className="input input-bordered w-full pl-10 h-10"
+              />
+            </div>
+            {errors.photoURL && (
+              <p className="text-red-600 text-sm">{errors.photoURL.message}</p>
+            )}
+          </div>
 
           {/* City */}
           <div>
@@ -327,7 +360,9 @@ const onSubmit = (data) => {
                   />
                 </div>
                 {errors.nidNumber && (
-                  <p className="text-red-600 text-sm">{errors.nidNumber.message}</p>
+                  <p className="text-red-600 text-sm">
+                    {errors.nidNumber.message}
+                  </p>
                 )}
               </div>
 
@@ -352,7 +387,6 @@ const onSubmit = (data) => {
                   </p>
                 )}
               </div>
-              
             </>
           )}
 
