@@ -14,9 +14,13 @@ import { Link } from "react-router-dom";
 import UseAuth from "../../hooks/UseAuth";
 import { auth } from "../../firebase/firebase.init";
 
+import { useNavigate } from "react-router-dom";
+
 const RegisterPage = () => {
   const [role, setRole] = useState("buyer");
   const { createUser, UserUpdateProfile, setUser } = UseAuth();
+
+  const navigate = useNavigate();
 
   const {
     register,
@@ -25,28 +29,70 @@ const RegisterPage = () => {
     formState: { errors },
   } = useForm();
   const password = watch("password");
+  // const onSubmit = (data) => {
+  //   data.role = role; // Attach selected role to form data
+  //   console.log("Form Data:", data);
+
+  //   createUser(data.email, data.password)
+  //     .then((res) => {
+  //       const user = res.user;
+  //       // User created successfully
+  //       UserUpdateProfile({
+  //         displayName: data.fullName,
+  //         photoURL: data.photoURL || "https://i.ibb.co/2ypYw9Y/default-avatar.png",
+          
+  //       })
+  //         .then(() => {
+  //           // ✅ Force refresh from Firebase Auth
+  //           const updatedUser = auth.currentUser;
+            
+
+  //           // ✅ Update context
+  //           setUser({
+  //             ...updatedUser,
+  //             displayName: updatedUser.displayName,
+
+  //           });
+
+  //           console.log("User Updated:", updatedUser);
+  //         })
+  //         .catch((error) => {
+  //           console.log("Profile Update Error:", error.message);
+  //           setUser(user);
+  //         });
+  //     })
+  //     .catch((error) => {
+  //       console.log("Registration Error:", error.message);
+  //     });
+  // };
+
   const onSubmit = (data) => {
+    data.role = role;
     console.log("Form Data:", data);
 
     createUser(data.email, data.password)
       .then((res) => {
         const user = res.user;
-        // User created successfully
+
         UserUpdateProfile({
           displayName: data.fullName,
-          photoURL: data.photoURL || "https://i.ibb.co/2ypYw9Y/default-avatar.png",
+          photoURL:
+            data.photoURL || "https://i.ibb.co/2ypYw9Y/default-avatar.png",
         })
           .then(() => {
-            // ✅ Force refresh from Firebase Auth
-            const updatedUser = auth.currentUser;
+            const updatedUser = {
+              ...auth.currentUser,
+              displayName: data.fullName,
+              photoURL:
+                data.photoURL || "https://i.ibb.co/2ypYw9Y/default-avatar.png",
+              role: data.role, // ✅ Add role
+            };
 
-            // ✅ Update context
-            setUser({
-              ...updatedUser,
-              displayName: updatedUser.displayName,
-            });
+            setUser(updatedUser); // context update
+            localStorage.setItem("user", JSON.stringify(updatedUser)); // refresh safe
 
             console.log("User Updated:", updatedUser);
+            navigate("/"); // redirect after registration
           })
           .catch((error) => {
             console.log("Profile Update Error:", error.message);

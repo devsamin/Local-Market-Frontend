@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { FiUser, FiLock, FiEye, FiEyeOff } from "react-icons/fi";
 import { FaStore } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import UseAuth from "../../hooks/UseAuth";
 import { useForm } from "react-hook-form";
 
@@ -9,6 +9,7 @@ const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [role, setRole] = useState("ক্রেতা");
   const { loginUser } = UseAuth();
+  const navigate = useNavigate();
 
   const {
     register,
@@ -19,6 +20,7 @@ const LoginPage = () => {
   const onSubmit = (data) => {
     // You can send role along with email & password
     loginUser(data.email, data.password);
+    navigate("/");
   };
 
   return (
