@@ -59,12 +59,19 @@ const CategoryProductSection = ({ products, category = "সব" }) => {
               className="bg-white border rounded-lg shadow-sm hover:shadow-lg transition-all overflow-hidden flex flex-col"
             >
               {/* Image */}
-              <div className="aspect-square overflow-hidden bg-gray-100">
+              <div className="relative aspect-square overflow-hidden bg-gray-100">
                 <img
                   src={product.image}
                   alt={product.name}
                   className="object-cover w-full h-full hover:scale-105 transition-transform duration-300"
                 />
+
+                {/* 🔴 Discount Badge */}
+                {product.discount && (
+                  <span className="absolute top-2 right-2 inline-flex items-center justify-center rounded-md border px-2 py-0.5 text-xs font-medium w-fit whitespace-nowrap shrink-0 gap-1 transition overflow-hidden border-transparent text-white bg-red-500 hover:bg-red-600">
+                    {product.discount}% ছাড়
+                  </span>
+                )}
               </div>
 
               {/* Card Content */}
