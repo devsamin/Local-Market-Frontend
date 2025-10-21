@@ -81,7 +81,7 @@ const Navbar = () => {
 
       {/* Right Side */}
       <div className="flex items-center gap-4 relative">
-        {user && role === "seller" ? (
+        {user && role === "বিক্রেতা" ? (
           // Seller Dashboard Button
           <Link
             to="/dashboard"
@@ -134,7 +134,7 @@ const Navbar = () => {
                     <h3 className="font-semibold text-sm text-gray-800">
                       আমার অ্যাকাউন্ট
                     </h3>
-                    <p className="text-xs text-gray-500">{user?.email}</p>
+                    <p className="text-xs font-bold  text-green-600">{role}</p>
                   </div>
                 </div>
                 <Link
@@ -143,7 +143,7 @@ const Navbar = () => {
                 >
                   <FaRegUser className="text-lg text-gray-500" /> প্রোফাইল
                 </Link>
-                {role === "buyer" ? (
+                {role === "ক্রেতা" ? (
                   <Link
                     to="/orders"
                     className="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 text-gray-700"
@@ -161,7 +161,7 @@ const Navbar = () => {
                   </Link>
                 )}
                 <Link
-                  to="/settings"
+                  to="/profile"
                   className="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 text-gray-700"
                 >
                   <IoSettingsOutline className="text-lg text-gray-500" /> সেটিংস

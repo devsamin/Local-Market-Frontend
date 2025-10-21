@@ -22,7 +22,7 @@ const BuyerProfile = () => {
                 Abdulla Al Samin
               </h2>
               <div className="flex items-center gap-2 text-green-600 font-semibold text-sm">
-                🟢 ক্রেতা
+                ক্রেতা
               </div>
               </div>
 

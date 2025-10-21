@@ -1,7 +1,7 @@
 import React from "react";
 import { FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn } from "react-icons/fa";
 // import { SiBkash, SiRocketdotchat } from "react-icons/si";
-import { GiReceiveMoney } from "react-icons/gi";
+// import { GiReceiveMoney } from "react-icons/gi";
 
 const Footer = () => {
   return (

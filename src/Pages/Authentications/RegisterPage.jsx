@@ -127,9 +127,9 @@ const RegisterPage = () => {
         {/* Role Tabs */}
         <div className="flex bg-gray-100 rounded-full mb-3 text-sm font-medium">
           {[
-            { key: "buyer", label: "ক্রেতা" },
-            { key: "seller", label: "বিক্রেতা" },
-            { key: "admin", label: "অ্যাডমিন" },
+            { key: "ক্রেতা", label: "ক্রেতা" },
+            { key: "বিক্রেতা", label: "বিক্রেতা" },
+            { key: "অ্যাডমিন", label: "অ্যাডমিন" },
           ].map((tab) => (
             <button
               key={tab.key}
@@ -141,9 +141,9 @@ const RegisterPage = () => {
               }`}
               onClick={() => setRole(tab.key)}
             >
-              {tab.key === "buyer" && <FiUser />}
-              {tab.key === "seller" && <FaStore />}
-              {tab.key === "admin" && <FiLock />}
+              {tab.key === "ক্রেতা" && <FiUser />}
+              {tab.key === "বিক্রেতা" && <FaStore />}
+              {tab.key === "অ্যাডমিন" && <FiLock />}
               {tab.label}
             </button>
           ))}
