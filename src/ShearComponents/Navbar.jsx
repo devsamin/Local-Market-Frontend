@@ -5,12 +5,14 @@ import { FaRegUser, FaUserCircle } from "react-icons/fa";
 import { MdOutlineHistory } from "react-icons/md";
 import { IoSettingsOutline } from "react-icons/io5";
 import { Link } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import UseAuth from "../hooks/UseAuth";
+import { CartContext } from "../contexts/CartContext/CartContext";
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
   const { user, logoutUser } = UseAuth();
+  const { cartItems } = useContext(CartContext);
 
   const storedUser = JSON.parse(localStorage.getItem("user"));
   const role = user?.role || storedUser?.role || "No role";
@@ -18,6 +20,7 @@ const Navbar = () => {
 
   const [location, setLocation] = useState("ঢাকা, বাংলাদেশ"); // default location
 
+  // Dropdown close on outside click
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (!event.target.closest(".profile-dropdown")) setOpen(false);
@@ -27,7 +30,7 @@ const Navbar = () => {
   }, []);
 
   return (
-    <div className="navbar bg-base-100 shadow-md py-3 px-4 md:px-8 flex justify-between items-center relative">
+    <div className="navbar bg-base-100 shadow-md py-3 px-4 md:px-8 flex justify-between items-center relative z-50">
       {/* Left Side: Logo + Location */}
       <div className="flex items-center gap-4">
         <Link to="/" className="flex items-center gap-2">
@@ -81,27 +84,30 @@ const Navbar = () => {
 
       {/* Right Side */}
       <div className="flex items-center gap-4 relative">
+        {/* Role-based button */}
         {user && role === "বিক্রেতা" ? (
-          // Seller Dashboard Button
           <Link
             to="/dashboard"
-            className="btn btn-black px-4 py-2 rounded-full"
+            className="px-4 py-2 bg-black text-white rounded-full hover:bg-gray-900 transition"
           >
             ড্যাশবোর্ড
           </Link>
         ) : (
-          // Buyer Cart
           <Link
             to="/cart"
             className="btn btn-ghost btn-circle relative text-2xl"
+            title="কার্ট দেখুন"
           >
             <FiShoppingCart />
-            <span className="badge badge-sm badge-primary absolute top-0 right-0 translate-x-1 -translate-y-1">
-              1
-            </span>
+            {cartItems.length > 0 && (
+              <span className="badge badge-sm absolute top-0 right-0 translate-x-1 -translate-y-1 bg-black text-white border-none">
+                {cartItems.length}
+              </span>
+            )}
           </Link>
         )}
 
+        {/* Profile / Auth */}
         {user ? (
           <div className="relative profile-dropdown">
             <button
@@ -118,8 +124,9 @@ const Navbar = () => {
               />
             </button>
 
+            {/* Dropdown Menu */}
             {open && (
-              <div className="absolute right-[-32px] mt-3 w-56 bg-white shadow-lg rounded-lg py-2 border z-50">
+              <div className="absolute right-[-32px] mt-3 w-56 bg-white shadow-lg rounded-lg py-2 border">
                 <div className="flex items-center gap-3 px-4 py-2 border-b">
                   {user?.photoURL ? (
                     <img
@@ -134,15 +141,17 @@ const Navbar = () => {
                     <h3 className="font-semibold text-sm text-gray-800">
                       আমার অ্যাকাউন্ট
                     </h3>
-                    <p className="text-xs font-bold  text-green-600">{role}</p>
+                    <p className="text-xs font-bold text-green-600">{role}</p>
                   </div>
                 </div>
+
                 <Link
                   to="/profile"
                   className="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 text-gray-700"
                 >
                   <FaRegUser className="text-lg text-gray-500" /> প্রোফাইল
                 </Link>
+
                 {role === "ক্রেতা" ? (
                   <Link
                     to="/orders"
@@ -157,16 +166,19 @@ const Navbar = () => {
                     className="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 text-gray-700"
                   >
                     <MdOutlineHistory className="text-lg text-gray-500" />{" "}
-                    ড্যাশবোর্ড
+                    বিক্রেতা ড্যাশবোর্ড
                   </Link>
                 )}
+
                 <Link
-                  to="/profile"
+                  to="/settings"
                   className="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 text-gray-700"
                 >
                   <IoSettingsOutline className="text-lg text-gray-500" /> সেটিংস
                 </Link>
+
                 <hr className="my-1" />
+
                 <button
                   onClick={logoutUser}
                   className="flex items-center gap-3 w-full text-left px-4 py-2 text-red-500 hover:bg-gray-100"

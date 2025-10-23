@@ -236,11 +236,15 @@ import {
   FiStar,
 } from "react-icons/fi";
 import { Link } from "react-router-dom";
+import { CartContext } from "../../contexts/CartContext/CartContext";
+import { useContext } from "react";
 
 const CategoryProductSection = ({ products, category = "সব" }) => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [priceRange, setPriceRange] = useState(50000);
   const [rating, setRating] = useState(0);
+
+  const { addToCart } = useContext(CartContext); // 🔥 cart context থেকে function আনো
 
   const filteredProducts =
     category === "সব"
@@ -364,7 +368,7 @@ const CategoryProductSection = ({ products, category = "সব" }) => {
                   <span className="text-xs sm:text-sm text-gray-600 flex-1">
                     {product.seller || "অজানা বিক্রেতা"}
                   </span>
-                  <button className="justify-center whitespace-nowrap text-xs sm:text-sm font-medium bg-black text-white hover:bg-gray-800 h-7 sm:h-8 rounded-md px-2.5 sm:px-3 flex items-center gap-1 transition">
+                  <button onClick={() => addToCart(product)}  className="justify-center whitespace-nowrap text-xs sm:text-sm font-medium bg-black text-white hover:bg-gray-800 h-7 sm:h-8 rounded-md px-2.5 sm:px-3 flex items-center gap-1 transition">
                     <FiShoppingCart className="w-3.5 h-3.5" /> কার্টে যোগ করুন
                   </button>
                 </div>
