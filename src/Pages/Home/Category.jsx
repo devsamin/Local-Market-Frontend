@@ -8,7 +8,7 @@ const Category = ({ categories, selectedCategory, setSelectedCategory }) => {
           <button
             key={index}
             onClick={() => setSelectedCategory(cat.name)} // Handel Click 
-            className={`flex items-center gap-2 whitespace-nowrap border px-4 py-2 rounded-full font-semibold text-gray-700 hover:bg-[#b5ee08] hover:text-black transition-all duration-300 ${
+            className={`flex items-center gap-2 whitespace-nowrap border px-4 py-2 rounded-full font-semibold text-gray-700 hover:bg-[#47474411] hover:text-black transition-all duration-300 ${
               selectedCategory === cat.name
                 ? "bg-black text-white"
                 : "bg-white"

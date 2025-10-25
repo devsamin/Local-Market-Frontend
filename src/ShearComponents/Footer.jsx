@@ -16,10 +16,10 @@ const Footer = () => {
           </p>
 
           <div className="flex items-center gap-4 mt-5">
-            <a href="#" className="p-2 bg-gray-800 rounded-full hover:bg-[#b5ee08] transition"><FaFacebookF /></a>
-            <a href="#" className="p-2 bg-gray-800 rounded-full hover:bg-[#b5ee08] transition"><FaTwitter /></a>
-            <a href="#" className="p-2 bg-gray-800 rounded-full hover:bg-[#b5ee08] transition"><FaInstagram /></a>
-            <a href="#" className="p-2 bg-gray-800 rounded-full hover:bg-[#b5ee08] transition"><FaLinkedinIn /></a>
+            <a href="#" className="p-2 bg-gray-800 rounded-full hover:bg-[#f0f2ea] transition"><FaFacebookF /></a>
+            <a href="#" className="p-2 bg-gray-800 rounded-full hover:bg-[#eff1e7] transition"><FaTwitter /></a>
+            <a href="#" className="p-2 bg-gray-800 rounded-full hover:bg-[#f3f5ee] transition"><FaInstagram /></a>
+            <a href="#" className="p-2 bg-gray-800 rounded-full hover:bg-[#f2f3ef] transition"><FaLinkedinIn /></a>
           </div>
         </div>
 
@@ -27,12 +27,12 @@ const Footer = () => {
         <div>
           <h3 className="text-lg font-semibold mb-4 text-white">দ্রুত লিংক</h3>
           <ul className="space-y-2 text-gray-400">
-            <li><a href="#" className="hover:text-[#b5ee08] transition">আমাদের সম্পর্কে</a></li>
-            <li><a href="#" className="hover:text-[#b5ee08] transition">কীভাবে কাজ করে</a></li>
-            <li><a href="#" className="hover:text-[#b5ee08] transition">বিক্রেতা হন</a></li>
-            <li><a href="#" className="hover:text-[#b5ee08] transition">সাহায্য ও সহযোগিতা</a></li>
-            <li><a href="#" className="hover:text-[#b5ee08] transition">ডেলিভারি তথ্য</a></li>
-            <li><a href="#" className="hover:text-[#b5ee08] transition">রিটার্ন পলিসি</a></li>
+            <li><a href="#" className="hover:text-[#f0f2ea] transition">আমাদের সম্পর্কে</a></li>
+            <li><a href="#" className="hover:text-[#f5f6f2] transition">কীভাবে কাজ করে</a></li>
+            <li><a href="#" className="hover:text-[#f4f5f1] transition">বিক্রেতা হন</a></li>
+            <li><a href="#" className="hover:text-[#ebebe9] transition">সাহায্য ও সহযোগিতা</a></li>
+            <li><a href="#" className="hover:text-[#f2f4ef] transition">ডেলিভারি তথ্য</a></li>
+            <li><a href="#" className="hover:text-[#f3f3f3] transition">রিটার্ন পলিসি</a></li>
           </ul>
         </div>
 
@@ -40,12 +40,12 @@ const Footer = () => {
         <div>
           <h3 className="text-lg font-semibold mb-4 text-white">জনপ্রিয় ক্যাটেগরি</h3>
           <ul className="space-y-2 text-gray-400">
-            <li><a href="#" className="hover:text-[#b5ee08] transition">ইলেকট্রনিক্স</a></li>
-            <li><a href="#" className="hover:text-[#b5ee08] transition">পোশাক ও ফ্যাশন</a></li>
-            <li><a href="#" className="hover:text-[#b5ee08] transition">মুদি ও খাবার</a></li>
-            <li><a href="#" className="hover:text-[#b5ee08] transition">বই ও শিক্ষা</a></li>
-            <li><a href="#" className="hover:text-[#b5ee08] transition">আসবাব ও সাজসজ্জা</a></li>
-            <li><a href="#" className="hover:text-[#b5ee08] transition">স্বাস্থ্য ও সৌন্দর্য</a></li>
+            <li><a href="#" className="hover:text-[#eeefea] transition">ইলেকট্রনিক্স</a></li>
+            <li><a href="#" className="hover:text-[#f6f8f2] transition">পোশাক ও ফ্যাশন</a></li>
+            <li><a href="#" className="hover:text-[#f8faf4] transition">মুদি ও খাবার</a></li>
+            <li><a href="#" className="hover:text-[#ecedea] transition">বই ও শিক্ষা</a></li>
+            <li><a href="#" className="hover:text-[#f8f9f5] transition">আসবাব ও সাজসজ্জা</a></li>
+            <li><a href="#" className="hover:text-[#f0f2eb] transition">স্বাস্থ্য ও সৌন্দর্য</a></li>
           </ul>
         </div>
 
@@ -73,7 +73,7 @@ const Footer = () => {
             placeholder="আপনার ইমেইল"
             className="px-4 py-2 w-64 rounded-l-md bg-white text-gray-800"
           />
-          <button className="bg-[#dadcd4] text-black px-5 py-2 rounded-r-md font-semibold hover:bg-lime-400 transition">
+          <button className="bg-[#dadcd4] text-black px-5 py-2 rounded-r-md font-semibold hover:bg-amber-50 transition">
             সাবস্ক্রাইব
           </button>
         </div>
@@ -82,10 +82,10 @@ const Footer = () => {
       {/* Footer Bottom */}
       <div className="border-t border-gray-800 text-center text-gray-400 text-sm py-6">
         <div className="flex flex-col md:flex-row justify-center items-center gap-3 mb-3">
-          <a href="#" className="hover:text-[#b5ee08]">গোপনীয়তার নীতি</a> |
-          <a href="#" className="hover:text-[#b5ee08]">ব্যবহারের শর্তাবলী</a> |
-          <a href="#" className="hover:text-[#b5ee08]">কুকি নীতি</a> |
-          <a href="#" className="hover:text-[#b5ee08]">আইনি বিজ্ঞপ্তি</a>
+          <a href="#" className="hover:text-[#e8e9e4]">গোপনীয়তার নীতি</a> |
+          <a href="#" className="hover:text-[#fefffc]">ব্যবহারের শর্তাবলী</a> |
+          <a href="#" className="hover:text-[#f2f5e9]">কুকি নীতি</a> |
+          <a href="#" className="hover:text-[#f8f9f3]">আইনি বিজ্ঞপ্তি</a>
         </div>
 
         {/* Payment Methods */}

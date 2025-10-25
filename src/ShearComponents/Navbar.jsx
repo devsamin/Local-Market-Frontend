@@ -100,9 +100,9 @@ const Navbar = () => {
           >
             <FiShoppingCart />
             {cartItems.length > 0 && (
-              <span className="badge badge-sm absolute top-0 right-0 translate-x-1 -translate-y-1 bg-black text-white border-none">
-                {cartItems.length}
-              </span>
+              <span className="absolute -top-1 -right-1 w-5 h-5 text-[10px] font-bold flex items-center justify-center text-white bg-red-500 rounded-full border border-white">
+      {cartItems.length}
+    </span>
             )}
           </Link>
         )}
