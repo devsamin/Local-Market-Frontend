@@ -7,8 +7,8 @@ import { useForm } from "react-hook-form";
 
 const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const [role, setRole] = useState("ক্রেতা");
-  const { loginUser } = UseAuth();
+  const [role, setRole] = useState("ক্রেতা"); // Default role
+  const { loginUser, setUser } = UseAuth();
   const navigate = useNavigate();
 
   const {
@@ -18,9 +18,32 @@ const LoginPage = () => {
   } = useForm();
 
   const onSubmit = (data) => {
-    // You can send role along with email & password
-    loginUser(data.email, data.password);
-    navigate("/");
+    data.role = role; // ✅ Attach selected role
+    console.log("Login Data:", data);
+
+    loginUser(data.email, data.password)
+      .then((res) => {
+        const user = res.user;
+        const loggedInUser = {
+          ...user,
+          role: data.role,
+        };
+
+        setUser(loggedInUser);
+        localStorage.setItem("user", JSON.stringify(loggedInUser));
+
+        console.log("User Logged In:", loggedInUser);
+        navigate("/"); // redirect after login
+      })
+      .catch((error) => {
+        console.error("Login Error:", error.message);
+      });
+  };
+
+  const roleDescription = {
+    ক্রেতা: "ক্রেতা হিসেবে লগইন করে আপনার পছন্দের পণ্য কিনুন।",
+    বিক্রেতা: "বিক্রেতা হিসেবে লগইন করে আপনার দোকান পরিচালনা করুন।",
+    অ্যাডমিন: "অ্যাডমিন লগইন শুধুমাত্র অনুমোদিত ব্যবহারকারীদের জন্য।",
   };
 
   return (
@@ -40,7 +63,7 @@ const LoginPage = () => {
         </div>
 
         {/* Role Selector */}
-        <div className="flex justify-center gap-3 mb-6">
+        <div className="flex justify-center gap-3 mb-4">
           {["ক্রেতা", "বিক্রেতা", "অ্যাডমিন"].map((r) => (
             <button
               key={r}
@@ -60,8 +83,14 @@ const LoginPage = () => {
           ))}
         </div>
 
+        {/* Role Info */}
+        <p className="text-center text-gray-600 text-sm mb-5">
+          {roleDescription[role]}
+        </p>
+
         {/* Form */}
         <form className="space-y-5" onSubmit={handleSubmit(onSubmit)}>
+          {/* Email */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               ইমেইল
@@ -70,15 +99,20 @@ const LoginPage = () => {
               type="email"
               placeholder="আপনার ইমেইল ঠিকানা"
               className={`w-full border rounded-xl px-4 py-2 focus:ring-2 focus:outline-none ${
-                errors.email ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-black"
+                errors.email
+                  ? "border-red-500 focus:ring-red-500"
+                  : "border-gray-300 focus:ring-black"
               }`}
               {...register("email", { required: "ইমেইল প্রয়োজন" })}
             />
             {errors.email && (
-              <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
+              <p className="text-red-500 text-sm mt-1">
+                {errors.email.message}
+              </p>
             )}
           </div>
 
+          {/* Password */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               পাসওয়ার্ড
@@ -88,7 +122,9 @@ const LoginPage = () => {
                 type={showPassword ? "text" : "password"}
                 placeholder="আপনার পাসওয়ার্ড"
                 className={`w-full border rounded-xl px-4 py-2 pr-10 focus:ring-2 focus:outline-none ${
-                  errors.password ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-black"
+                  errors.password
+                    ? "border-red-500 focus:ring-red-500"
+                    : "border-gray-300 focus:ring-black"
                 }`}
                 {...register("password", { required: "পাসওয়ার্ড প্রয়োজন" })}
               />
@@ -101,10 +137,13 @@ const LoginPage = () => {
               </button>
             </div>
             {errors.password && (
-              <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>
+              <p className="text-red-500 text-sm mt-1">
+                {errors.password.message}
+              </p>
             )}
           </div>
 
+          {/* Submit */}
           <button
             type="submit"
             className="w-full py-3 rounded-xl bg-black text-white font-semibold hover:bg-gray-800 transition"
@@ -116,10 +155,7 @@ const LoginPage = () => {
         {/* Footer */}
         <p className="text-center text-gray-500 text-sm mt-6">
           নতুন অ্যাকাউন্ট তৈরি করুন{" "}
-          <Link
-            to="/register"
-            className="text-black font-medium hover:underline"
-          >
+          <Link to="/register" className="text-black font-medium hover:underline">
             এখনই
           </Link>
         </p>
