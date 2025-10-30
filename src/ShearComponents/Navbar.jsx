@@ -87,7 +87,7 @@ const Navbar = () => {
         {/* Role-based button */}
         {user && role === "বিক্রেতা" ? (
           <Link
-            to="/dashboard"
+            to="/seller-dashboard"
             className="px-4 py-2 bg-black text-white rounded-full hover:bg-gray-900 transition"
           >
             ড্যাশবোর্ড
