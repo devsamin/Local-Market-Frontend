@@ -192,7 +192,8 @@ const LoginPage = () => {
   const onSubmit = async (data) => {
     try {
       const res = await axios.post("http://127.0.0.1:8000/api/users/login/", {
-        email: data.email,
+        // email: data.email,
+        username: data.username,
         password: data.password,
       });
 
@@ -244,7 +245,7 @@ const LoginPage = () => {
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
           {/* Email */}
-          <div>
+          {/* <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">ইমেইল</label>
             <input
               type="email"
@@ -253,7 +254,18 @@ const LoginPage = () => {
               {...register("email", { required: "ইমেইল প্রয়োজন" })}
             />
             {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}
-          </div>
+          </div> */}
+          {/* Username */}
+<div>
+  <label className="block text-sm font-medium text-gray-700 mb-1">ইউজারনেম</label>
+  <input
+    type="text"
+    placeholder="আপনার ইউজারনেম"
+    className="w-full border rounded-xl px-4 py-2 focus:ring-2 focus:outline-none border-gray-300 focus:ring-black"
+    {...register("username", { required: "ইউজারনেম প্রয়োজন" })}
+  />
+  {errors.username && <p className="text-red-500 text-sm mt-1">{errors.username.message}</p>}
+</div>
 
           {/* Password */}
           <div>

@@ -437,44 +437,62 @@ import { FiUser, FiPhone, FiMail, FiLock, FiBriefcase, FiFileText, FiCreditCard 
 const RegisterPage = () => {
   const [role, setRole] = useState("buyer");
   const [errorMsg, setErrorMsg] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [photoPreview, setPhotoPreview] = useState(null);
   const navigate = useNavigate();
 
   const { register, handleSubmit, watch, formState: { errors } } = useForm();
   const password = watch("password");
 
+  const handlePhotoChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setPhotoPreview(URL.createObjectURL(file));
+    }
+  };
+
   const onSubmit = async (data) => {
+    setErrorMsg("");
+    setLoading(true);
     try {
-      const payload = {
-        username: data.fullName,
-        email: data.email,
-        password: data.password,
-        role: role, // buyer/seller/admin
-        phone: data.phone,
-        location: data.city + ", " + data.area,
-        address: data.address,
-        businessName: data.businessName || "",
-        nidNumber: data.nidNumber || "",
-        bankAccount: data.bankAccount || "",
-        photoURL: data.photoURL || "https://i.ibb.co/2ypYw9Y/default-avatar.png",
-      };
+      const formData = new FormData();
+      formData.append("username", data.fullName);
+      formData.append("email", data.email);
+      formData.append("password", data.password);
+      formData.append("role", role);
+      formData.append("phone", data.phone);
+      formData.append("location", `${data.city}, ${data.area}`);
+      formData.append("address", data.address);
 
-      const res = await axios.post("http://127.0.0.1:8000/api/users/register/", payload);
-      console.log("User Registered:", res.data);
+      // Seller fields
+      if (role === "seller") {
+        formData.append("businessName", data.businessName || "");
+        formData.append("nidNumber", data.nidNumber || "");
+        formData.append("bankAccount", data.bankAccount || "");
+      }
 
-      // Auto login after register
-      const loginRes = await axios.post("http://127.0.0.1:8000/api/users/login/", {
-        email: data.email,
-        password: data.password,
-      });
+      // Photo upload
+      if (data.photo && data.photo[0]) {
+        formData.append("photo", data.photo[0]);
+      }
 
-      localStorage.setItem("access", loginRes.data.access);
-      localStorage.setItem("refresh", loginRes.data.refresh);
-      localStorage.setItem("user", JSON.stringify(res.data));
-
+      const res = await axios.post(
+        "http://127.0.0.1:8000/api/users/register/",
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
+      // ✅ Save returned user info
+    const createdUser = res.data;
+    console.log("Registered User:", createdUser);
+    localStorage.setItem("user", JSON.stringify(createdUser));
       navigate("/"); // redirect to home
     } catch (error) {
       console.error("Registration Error:", error.response?.data || error.message);
       setErrorMsg(error.response?.data?.email ? error.response.data.email[0] : "Registration failed");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -615,6 +633,25 @@ const RegisterPage = () => {
             {errors.confirmPassword && <p className="text-red-600 text-sm">{errors.confirmPassword.message}</p>}
           </div>
 
+          {/* Profile Photo Upload */}
+          <div className="col-span-2">
+            <label className="block text-sm font-medium mb-1">প্রোফাইল ছবি</label>
+            <input
+              type="file"
+              {...register("photo")}
+              accept="image/*"
+              onChange={handlePhotoChange}
+              className="file-input file-input-bordered w-full"
+            />
+            {photoPreview && (
+              <img
+                src={photoPreview}
+                alt="Preview"
+                className="mt-2 h-20 w-20 object-cover rounded-full"
+              />
+            )}
+          </div>
+
           {/* City */}
           <div>
             <label className="block text-sm font-medium mb-1">শহর/জেলা *</label>
@@ -696,3 +733,4 @@ const RegisterPage = () => {
 };
 
 export default RegisterPage;
+
