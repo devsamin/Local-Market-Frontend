@@ -13,6 +13,7 @@ const LoginPage = () => {
   const [role, setRole] = useState("ক্রেতা");
   const [errorMsg, setErrorMsg] = useState("");
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false); // ✅ loading state
 
   const { register, handleSubmit, formState: { errors } } = useForm();
   const { login } = useContext(AuthContext);
@@ -32,6 +33,7 @@ const LoginPage = () => {
 
   const onSubmit = async (data) => {
     setErrorMsg(""); // clear previous error
+    setLoading(true); // ✅ Start loading
     try {
       // ✅ Send English role to backend
       const res = await axios.post("http://127.0.0.1:8000/api/users/login/", {
@@ -62,6 +64,8 @@ const LoginPage = () => {
         error.response?.data?.detail ||
         "লগইন ব্যর্থ হয়েছে! দয়া করে তথ্যগুলো যাচাই করুন।";
       setErrorMsg(errMsg);
+    } finally {
+      setLoading(false); // ✅ Stop loading after success or error
     }
   };
 
@@ -154,28 +158,30 @@ const LoginPage = () => {
             )}
           </div>
 
-          {/* ✅ Error Message */}
+          {/* Error Message */}
           {errorMsg && (
             <div className="bg-red-50 border border-red-200 text-red-600 text-sm p-3 rounded-xl text-center">
               {errorMsg}
             </div>
           )}
 
-          {/* Submit */}
+          {/* ✅ Submit Button with loading */}
           <button
             type="submit"
-            className="w-full py-3 rounded-xl bg-black text-white font-semibold hover:bg-gray-800 transition"
+            disabled={loading}
+            className={`w-full py-3 rounded-xl font-semibold transition ${
+              loading
+                ? "bg-gray-600 cursor-not-allowed text-white"
+                : "bg-black hover:bg-gray-800 text-white"
+            }`}
           >
-            লগইন করুন
+            {loading ? "লগইন হচ্ছে..." : "লগইন করুন"}
           </button>
         </form>
 
         <p className="text-center text-gray-500 text-sm mt-6">
           নতুন অ্যাকাউন্ট তৈরি করুন{" "}
-          <Link
-            to="/register"
-            className="text-black font-medium hover:underline"
-          >
+          <Link to="/register" className="text-black font-medium hover:underline">
             এখানে
           </Link>
         </p>

@@ -1,9 +1,12 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import { FaStore } from "react-icons/fa";
 import { FiUser, FiPhone, FiMail, FiLock, FiBriefcase, FiFileText, FiCreditCard } from "react-icons/fi";
+import { AuthContext } from "../../contexts/AuthContext/AuthProvider";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const RegisterPage = () => {
   const [role, setRole] = useState("buyer");
@@ -11,6 +14,7 @@ const RegisterPage = () => {
   const [loading, setLoading] = useState(false);
   const [photoPreview, setPhotoPreview] = useState(null);
   const navigate = useNavigate();
+  const {login} = useContext(AuthContext)
 
   const {
     register,
@@ -54,10 +58,13 @@ const RegisterPage = () => {
         { headers: { "Content-Type": "multipart/form-data" } }
       );
 
-      const createdUser = res.data;
-      console.log("Registered User:", createdUser);
-      localStorage.setItem("user", JSON.stringify(createdUser));
-      navigate("/"); // redirect to home
+      toast.success("অ্যাকাউন্ট সফলভাবে তৈরি হয়েছে! এখন লগইন করুন 🔐", {
+        position: "top-center",
+        autoClose: 3000,
+      });
+
+      navigate("/login");
+      // localStorage.setItem("user", JSON.stringify(createdUser));
     } catch (error) {
       console.error("Registration Error:", error.response?.data || error.message);
       // Backend field error display
