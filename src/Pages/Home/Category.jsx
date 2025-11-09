@@ -1,4 +1,4 @@
-import React from "react";
+
 
 const Category = ({ categories, selectedCategory, setSelectedCategory }) => {
   return (
