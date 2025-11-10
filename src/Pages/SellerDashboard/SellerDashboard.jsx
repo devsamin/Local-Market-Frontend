@@ -290,27 +290,23 @@
 
 
 
-
 import React, { useState } from "react";
 import {
-  FiShoppingCart,
-  FiPackage,
-  FiStar,
-  FiTrendingUp,
-  FiMessageSquare,
-  FiBox,
-  FiBarChart2,
-} from "react-icons/fi";
+  Package,
+  ShoppingCart,
+  Star,
+  Box,
+  BarChart2,
+} from "lucide-react";
 import { MdTrendingUp } from "react-icons/md";
 
-// ==== Import Child Components (You will create these files) ====
 import Overview from "./Overview";
 import Products from "./Products";
 import Orders from "./Orders";
 import Analytics from "./Analytics";
 
 const SellerDashboard = () => {
-  const [activeTab, setActiveTab] = useState("overview"); // overview, products, orders, analytics
+  const [activeTab, setActiveTab] = useState("overview");
 
   const renderContent = () => {
     switch (activeTab) {
@@ -327,32 +323,44 @@ const SellerDashboard = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 py-6 px-4 md:px-8">
-      {/* ==== Header (Seller Info) ==== */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6">
-        <div className="flex items-center gap-4">
-          <div className="w-16 h-16 bg-indigo-600 text-white flex items-center justify-center rounded-full text-xl font-bold">
-            <img src="" alt="Samin" />
-          </div>
-          <div>
-            <h2 className="text-xl font-semibold">আবদুল্লাহ আল চামিন</h2>
-            <p className="text-gray-500 text-sm">বিক্রেতা অ্যাকাউন্ট</p>
-            <div className="flex items-center gap-2 text-sm mt-1">
-              <span className="text-gray-600">⭐ 4.2 রেটিং</span>
-              <span className="text-gray-400">•</span>
-              <span className="text-gray-600">৮ পণ্য</span>
+      {/* ==== Seller Info Section (New Design) ==== */}
+      <div className="flex items-center gap-4 mb-6 bg-white rounded-xl shadow p-5">
+        {/* Avatar */}
+        <div className="relative flex shrink-0 overflow-hidden rounded-full h-20 w-20 border-4 border-white shadow-lg bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center text-white text-2xl font-semibold">
+          আ
+        </div>
+
+        {/* Seller Info */}
+        <div className="flex-1">
+          <h1 className="text-lg font-semibold text-gray-800">আহমেদ আলী</h1>
+          <p className="text-sm text-gray-500">বিক্রেতা ড্যাশবোর্ড</p>
+
+          {/* Stats */}
+          <div className="flex items-center gap-6 mt-2">
+            <div className="flex items-center gap-1 text-sm text-gray-700">
+              <Package className="w-4 h-4 text-gray-500" />
+              <span>৭ পণ্য</span>
+            </div>
+            <div className="flex items-center gap-1 text-sm text-gray-700">
+              <ShoppingCart className="w-4 h-4 text-gray-500" />
+              <span>৮ অর্ডার</span>
+            </div>
+            <div className="flex items-center gap-1 text-sm text-gray-700">
+              <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
+              <span>৪.২ রেটিং</span>
             </div>
           </div>
         </div>
       </div>
 
-      {/* ==== Top Tabs ==== */}
+      {/* ==== Navigation Tabs ==== */}
       <div className="flex justify-between gap-9 bg-white shadow-sm rounded-xl mx-4 py-3 mb-6">
         <button
           onClick={() => setActiveTab("overview")}
           className={`flex items-center m-2 gap-2 font-medium ${
             activeTab === "overview"
-              ? "text-primary border-b-2 border-primary"
-              : "text-gray-700 hover:text-primary"
+              ? "text-indigo-600 border-b-2 border-indigo-600"
+              : "text-gray-700 hover:text-indigo-600"
           }`}
         >
           <MdTrendingUp className="text-lg" /> ওভারভিউ
@@ -361,31 +369,31 @@ const SellerDashboard = () => {
           onClick={() => setActiveTab("products")}
           className={`flex items-center gap-2 ${
             activeTab === "products"
-              ? "text-primary border-b-2 border-primary"
-              : "text-gray-700 hover:text-primary"
+              ? "text-indigo-600 border-b-2 border-indigo-600"
+              : "text-gray-700 hover:text-indigo-600"
           }`}
         >
-          <FiBox className="text-lg" /> পণ্য
+          <Box className="text-lg" /> পণ্য
         </button>
         <button
           onClick={() => setActiveTab("orders")}
           className={`flex items-center gap-2 ${
             activeTab === "orders"
-              ? "text-primary border-b-2 border-primary"
-              : "text-gray-700 hover:text-primary"
+              ? "text-indigo-600 border-b-2 border-indigo-600"
+              : "text-gray-700 hover:text-indigo-600"
           }`}
         >
-          <FiShoppingCart className="text-lg" /> অর্ডার
+          <ShoppingCart className="text-lg" /> অর্ডার
         </button>
         <button
           onClick={() => setActiveTab("analytics")}
           className={`flex items-center m-2 gap-2 ${
             activeTab === "analytics"
-              ? "text-primary border-b-2 border-primary"
-              : "text-gray-700 hover:text-primary"
+              ? "text-indigo-600 border-b-2 border-indigo-600"
+              : "text-gray-700 hover:text-indigo-600"
           }`}
         >
-          <FiBarChart2 className="text-lg" /> অ্যানালিটিক্স
+          <BarChart2 className="text-lg" /> অ্যানালিটিক্স
         </button>
       </div>
 
