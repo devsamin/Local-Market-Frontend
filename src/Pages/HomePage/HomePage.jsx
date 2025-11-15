@@ -34,7 +34,6 @@ const HomePage = () => {
   const [products, setProducts] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("সব");
 
-  // 🔹 Fetch categories and products from API
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -42,14 +41,14 @@ const HomePage = () => {
           axios.get("http://127.0.0.1:8000/api/category/"),
           axios.get("http://127.0.0.1:8000/api/products/"),
         ]);
+
         setCategories([{ id: 0, name: "সব" }, ...catRes.data]);
         setProducts(prodRes.data);
-        console.log("Fetched categories:", catRes.data);
-        console.log("Fetched products:", prodRes.data);
       } catch (error) {
         console.error("Error loading data:", error);
       }
     };
+
     fetchData();
   }, []);
 
@@ -60,7 +59,9 @@ const HomePage = () => {
         selectedCategory={selectedCategory}
         setSelectedCategory={setSelectedCategory}
       />
+
       <SpecialOffers />
+
       <CategoryProductSection
         products={products}
         category={selectedCategory}
@@ -70,3 +71,5 @@ const HomePage = () => {
 };
 
 export default HomePage;
+
+
