@@ -52,8 +52,8 @@ const AddProductModal = ({ onClose, onAdd }) => {
       formData.append("price", data.price);
       formData.append("stock", data.stock || 0);
       formData.append("discount", data.discount || 0);
-
-      if (data.category) formData.append("categories", data.category);
+      formData.append("category_ids", data.category);
+      // if (data.category) formData.append("categories", data.category);
       if (data.image && data.image[0]) formData.append("image", data.image[0]);
 
       const res = await axios.post("http://127.0.0.1:8000/api/products/", formData, {

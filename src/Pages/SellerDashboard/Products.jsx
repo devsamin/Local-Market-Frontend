@@ -4,8 +4,10 @@ import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { FiEye, FiEdit2, FiTrash2 } from "react-icons/fi";
 import AddProductModal from "./AddProductModal/AddProductModal";
-import EditProductModal from "./EditProductModal/EditProductModal"; // 👈 new
+import EditProductModal from "./EditProductModal/EditProductModal"; 
 import { AuthContext } from "../../contexts/AuthContext/AuthProvider";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Products = () => {
   const [products, setProducts] = useState([]);
@@ -51,10 +53,14 @@ const Products = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
       setProducts((prev) => prev.filter((p) => p.id !== id));
-      alert("✅ পণ্যটি সফলভাবে মুছে ফেলা হয়েছে!");
+      toast.success("পণ্যটি সফলভাবে মুছে ফেলা হয়েছে!", {
+      position: "top-right",
+    });
     } catch (error) {
       console.error("❌ Delete Error:", error.response?.data || error);
-      alert("পণ্যটি মুছতে সমস্যা হয়েছে!");
+      toast.error("পণ্যটি মুছতে সমস্যা হয়েছে!", {
+      position: "top-right",
+    });
     }
   };
 
