@@ -1,22 +1,50 @@
 import React, { useState } from "react";
 import { FiX, FiUser, FiArrowLeft, FiCheckCircle } from "react-icons/fi";
-
+import axios from "axios";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 const OrderConfirmModal = ({ isOpen, onClose }) => {
   const [step, setStep] = useState(1);
   const [deliveryType, setDeliveryType] = useState("home");
+   const navigate = useNavigate(); // ✅ Navigate hook
 
   if (!isOpen) return null;
 
   const nextStep = () => setStep((prev) => Math.min(prev + 1, 3));
   const prevStep = () => setStep((prev) => Math.max(prev - 1, 1));
 
-  const handleConfirm = () => {
+  // const handleConfirm = () => {
+  //   setStep(4);
+  //   setTimeout(() => {
+  //     onClose();
+  //     setStep(1);
+  //   }, 2500);
+  // };
+  const handleConfirm = async () => {
+  const token = localStorage.getItem("access");
+
+  try {
+    const res = await axios.post(
+      "http://127.0.0.1:8000/api/orders/orders/checkout/",
+      {},
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+    toast.success("Order placed successfully! 🎉");
+    console.log("Order Created:", res.data);
+
     setStep(4);
     setTimeout(() => {
       onClose();
       setStep(1);
-    }, 2500);
-  };
+      navigate("/profile?tab=orders"); // ✅ Redirect to orders tab
+    }, 2000);
+  } catch (e) {
+    toast.error("Order failed. Try again! ",e);
+  }
+};
+
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 overflow-auto">

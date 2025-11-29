@@ -9,6 +9,7 @@ import RegisterPage from "../Pages/Authentications/RegisterPage";
 import LoginPage from "../Pages/Authentications/LoginPage";
 import SellerDashboard from "../Pages/SellerDashboard/SellerDashboard";
 import UserProfile from "../Pages/Profile/UserProfile";
+// import BuyerOrders from "../Pages/Profile/BuyerOrders";
 
 export const router = createBrowserRouter([
   {
@@ -23,41 +24,44 @@ export const router = createBrowserRouter([
           const catRes = await fetch("/categoriesData.json");
           const categories = await catRes.json();
 
-        //   Products fetch
+          //   Products fetch
           const prodRes = await fetch("/productData.json");
           const products = await prodRes.json();
 
-        //   return categories;
+          //   return categories;
           return { categories, products };
         },
       },
       {
         path: "/cart",
-        element : <BuyerCart/>
+        element: <BuyerCart />,
       },
+      // {
+      //   path: "/orders",
+      //   element: <BuyerOrders />,
+      // },
       {
         path: "/profile",
-        element : <UserProfile/>
+        element: <UserProfile />,
       },
       {
-        path : '/seller-dashboard',
-        element : <SellerDashboard/>
-      }
+        path: "/seller-dashboard",
+        element: <SellerDashboard />,
+      },
     ],
   },
   {
-    path : "/",
-    element : <AuthLayouts/>,
-    children : [
+    path: "/",
+    element: <AuthLayouts />,
+    children: [
       {
-        path : "/login",
-        element : < LoginPage/>
+        path: "/login",
+        element: <LoginPage />,
       },
       {
-        path : "/register",
-        element : <RegisterPage/>
-      }
-    ]
-  }
+        path: "/register",
+        element: <RegisterPage />,
+      },
+    ],
+  },
 ]);
-
