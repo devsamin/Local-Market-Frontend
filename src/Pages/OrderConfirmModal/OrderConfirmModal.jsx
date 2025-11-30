@@ -3,10 +3,13 @@ import { FiX, FiUser, FiArrowLeft, FiCheckCircle } from "react-icons/fi";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import  { useContext } from "react";
+import { CartContext } from "../../contexts/CartContext/CartContext";
 const OrderConfirmModal = ({ isOpen, onClose }) => {
   const [step, setStep] = useState(1);
   const [deliveryType, setDeliveryType] = useState("home");
    const navigate = useNavigate(); // ✅ Navigate hook
+   const { clearCart } = useContext(CartContext);
 
   if (!isOpen) return null;
 
@@ -33,6 +36,7 @@ const OrderConfirmModal = ({ isOpen, onClose }) => {
     );
     toast.success("Order placed successfully! 🎉");
     console.log("Order Created:", res.data);
+    clearCart(); // ✅ Clear cart after order
 
     setStep(4);
     setTimeout(() => {

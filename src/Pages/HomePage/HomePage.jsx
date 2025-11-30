@@ -28,11 +28,15 @@ import axios from "axios";
 import Category from "../Home/Category";
 import SpecialOffers from "../Home/SpecialOffers";
 import CategoryProductSection from "../Home/CategoryProductSection";
+// import Navbar from "../../ShearComponents/Navbar";
+import { useOutletContext } from "react-router-dom";
 
 const HomePage = () => {
   const [categories, setCategories] = useState([]);
   const [products, setProducts] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("সব");
+
+   const { searchTerm } = useOutletContext();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -54,6 +58,9 @@ const HomePage = () => {
 
   return (
     <div>
+      
+
+
       <Category
         categories={categories}
         selectedCategory={selectedCategory}
@@ -65,6 +72,7 @@ const HomePage = () => {
       <CategoryProductSection
         products={products}
         category={selectedCategory}
+        searchTerm={searchTerm} // 🔹 pass searchTerm
       />
     </div>
   );

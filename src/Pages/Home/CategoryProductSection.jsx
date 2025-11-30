@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useMemo } from "react";
 import {
   FiShoppingCart,
   FiFilter,
@@ -14,9 +14,10 @@ import ProductDetailsModal from "../ProductDetailsModal/ProductDetailsModal";
 
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Fuse from "fuse.js";
 
 
-const CategoryProductSection = ({ products = [], category = "সব" }) => {
+const CategoryProductSection = ({ products = [], category = "সব", searchTerm = "" }) => {
   // 🔹 State
   const [isFilterOpen, setIsFilterOpen] = useState(false); // filter drawer
   const [priceRange, setPriceRange] = useState(50000); // price filter
@@ -25,21 +26,54 @@ const CategoryProductSection = ({ products = [], category = "সব" }) => {
   const userData = JSON.parse(localStorage.getItem("user"));
   const { addToCart, cartItems } = useContext(CartContext); // cart context
 
-  console.log("Products in CategoryProductSection:", products);
-  // 🔹 Filter products by category
-  const filteredProducts =
-    category === "সব"
+  // inside your component
+
+
+  // console.log("Products in CategoryProductSection:", products);
+  // // 🔹 Filter products by category
+  // const filteredProducts =
+  //   category === "সব"
+  //     ? products
+  //     : products.filter((p) =>
+  //         Array.isArray(p.categories)
+  //           ? p.categories.some((cat) => cat && cat.name === category)
+  //           : false
+  //       );
+
+  // // 🔹 Apply price and rating filters
+  // const finalProducts = filteredProducts.filter(
+  //   (p) => parseFloat(p.price) <= priceRange && (p.rating || 0) >= rating
+  // );
+
+
+  // 🔹 Filter by category
+  const filteredByCategory = useMemo(() => {
+    return category === "সব"
       ? products
       : products.filter((p) =>
           Array.isArray(p.categories)
             ? p.categories.some((cat) => cat && cat.name === category)
             : false
         );
+  }, [products, category]);
+
+  // 🔹 Filter by search term using Fuse.js
+  const filteredBySearch = useMemo(() => {
+    if (!searchTerm) return filteredByCategory;
+    const fuse = new Fuse(filteredByCategory, {
+      keys: ["name", "description"],
+      threshold: 0.3,
+    });
+    return fuse.search(searchTerm).map((res) => res.item);
+  }, [filteredByCategory, searchTerm]);
 
   // 🔹 Apply price and rating filters
-  const finalProducts = filteredProducts.filter(
-    (p) => parseFloat(p.price) <= priceRange && (p.rating || 0) >= rating
-  );
+  const finalProducts = useMemo(() => {
+    return filteredBySearch.filter(
+      (p) => parseFloat(p.price) <= priceRange && (p.rating || 0) >= rating
+    );
+  }, [filteredBySearch, priceRange, rating]);
+
 
   // 🔹 Add product to cart
   const handleAddToCart = async (product) => {
@@ -168,7 +202,7 @@ toast.success("পণ্যটি সফলভাবে কার্টে য�
                 <div className="flex items-center justify-between text-sm">
                   <div className="flex items-center gap-2 text-gray-600">
                     <FiMapPin className="w-3 h-3" />
-                    <span>{product.location || "ঢাকা"}</span>
+                    <span>{userData?.location || "ঢাকা"}</span>
 
                     {product.verified && (
                       <FiCheckCircle
@@ -181,16 +215,16 @@ toast.success("পণ্যটি সফলভাবে কার্টে য�
 
                 {/* Seller + Cart Button */}
                 <div className="flex items-center gap-2 pt-2">
-                  <span className="text-sm text-gray-600 flex-1">
+                  {/* <span className="text-sm text-gray-600 flex-1">
                     {product.seller_name || "অজানা বিক্রেতা"}
-                  </span>
+                  </span> */}
 
                   <button
                     onClick={(e) => {
                       e.stopPropagation(); // STOP DOUBLE CALL
                       handleAddToCart(product);
                     }}
-                    className="flex items-center gap-1 bg-black text-white text-sm rounded-md px-3 py-1.5 hover:bg-gray-800"
+                    className="ml-auto flex items-center justify-center gap-1 bg-black text-white text-sm rounded-md px-3 py-1.5 hover:bg-gray-800"
                   >
                     <FiShoppingCart className="w-4 h-4" />
                     কার্টে যোগ করুন

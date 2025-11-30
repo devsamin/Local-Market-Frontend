@@ -224,7 +224,7 @@ import { CartContext } from "../contexts/CartContext/CartContext";
 import { AuthContext } from "../contexts/AuthContext/AuthProvider";
 import { BASE_URL } from "../config.js/config";
 
-const Navbar = () => {
+const Navbar = ({ searchTerm, setSearchTerm }) => {
   const [open, setOpen] = useState(false);
   const { user, logout } = useContext(AuthContext);
   const { cartItems } = useContext(CartContext);
@@ -274,6 +274,30 @@ const Navbar = () => {
       </div>
 
       {/* Search */}
+      {/* <div className="flex-1 max-w-lg mx-6 hidden md:flex">
+        <label className="input input-bordered flex items-center gap-2 w-full h-10 rounded-full px-3 text-base bg-gray-50">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={2}
+            stroke="currentColor"
+            className="w-6 h-6 text-gray-500"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z"
+            />
+          </svg>
+          <input
+            type="search"
+            placeholder="পণ্য খুঁজুন..."
+            className="grow bg-transparent outline-none placeholder:text-gray-500"
+          />
+        </label>
+      </div> */}
+  {/* 🔹 Search Input */}
       <div className="flex-1 max-w-lg mx-6 hidden md:flex">
         <label className="input input-bordered flex items-center gap-2 w-full h-10 rounded-full px-3 text-base bg-gray-50">
           <svg
@@ -294,6 +318,8 @@ const Navbar = () => {
             type="search"
             placeholder="পণ্য খুঁজুন..."
             className="grow bg-transparent outline-none placeholder:text-gray-500"
+            value={searchTerm} // 🔹 bind value
+            onChange={(e) => setSearchTerm(e.target.value)} // 🔹 update parent state
           />
         </label>
       </div>
