@@ -1,9 +1,17 @@
+
 // import React, { useEffect, useState, useContext } from "react";
 // import { FiMail, FiPhone, FiMapPin, FiEdit3 } from "react-icons/fi";
 // import axios from "axios";
 // import { AuthContext } from "../../contexts/AuthContext/AuthProvider";
 // import { useNavigate } from "react-router-dom";
-// import { BASE_URL } from "../../config.js/config";
+// import { BASE_URL } from "../../config.js/config"
+// import { toast } from "react-hot-toast";
+
+// import ReviewModal from "../ReviewModal/ReviewModal";
+// import { useLocation } from "react-router-dom";
+
+
+
 
 // const UserProfile = () => {
 //   const [activeTab, setActiveTab] = useState("personal");
@@ -13,10 +21,22 @@
 //   const [editing, setEditing] = useState(false);
 //   const [photoPreview, setPhotoPreview] = useState(null);
 
+//   const [orders, setOrders] = useState([]);
+//   const [orderLoading, setOrderLoading] = useState(true);
+
+//   const [showReviewModal, setShowReviewModal] = useState(false);
+//   const [selectedOrderItem, setSelectedOrderItem] = useState(null);
+
 //   const navigate = useNavigate();
 //   const { logout, updateUser } = useContext(AuthContext);
+//   const location = useLocation();
+//   const urlTab = new URLSearchParams(location.search).get("tab");
 
-//   // Fetch Profile from API
+//   useEffect(() => {
+//     if (urlTab) setActiveTab(urlTab);
+//   }, [urlTab]);
+
+//   // Fetch profile
 //   const fetchProfile = async () => {
 //     try {
 //       const token = localStorage.getItem("access");
@@ -41,17 +61,32 @@
 //     }
 //   };
 
+//   // Fetch orders
+//   const fetchOrders = async () => {
+//     try {
+//       const token = localStorage.getItem("access");
+//       const res = await axios.get(`${BASE_URL}/api/orders/orders/`, {
+//         headers: { Authorization: `Bearer ${token}` },
+//       });
+//       setOrders(res.data);
+//     } catch (error) {
+//       console.error("Order Fetch Error:", error);
+//       toast.error("অর্ডার লোড করতে ব্যর্থ হয়েছে!");
+//     } finally {
+//       setOrderLoading(false);
+//     }
+//   };
+
 //   useEffect(() => {
 //     fetchProfile();
+//     fetchOrders();
 //   }, []);
 
-//   // Input change
 //   const handleChange = (e) => {
 //     const { name, value } = e.target;
 //     setProfile({ ...profile, [name]: value });
 //   };
 
-//   // Photo change
 //   const handlePhotoChange = (e) => {
 //     const file = e.target.files[0];
 //     if (file) {
@@ -60,7 +95,6 @@
 //     }
 //   };
 
-//   // Save profile
 //   const handleSave = async () => {
 //     try {
 //       const token = localStorage.getItem("access");
@@ -83,25 +117,41 @@
 //       if (profile.photoFile) formData.append("photo", profile.photoFile);
 
 //       const res = await axios.put(`${BASE_URL}/api/users/profile/`, formData, {
-//         headers: { Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data" },
+//         headers: {
+//           Authorization: `Bearer ${token}`,
+//           "Content-Type": "multipart/form-data",
+//         },
 //       });
 
 //       setProfile(res.data);
 //       setPhotoPreview(res.data.photo ? `${BASE_URL}${res.data.photo}` : null);
-//       updateUser(res.data); // ✅ Update context so Navbar updates instantly
+//       updateUser(res.data);
 //       setEditing(false);
-//       alert("প্রোফাইল সফলভাবে আপডেট হয়েছে!");
+//       toast.success("প্রোফাইল সফলভাবে আপডেট হয়েছে!");
 //     } catch (error) {
 //       console.error(error);
-//       alert("প্রোফাইল আপডেট করতে ব্যর্থ হয়েছে।");
+//       toast.error("প্রোফাইল আপডেট করতে ব্যর্থ হয়েছে।");
 //     }
 //   };
 
+//   const openReviewModal = (item) => {
+//     setSelectedOrderItem(item);
+//     setShowReviewModal(true);
+//   };
+
 //   if (loading)
-//     return <div className="flex items-center justify-center min-h-screen text-gray-700 text-lg">প্রোফাইল লোড হচ্ছে...</div>;
+//     return (
+//       <div className="flex items-center justify-center min-h-screen text-gray-700 text-lg">
+//         প্রোফাইল লোড হচ্ছে...
+//       </div>
+//     );
 
 //   if (errorMsg)
-//     return <div className="flex items-center justify-center min-h-screen text-red-500 text-lg">{errorMsg}</div>;
+//     return (
+//       <div className="flex items-center justify-center min-h-screen text-red-500 text-lg">
+//         {errorMsg}
+//       </div>
+//     );
 
 //   return (
 //     <div className="min-h-screen bg-gray-50 flex justify-center py-10 px-4">
@@ -109,7 +159,6 @@
 //         {/* Header */}
 //         <div className="flex flex-col sm:flex-row items-center sm:items-start justify-between border-b border-gray-200 pb-5">
 //           <div className="flex items-center gap-6">
-//             {/* Avatar */}
 //             <div className="w-24 h-24 rounded-full overflow-hidden border border-gray-200 relative">
 //               <img
 //                 src={photoPreview || "https://i.ibb.co/2ypYw9Y/default-avatar.png"}
@@ -122,23 +171,35 @@
 //                   accept="image/*"
 //                   onChange={handlePhotoChange}
 //                   className="absolute inset-0 opacity-0 cursor-pointer"
-//                   title="Click to change photo"
 //                 />
 //               )}
 //             </div>
 
-//             {/* User info */}
 //             <div>
 //               <div className="flex items-center gap-4">
-//                 <h2 className="text-2xl font-bold text-gray-800 mb-1">{profile.username || "নাম পাওয়া যায়নি"}</h2>
+//                 <h2 className="text-2xl font-bold text-gray-800 mb-1">
+//                   {profile.username || "নাম পাওয়া যায়নি"}
+//                 </h2>
 //                 <div className="flex items-center gap-2 text-green-600 font-semibold text-sm">
-//                   {profile.role === "buyer" ? "ক্রেতা" : profile.role === "seller" ? "বিক্রেতা" : "অজানা ভূমিকা"}
+//                   {profile.role === "buyer"
+//                     ? "ক্রেতা"
+//                     : profile.role === "seller"
+//                     ? "বিক্রেতা"
+//                     : "অজানা ভূমিকা"}
 //                 </div>
 //               </div>
+
 //               <div className="text-gray-600 text-sm mt-2 space-y-1">
-//                 <p className="flex items-center gap-2"><FiMail /> {profile.email || "ইমেইল নেই"}</p>
-//                 <p className="flex items-center gap-2"><FiPhone /> {profile.phone || "নম্বর নেই"}</p>
-//                 <p className="flex items-center gap-2"><FiMapPin /> {profile.location || "ঠিকানা নেই"}, {profile.city || ""}</p>
+//                 <p className="flex items-center gap-2">
+//                   <FiMail /> {profile.email || "ইমেইল নেই"}
+//                 </p>
+//                 <p className="flex items-center gap-2">
+//                   <FiPhone /> {profile.phone || "নম্বর নেই"}
+//                 </p>
+//                 <p className="flex items-center gap-2">
+//                   <FiMapPin /> {profile.location || "ঠিকানা নেই"},{" "}
+//                   {profile.city || ""}
+//                 </p>
 //               </div>
 //             </div>
 //           </div>
@@ -146,75 +207,71 @@
 //           {/* Buttons */}
 //           <div className="mt-4 sm:mt-0 flex gap-2">
 //             {!editing ? (
-//               <button onClick={() => setEditing(true)} className="flex items-center gap-2 bg-gray-900 text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition">
+//               <button
+//                 onClick={() => setEditing(true)}
+//                 className="flex items-center gap-2 bg-gray-900 text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition"
+//               >
 //                 <FiEdit3 /> প্রোফাইল সম্পাদনা
 //               </button>
 //             ) : (
 //               <>
 //                 <button
-//   onClick={handleSave}
-//   className="flex items-center gap-2 bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition"
-// >
-//   সংরক্ষণ
-// </button>
-// <button
-//   onClick={() => { setEditing(false); fetchProfile(); }}
-//   className="flex items-center gap-2 bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition"
-// >
-//   বাতিল
-// </button>
+//                   onClick={handleSave}
+//                   className="flex items-center gap-2 bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition"
+//                 >
+//                   সংরক্ষণ
+//                 </button>
+//                 <button
+//                   onClick={() => {
+//                     setEditing(false);
+//                     fetchProfile();
+//                   }}
+//                   className="flex items-center gap-2 bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition"
+//                 >
+//                   বাতিল
+//                 </button>
 //               </>
 //             )}
 //           </div>
 //         </div>
 
 //         {/* Tabs */}
-//         <div className="flex flex-wrap gap-2 mt-4 border-b border-gray-200">
-//           {["personal", "orders", "reviews", "settings"].map(tab => (
+//         <div className="flex gap-2 mt-4 border-b border-gray-200">
+//           {["personal", "orders", "reviews", "settings"].map((tab) => (
 //             <button
 //               key={tab}
 //               onClick={() => setActiveTab(tab)}
-//               className={`px-4 py-2 text-sm font-medium rounded-t-lg transition-all ${activeTab === tab ? "text-indigo-600 border-b-2 border-indigo-600 bg-gray-50" : "text-gray-600 hover:text-indigo-500"}`}
+//               className={`px-4 py-2 text-sm font-medium ${
+//                 activeTab === tab
+//                   ? "text-indigo-600 border-b-2 border-indigo-600"
+//                   : "text-gray-600"
+//               }`}
 //             >
-//               {tab === "personal" ? "ব্যক্তিগত তথ্য" : tab === "orders" ? "অর্ডার ইতিহাস (0)" : tab === "reviews" ? "রিভিউ (0)" : "সেটিংস"}
+//               {tab === "personal"
+//                 ? "ব্যক্তিগত তথ্য"
+//                 : tab === "orders"
+//                 ? `অর্ডার ইতিহাস (${orders.length})`
+//                 : tab === "reviews"
+//                 ? "রিভিউ"
+//                 : "সেটিংস"}
 //             </button>
 //           ))}
 //         </div>
 
-//         {/* Tab Content */}
+//         {/* CONTENT */}
 //         <div className="mt-4">
 //           {activeTab === "personal" && (
 //             <div>
-//               <h3 className="text-lg font-semibold text-gray-800 mb-4">ব্যক্তিগত তথ্য</h3>
+//               <h3 className="text-lg font-semibold mb-4">ব্যক্তিগত তথ্য</h3>
 //               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-//                 {["username","email","phone","city","location"].map((field) => (
-//                   <div key={field}>
-//                     <label className="block text-sm text-gray-500 mb-1">{field === "username" ? "পূর্ণ নাম" : field === "phone" ? "মোবাইল নাম্বার" : field.charAt(0).toUpperCase() + field.slice(1)}</label>
-//                     <input
-//                       type="text"
-//                       name={field}
-//                       value={profile[field] || ""}
-//                       onChange={handleChange}
-//                       readOnly={!editing}
-//                       className={`w-full border rounded-lg px-3 py-2 ${editing ? "bg-white border-gray-300" : "bg-gray-100 border-gray-200"}`}
-//                     />
-//                   </div>
-//                 ))}
-//                 <div className="sm:col-span-2">
-//                   <label className="block text-sm text-gray-500 mb-1">ঠিকানা</label>
-//                   <textarea
-//                     name="address"
-//                     value={profile.address || ""}
-//                     onChange={handleChange}
-//                     readOnly={!editing}
-//                     className={`w-full border rounded-lg px-3 py-2 h-20 ${editing ? "bg-white border-gray-300" : "bg-gray-100 border-gray-200"}`}
-//                   />
-//                 </div>
-
-//                 {profile.role === "seller" && ["businessName","nidNumber","bankAccount"].map(field => (
+//                 {["username", "email", "phone", "city", "location"].map((field) => (
 //                   <div key={field}>
 //                     <label className="block text-sm text-gray-500 mb-1">
-//                       {field === "businessName" ? "ব্যবসার নাম" : field === "nidNumber" ? "NID নম্বর" : "ব্যাংক অ্যাকাউন্ট"}
+//                       {field === "username"
+//                         ? "পূর্ণ নাম"
+//                         : field === "phone"
+//                         ? "মোবাইল নাম্বার"
+//                         : field.toUpperCase()}
 //                     </label>
 //                     <input
 //                       type="text"
@@ -222,34 +279,127 @@
 //                       value={profile[field] || ""}
 //                       onChange={handleChange}
 //                       readOnly={!editing}
-//                       className={`w-full border rounded-lg px-3 py-2 ${editing ? "bg-white border-gray-300" : "bg-gray-100 border-gray-200"}`}
+//                       className={`w-full border rounded-lg px-3 py-2 ${
+//                         editing ? "bg-white border-gray-300" : "bg-gray-100 border-gray-200"
+//                       }`}
 //                     />
 //                   </div>
 //                 ))}
+
+//                 <div className="sm:col-span-2">
+//                   <label className="block text-sm text-gray-500 mb-1">ঠিকানা</label>
+//                   <textarea
+//                     name="address"
+//                     value={profile.address || ""}
+//                     onChange={handleChange}
+//                     readOnly={!editing}
+//                     className={`w-full border rounded-lg px-3 py-2 h-20 ${
+//                       editing ? "bg-white border-gray-300" : "bg-gray-100 border-gray-200"
+//                     }`}
+//                   />
+//                 </div>
 //               </div>
 //             </div>
 //           )}
-//           {activeTab === "orders" && <p className="text-gray-500 text-sm">কোন অর্ডার ইতিহাস নেই।</p>}
-//           {activeTab === "reviews" && <p className="text-gray-500 text-sm">কোন রিভিউ পাওয়া যায়নি।</p>}
-//           {activeTab === "settings" && <p className="text-gray-500 text-sm">সেটিংস অপশন আসছে শীঘ্রই।</p>}
+
+//           {activeTab === "orders" && (
+//             <div>
+//               <h3 className="text-lg font-semibold mb-4">অর্ডার ইতিহাস</h3>
+//               {orderLoading ? (
+//                 <p className="text-gray-500">অর্ডার লোড হচ্ছে...</p>
+//               ) : orders.length === 0 ? (
+//                 <p className="text-gray-500 text-sm">কোন অর্ডার পাওয়া যায়নি।</p>
+//               ) : (
+//                 <div className="space-y-4">
+//                   {orders.map((order) => (
+//                     <div key={order.id} className="border rounded-lg p-4 bg-gray-50 shadow-sm">
+//                       <div className="flex justify-between">
+//                         <h4 className="font-bold">অর্ডার #{order.id}</h4>
+//                         <span
+//                           className={`text-sm px-2 py-1 rounded font-semibold ${
+//                             order.status === "completed"
+//                               ? "bg-green-100 text-green-600"
+//                               : order.status === "pending"
+//                               ? "bg-yellow-100 text-yellow-600"
+//                               : "bg-red-100 text-red-600"
+//                           }`}
+//                         >
+//                           {order.status}
+//                         </span>
+//                       </div>
+//                       <p className="text-sm text-gray-600 mt-1">
+//                         তারিখ: {order.created_at?.slice(0, 10)}
+//                       </p>
+//                       <div className="mt-2 space-y-2">
+//                         {order.items?.map((item) => (
+//                           <div key={item.id} className="flex justify-between items-center text-sm text-gray-700">
+//                             <span>{item.product_name}</span>
+//                             <div className="flex gap-2">
+//                               <span>
+//                                 {item.quantity} × {item.price}৳
+//                               </span>
+//                               {order.status === "completed" && !item.review && (
+//                                 <button
+//                                   onClick={() => openReviewModal(item)}
+//                                   className="px-2 py-1 bg-indigo-600 text-white text-xs rounded hover:bg-indigo-700"
+//                                 >
+//                                   রিভিউ যোগ করুন
+//                                 </button>
+//                               )}
+//                             </div>
+//                           </div>
+//                         ))}
+//                       </div>
+//                       <div className="text-right text-gray-900 font-semibold mt-2">
+//                         মোট: {order.total_price} ৳
+//                       </div>
+//                     </div>
+//                   ))}
+//                 </div>
+//               )}
+//             </div>
+//           )}
+
+//           {activeTab === "reviews" && (
+//             <p className="text-gray-500 text-sm">
+//               কোন রিভিউ পাওয়া যায়নি। (আপনার রিভিউ দেখতে এই ফিচারটি আরও উন্নত করা হবে)
+//             </p>
+//           )}
+
+//           {activeTab === "settings" && (
+//             <p className="text-gray-500 text-sm">সেটিংস অপশন আসছে খুব শীঘ্রই…</p>
+//           )}
 //         </div>
 //       </div>
+
+//       {showReviewModal && (
+//         <ReviewModal
+//           item={selectedOrderItem}
+//           onClose={() => setShowReviewModal(false)}
+//           onSuccess={() => {
+//             setShowReviewModal(false);
+//             fetchOrders();
+//           }}
+//         />
+//       )}
 //     </div>
 //   );
 // };
 
 // export default UserProfile;
 
+
+
+// UserProfile.jsx
 import React, { useEffect, useState, useContext } from "react";
 import { FiMail, FiPhone, FiMapPin, FiEdit3 } from "react-icons/fi";
 import axios from "axios";
 import { AuthContext } from "../../contexts/AuthContext/AuthProvider";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { BASE_URL } from "../../config.js/config";
 import { toast } from "react-hot-toast";
 
-import { useLocation } from "react-router-dom";
-
+import ReviewModal from "../ReviewModal/ReviewModal";
 
 const UserProfile = () => {
   const [activeTab, setActiveTab] = useState("personal");
@@ -259,23 +409,22 @@ const UserProfile = () => {
   const [editing, setEditing] = useState(false);
   const [photoPreview, setPhotoPreview] = useState(null);
 
-  // Orders State
   const [orders, setOrders] = useState([]);
   const [orderLoading, setOrderLoading] = useState(true);
+  console.log("Orders State:", orders);
+
+  const [showReviewModal, setShowReviewModal] = useState(false);
+  const [selectedOrderItem, setSelectedOrderItem] = useState(null);
 
   const navigate = useNavigate();
   const { logout, updateUser } = useContext(AuthContext);
 
   const location = useLocation();
-const urlTab = new URLSearchParams(location.search).get("tab");
+  const urlTab = new URLSearchParams(location.search).get("tab");
 
-useEffect(() => {
-  if (urlTab) {
-    setActiveTab(urlTab);
-  }
-}, [urlTab]);
-
-  
+  useEffect(() => {
+    if (urlTab) setActiveTab(urlTab);
+  }, [urlTab]);
 
   // Fetch Profile
   const fetchProfile = async () => {
@@ -378,6 +527,12 @@ useEffect(() => {
       console.error(error);
       toast.error("প্রোফাইল আপডেট করতে ব্যর্থ হয়েছে।");
     }
+  };
+
+  // Open Review Modal
+  const openReviewModal = (item) => {
+    setSelectedOrderItem(item);
+    setShowReviewModal(true);
   };
 
   if (loading)
@@ -532,7 +687,6 @@ useEffect(() => {
           {activeTab === "personal" && (
             <div>
               <h3 className="text-lg font-semibold mb-4">ব্যক্তিগত তথ্য</h3>
-
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 {["username", "email", "phone", "city", "location"].map(
                   (field) => (
@@ -595,6 +749,7 @@ useEffect(() => {
               ) : (
                 <div className="space-y-4">
                   {orders.map((order) => (
+                    
                     <div
                       key={order.id}
                       className="border rounded-lg p-4 bg-gray-50 shadow-sm"
@@ -604,7 +759,7 @@ useEffect(() => {
 
                         <span
                           className={`text-sm px-2 py-1 rounded font-semibold ${
-                            order.status === "completed"
+                            order.status === "delivered"
                               ? "bg-green-100 text-green-600"
                               : order.status === "pending"
                               ? "bg-yellow-100 text-yellow-600"
@@ -619,16 +774,28 @@ useEffect(() => {
                         তারিখ: {order.created_at?.slice(0, 10)}
                       </p>
 
-                      <div className="mt-2 space-y-1">
+                      <div className="mt-2 space-y-2">
                         {order.items?.map((item) => (
                           <div
                             key={item.id}
-                            className="flex justify-between text-sm text-gray-700"
+                            className="flex justify-between items-center text-sm text-gray-700"
                           >
                             <span>{item.product_name}</span>
-                            <span>
-                              {item.quantity} × {item.price}৳
-                            </span>
+                            <div className="flex gap-2">
+                              <span>
+                                {item.quantity} × {item.price}৳
+                              </span>
+                              {/* Show Review Button if order completed & no review */}
+                              {order.status === "delivered" &&  (
+                                <button
+                                  onClick={() => openReviewModal(item)}
+                                  className="px-2 py-1 bg-indigo-600 text-white text-xs rounded hover:bg-indigo-700"
+                                >
+                                  রিভিউ যোগ করুন
+                                </button>
+                                
+                              )}
+                            </div>
                           </div>
                         ))}
                       </div>
@@ -643,19 +810,37 @@ useEffect(() => {
             </div>
           )}
 
-          {/* REVIEWS */}
+          {/* REVIEWS TAB */}
           {activeTab === "reviews" && (
-            <p className="text-gray-500 text-sm">কোন রিভিউ পাওয়া যায়নি।</p>
+            <p className="text-gray-500 text-sm">
+              কোন রিভিউ পাওয়া যায়নি। (আপনার রিভিউ দেখতে এই ফিচারটি আরও উন্নত করা হবে)
+            </p>
           )}
 
           {/* SETTINGS */}
           {activeTab === "settings" && (
-            <p className="text-gray-500 text-sm">সেটিংস অপশন আসছে খুব শীঘ্রই…</p>
+            <p className="text-gray-500 text-sm">
+              সেটিংস অপশন আসছে খুব শীঘ্রই…
+            </p>
           )}
         </div>
       </div>
+
+      {/* Review Modal */}
+      {showReviewModal && (
+  <ReviewModal
+    open={showReviewModal} // <-- pass open prop
+    orderItemId={selectedOrderItem?.id} // <-- pass the order item id
+    onClose={() => setShowReviewModal(false)}
+    onSuccess={() => {
+      setShowReviewModal(false);
+      fetchOrders(); // refresh orders to show review
+    }}
+  />
+)}
     </div>
   );
 };
 
 export default UserProfile;
+    
