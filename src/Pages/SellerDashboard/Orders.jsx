@@ -210,7 +210,6 @@
 
 // // export default Orders;
 
-
 // import React, { useState, useEffect, useContext } from "react";
 // import axios from "axios";
 // import { AuthContext } from "../../contexts/AuthContext/AuthProvider";
@@ -272,7 +271,6 @@
 
 // export default Orders;
 
-
 import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { AuthContext } from "../../contexts/AuthContext/AuthProvider";
@@ -297,9 +295,12 @@ const Orders = () => {
   // Fetch seller order items
   const fetchOrders = async () => {
     try {
-      const res = await axios.get("http://127.0.0.1:8000/api/orders/seller-orders/", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await axios.get(
+        "http://127.0.0.1:8000/api/orders/seller-orders/",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       setOrderItems(res.data);
       console.log("Fetched Order Items:", res.data);
     } catch (err) {
@@ -337,36 +338,63 @@ const Orders = () => {
   return (
     <div className="p-5 space-y-6">
       <h2 className="text-xl font-semibold">অর্ডার ব্যবস্থাপনা</h2>
-      <p className="text-sm text-gray-500">আপনার সকল অর্ডার দেখুন এবং পরিচালনা করুন</p>
+      <p className="text-sm text-gray-500">
+        আপনার সকল অর্ডার দেখুন এবং পরিচালনা করুন
+      </p>
 
       {Object.values(ordersGrouped).map(({ order, items }) => (
-        <div key={order?.id || Math.random()} className="border rounded-lg p-5 bg-white shadow-sm mb-4">
+        <div
+          key={order?.id || Math.random()}
+          className="border rounded-lg p-5 bg-white shadow-sm mb-4"
+        >
           {/* Order Header */}
           <div className="flex justify-between items-center mb-4">
             <div>
-              <p className="font-semibold">Order #{order?.id}</p>
-              <p className="text-xs text-gray-500">Buyer: {order?.user?.username || "Unknown"}</p>
-              <p className="text-xs text-gray-400">{order?.created_at ? new Date(order.created_at).toLocaleString() : ""}</p>
+              <p className="font-semibold">Order #{items[0]?.id}</p>
+              <p className="text-xs text-gray-500">
+                Buyer: {items[0]?.buyer_name || "Unknown"}
+              </p>
+              <p className="text-xs text-gray-400">
+                {order?.created_at
+                  ? new Date(order.created_at).toLocaleString()
+                  : ""}
+              </p>
             </div>
             <div className="text-right">
-              <p>৳{order?.total_price?.toLocaleString()}</p>
+              <p>
+                Total Price :
+                {items
+                  .reduce(
+                    (total, item) => total + item.price * item.quantity,
+                    0
+                  )
+                  .toLocaleString()}
+                ৳{" "}
+              </p>
             </div>
           </div>
 
           {/* Items */}
           <div className="space-y-4">
             {items.map((item) => (
-              <div key={item.id} className="flex items-center justify-between border-b pb-4">
+              <div
+                key={item.id}
+                className="flex items-center justify-between border-b pb-4"
+              >
                 <div className="flex gap-4">
                   <img
-                    src={item.product?.image || "https://via.placeholder.com/60"}
+                    src={
+                      item.product?.image || "https://via.placeholder.com/60"
+                    }
                     alt={item.product?.name || "Product"}
                     className="w-14 h-14 rounded border"
                   />
                   <div>
-                    <p className="text-sm font-medium">{item.product?.name || "Deleted Product"}</p>
+                    <p className="text-sm font-medium">
+                      {item.product?.name || "Deleted Product"}
+                    </p>
                     <p className="text-xs text-gray-500">
-                      Qty: {item.quantity} • ৳{item.price}
+                      Quantity : {item.quantity} • ৳{item.price}
                     </p>
                   </div>
                 </div>
@@ -375,14 +403,20 @@ const Orders = () => {
                 <div>
                   <select
                     value={item.status}
-                    onChange={(e) => handleStatusChange(item.id, e.target.value)}
+                    onChange={(e) =>
+                      handleStatusChange(item.id, e.target.value)
+                    }
                     className="border rounded p-2 text-sm"
                   >
                     <option value="pending">অপেক্ষমান</option>
                     <option value="shipped">পরিবহন</option>
                     <option value="delivered">সম্পন্ন</option>
                   </select>
-                  <span className={`ml-2 px-2 py-1 text-sm rounded-full ${statusStyles[item.status]}`}>
+                  <span
+                    className={`ml-2 px-2 py-1 text-sm rounded-full ${
+                      statusStyles[item.status]
+                    }`}
+                  >
                     {item.status}
                   </span>
                 </div>

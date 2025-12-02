@@ -684,56 +684,101 @@ const UserProfile = () => {
         {/* CONTENT */}
         <div className="mt-4">
           {/* PERSONAL TAB */}
-          {activeTab === "personal" && (
-            <div>
-              <h3 className="text-lg font-semibold mb-4">ব্যক্তিগত তথ্য</h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                {["username", "email", "phone", "city", "location"].map(
-                  (field) => (
-                    <div key={field}>
-                      <label className="block text-sm text-gray-500 mb-1">
-                        {field === "username"
-                          ? "পূর্ণ নাম"
-                          : field === "phone"
-                          ? "মোবাইল নাম্বার"
-                          : field.toUpperCase()}
-                      </label>
-                      <input
-                        type="text"
-                        name={field}
-                        value={profile[field] || ""}
-                        onChange={handleChange}
-                        readOnly={!editing}
-                        className={`w-full border rounded-lg px-3 py-2 ${
-                          editing
-                            ? "bg-white border-gray-300"
-                            : "bg-gray-100 border-gray-200"
-                        }`}
-                      />
-                    </div>
-                  )
-                )}
+          {/* PERSONAL TAB */}
+{activeTab === "personal" && (
+  <div>
+    <h3 className="text-lg font-semibold mb-4">ব্যক্তিগত তথ্য</h3>
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+      {/* General Fields (All Roles) */}
+      {["username", "email", "phone", "city", "location"].map((field) => (
+        <div key={field}>
+          <label className="block text-sm text-gray-500 mb-1">
+            {field === "username"
+              ? "পূর্ণ নাম"
+              : field === "phone"
+              ? "মোবাইল নাম্বার"
+              : field.toUpperCase()}
+          </label>
+          <input
+            type="text"
+            name={field}
+            value={profile[field] || ""}
+            onChange={handleChange}
+            readOnly={!editing}
+            className={`w-full border rounded-lg px-3 py-2 ${
+              editing ? "bg-white border-gray-300" : "bg-gray-100 border-gray-200"
+            }`}
+          />
+        </div>
+      ))}
 
-                {/* Address */}
-                <div className="sm:col-span-2">
-                  <label className="block text-sm text-gray-500 mb-1">
-                    ঠিকানা
-                  </label>
-                  <textarea
-                    name="address"
-                    value={profile.address || ""}
-                    onChange={handleChange}
-                    readOnly={!editing}
-                    className={`w-full border rounded-lg px-3 py-2 h-20 ${
-                      editing
-                        ? "bg-white border-gray-300"
-                        : "bg-gray-100 border-gray-200"
-                    }`}
-                  />
-                </div>
-              </div>
-            </div>
-          )}
+      {/* Address */}
+      <div className="sm:col-span-2">
+        <label className="block text-sm text-gray-500 mb-1">ঠিকানা</label>
+        <textarea
+          name="address"
+          value={profile.address || ""}
+          onChange={handleChange}
+          readOnly={!editing}
+          className={`w-full border rounded-lg px-3 py-2 h-20 ${
+            editing ? "bg-white border-gray-300" : "bg-gray-100 border-gray-200"
+          }`}
+        />
+      </div>
+
+      {/* Seller-only Fields */}
+      {profile.role === "seller" && (
+        <>
+          <div className="sm:col-span-2 mt-4 border-t pt-3">
+            <h3 className="text-lg font-semibold text-gray-800 mb-2">ব্যবসায়িক তথ্য</h3>
+          </div>
+
+          <div className="sm:col-span-2">
+            <label className="block text-sm text-gray-500 mb-1">দোকান/ব্যবসার নাম</label>
+            <input
+              type="text"
+              name="businessName"
+              value={profile.businessName || ""}
+              onChange={handleChange}
+              readOnly={!editing}
+              className={`w-full border rounded-lg px-3 py-2 ${
+                editing ? "bg-white border-gray-300" : "bg-gray-100 border-gray-200"
+              }`}
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm text-gray-500 mb-1">১৭ সংখ্যার NID নম্বর</label>
+            <input
+              type="text"
+              name="nidNumber"
+              value={profile.nidNumber || ""}
+              onChange={handleChange}
+              readOnly={!editing}
+              className={`w-full border rounded-lg px-3 py-2 ${
+                editing ? "bg-white border-gray-300" : "bg-gray-100 border-gray-200"
+              }`}
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm text-gray-500 mb-1">ব্যাংক অ্যাকাউন্ট নম্বর</label>
+            <input
+              type="text"
+              name="bankAccount"
+              value={profile.bankAccount || ""}
+              onChange={handleChange}
+              readOnly={!editing}
+              className={`w-full border rounded-lg px-3 py-2 ${
+                editing ? "bg-white border-gray-300" : "bg-gray-100 border-gray-200"
+              }`}
+            />
+          </div>
+        </>
+      )}
+    </div>
+  </div>
+)}
 
           {/* ORDERS TAB */}
           {activeTab === "orders" && (

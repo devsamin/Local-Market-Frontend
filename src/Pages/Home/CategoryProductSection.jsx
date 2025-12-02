@@ -26,25 +26,8 @@ const CategoryProductSection = ({ products = [], category = "সব", searchTerm
   const userData = JSON.parse(localStorage.getItem("user"));
   const { addToCart, cartItems } = useContext(CartContext); // cart context
 
-  // inside your component
-
-
-  // console.log("Products in CategoryProductSection:", products);
-  // // 🔹 Filter products by category
-  // const filteredProducts =
-  //   category === "সব"
-  //     ? products
-  //     : products.filter((p) =>
-  //         Array.isArray(p.categories)
-  //           ? p.categories.some((cat) => cat && cat.name === category)
-  //           : false
-  //       );
-
-  // // 🔹 Apply price and rating filters
-  // const finalProducts = filteredProducts.filter(
-  //   (p) => parseFloat(p.price) <= priceRange && (p.rating || 0) >= rating
-  // );
-
+  console.log("userData:", userData);
+  
 
   // 🔹 Filter by category
   const filteredByCategory = useMemo(() => {
@@ -77,6 +60,10 @@ const CategoryProductSection = ({ products = [], category = "সব", searchTerm
 
   // 🔹 Add product to cart
   const handleAddToCart = async (product) => {
+     if (userData?.role==="seller") {
+    toast.error("সেলারেরা কার্টে পণ্য যোগ করতে পারবেন না!");
+    return; // exit early
+  }
     try {
       const token = localStorage.getItem("access");
       const config = {
@@ -122,7 +109,7 @@ toast.success("পণ্যটি সফলভাবে কার্টে য�
             <FiFilter className="w-4 h-4" /> ফিল্টার
           </button>
 
-          <Link
+          {/* <Link
             to="/cart"
             className="relative justify-center whitespace-nowrap rounded-md text-sm font-medium bg-gray-800 text-white hover:bg-gray-950/90 h-9 px-4 py-2 flex items-center gap-2"
           >
@@ -132,7 +119,30 @@ toast.success("পণ্যটি সফলভাবে কার্টে য�
                 {cartItems.length}
               </span>
             )}
-          </Link>
+          </Link> */}
+          {/* Cart Button */}
+  {userData?.role !== "seller" ? (
+    // Buyer বা Non-Seller এর জন্য
+    <Link
+      to="/cart"
+      className="relative justify-center whitespace-nowrap rounded-md text-sm font-medium bg-gray-800 text-white hover:bg-gray-950/90 h-9 px-4 py-2 flex items-center gap-2"
+    >
+      <FiShoppingCart className="w-4 h-4" /> কার্ট
+      {cartItems.length > 0 && (
+        <span className="absolute -top-1 -right-1 w-5 h-5 text-[10px] font-bold flex items-center justify-center text-white bg-red-500 rounded-full border border-white">
+          {cartItems.length}
+        </span>
+      )}
+    </Link>
+  ) : (
+    // Seller এর জন্য disabled Button
+    <button
+      className="justify-center whitespace-nowrap rounded-md text-sm font-medium bg-gray-600 text-white cursor-not-allowed h-9 px-4 py-2 flex items-center gap-2"
+      onClick={() => toast.error("সেলারেরা কার্ট ব্যবহার করতে পারবেন না!")}
+    >
+      <FiShoppingCart className="w-4 h-4" /> কার্ট
+    </button>
+  )}
         </div>
       </div>
 
@@ -183,7 +193,7 @@ toast.success("পণ্যটি সফলভাবে কার্টে য�
                     </span>
 
                     {product.price && (
-                      <span className="text-sm text-gray-400 line-through">
+                      <span className="text-sm text-gray-500 line-through">
                         ৳{product.price}
                       </span>
                     )}
@@ -219,7 +229,7 @@ toast.success("পণ্যটি সফলভাবে কার্টে য�
                     {product.seller_name || "অজানা বিক্রেতা"}
                   </span> */}
 
-                  <button
+                  {/* <button
                     onClick={(e) => {
                       e.stopPropagation(); // STOP DOUBLE CALL
                       handleAddToCart(product);
@@ -228,7 +238,23 @@ toast.success("পণ্যটি সফলভাবে কার্টে য�
                   >
                     <FiShoppingCart className="w-4 h-4" />
                     কার্টে যোগ করুন
-                  </button>
+                  </button> */}
+                  {/* Add to Cart Button */}
+{!userData?.role==="seller" ? (
+  <button
+    onClick={(e) => { e.stopPropagation(); handleAddToCart(product); }}
+    className="ml-auto flex items-center justify-center gap-1 bg-black text-white text-sm rounded-md px-3 py-1.5 hover:bg-gray-800"
+  >
+    <FiShoppingCart /> কার্টে যোগ করুন
+  </button>
+) : (
+  <button
+    onClick={(e) => { e.stopPropagation(); toast.error("সেলারেরা কার্টে পণ্য যোগ করতে পারবেন না!"); }}
+    className="ml-auto flex items-center justify-center gap-1 bg-gray-600 text-white text-sm rounded-md px-3 py-1.5 cursor-not-allowed"
+  >
+    <FiShoppingCart /> কার্টে যোগ করুন
+  </button>
+)}
                 </div>
               </div>
             </div>
@@ -329,200 +355,3 @@ toast.success("পণ্যটি সফলভাবে কার্টে য�
 };
 
 export default CategoryProductSection;
-
-// import React, { useState, useContext } from "react";
-// import {
-//   FiShoppingCart,
-//   FiFilter,
-//   FiX,
-//   FiMapPin,
-//   FiCheckCircle,
-//   FiStar,
-// } from "react-icons/fi";
-// import { Link } from "react-router-dom";
-// import axios from "axios";
-// import { CartContext } from "../../contexts/CartContext/CartContext";
-// import ProductDetailsModal from "../ProductDetailsModal/ProductDetailsModal";
-
-// const CategoryProductSection = ({ products = [], category = "সব" }) => {
-//   const [isFilterOpen, setIsFilterOpen] = useState(false);
-//   const [priceRange, setPriceRange] = useState(50000);
-//   const [rating, setRating] = useState(0);
-//   const [selectedProduct, setSelectedProduct] = useState(null);
-
-//   const userData = JSON.parse(localStorage.getItem("user"));
-//   const { addToCart, cartItems } = useContext(CartContext);
-
-//   // Category filtering
-//   const filteredProducts =
-//     category === "সব"
-//       ? products
-//       : products.filter((p) =>
-//           Array.isArray(p.categories)
-//             ? p.categories.some((cat) => cat && cat.name === category)
-//             : false
-//         );
-
-//   // Rating + price filtering
-//   const finalProducts = filteredProducts.filter(
-//     (p) => parseFloat(p.price) <= priceRange && (p.rating || 0) >= rating
-//   );
-// console.log("Products in CategoryProductSection:", products);
-//   // Add to cart
-//   const handleAddToCart = async (product) => {
-//     try {
-//       const token = localStorage.getItem("access");
-//       const config = {
-//         headers: {
-//           Authorization: `Bearer ${token}`,
-//           "Content-Type": "application/json",
-//         },
-//       };
-
-//       const body = { product_id: product.id, quantity: 1 };
-
-//       const res = await axios.post(
-//         "http://127.0.0.1:8000/api/cart/add_item/",
-//         body,
-//         config
-//       );
-
-//       if (res.status === 200) {
-//         alert("Product added to cart successfully!");
-//         addToCart(product);
-//       }
-//     } catch (err) {
-//       console.error(err);
-//       alert(
-//         err.response?.data?.error ||
-//           "Failed to add product to cart. Try again."
-//       );
-//     }
-//   };
-
-//   return (
-//     <div className="relative p-3 sm:p-4">
-//       {/* Header */}
-//       <div className="flex items-center justify-between mb-6">
-//         <div>
-//           <h2 className="text-xl sm:text-2xl font-bold">{category}</h2>
-//           <p className="text-muted-foreground text-sm sm:text-base">
-//             {finalProducts.length} টি পণ্য পাওয়া গেছে
-//           </p>
-//         </div>
-
-//         <div className="flex items-center gap-2">
-//           <button
-//             onClick={() => setIsFilterOpen(true)}
-//             className="justify-center whitespace-nowrap rounded-md text-sm font-medium border bg-background hover:bg-gray-300 dark:hover:bg-input/40 px-4 py-2 flex items-center gap-2"
-//           >
-//             <FiFilter className="w-4 h-4" /> ফিল্টার
-//           </button>
-
-//           <Link
-//             to="/cart"
-//             className="relative rounded-md bg-gray-800 text-white text-sm px-4 py-2 flex items-center gap-2"
-//           >
-//             <FiShoppingCart className="w-4 h-4" />
-//             কার্ট
-//             {cartItems.length > 0 && (
-//               <span className="absolute -top-1 -right-1 w-5 h-5 flex items-center justify-center text-[10px] bg-red-500 text-white rounded-full border border-white">
-//                 {cartItems.length}
-//               </span>
-//             )}
-//           </Link>
-//         </div>
-//       </div>
-
-//       {/* Product Grid */}
-
-//       {/* Filter Drawer */}
-//       <div
-//         className={`fixed top-0 right-0 h-full w-72 sm:w-80 bg-white shadow-lg transition-transform duration-300 z-50 ${
-//           isFilterOpen ? "translate-x-0" : "translate-x-full"
-//         }`}
-//       >
-//         <div className="flex justify-between items-center px-4 py-3 border-b">
-//           <h3 className="text-lg font-bold">ফিল্টার অপশন</h3>
-//           <button
-//             onClick={() => setIsFilterOpen(false)}
-//             className="text-gray-600 hover:text-black"
-//           >
-//             <FiX size={20} />
-//           </button>
-//         </div>
-
-//         <div className="p-4 space-y-5 overflow-y-auto h-[calc(100%-60px)]">
-//           {/* Price Filter */}
-//           <div>
-//             <h4 className="font-semibold mb-2">মূল্য পরিসীমা</h4>
-//             <input
-//               type="range"
-//               min="0"
-//               max="50000"
-//               value={priceRange}
-//               onChange={(e) => setPriceRange(Number(e.target.value))}
-//               className="w-full accent-black"
-//             />
-//             <div className="flex justify-between text-sm text-gray-600">
-//               <span>৳0</span>
-//               <span>৳{priceRange}</span>
-//             </div>
-//           </div>
-
-//           {/* Rating Filter */}
-//           <div>
-//             <h4 className="font-semibold mb-2">ন্যূনতম রেটিং</h4>
-//             <input
-//               type="range"
-//               min="0"
-//               max="5"
-//               step="0.5"
-//               value={rating}
-//               onChange={(e) => setRating(Number(e.target.value))}
-//               className="w-full accent-black"
-//             />
-//             <p className="text-sm text-gray-600">⭐ {rating} এবং তার বেশি</p>
-//           </div>
-
-//           {/* Sorting */}
-//           <div>
-//             <h4 className="font-semibold mb-2">সাজান</h4>
-//             <select className="w-full border rounded px-3 py-2 text-sm">
-//               <option>জনপ্রিয়তা অনুযায়ী</option>
-//               <option>মূল্য (কম থেকে বেশি)</option>
-//               <option>মূল্য (বেশি থেকে কম)</option>
-//               <option>রেটিং</option>
-//             </select>
-//           </div>
-
-//           <button
-//             onClick={() => setIsFilterOpen(false)}
-//             className="w-full bg-black text-white py-2 rounded hover:bg-gray-800"
-//           >
-//             সব ফিল্টার প্রয়োগ করুন
-//           </button>
-//         </div>
-//       </div>
-
-//       {/* Overlay */}
-//       {isFilterOpen && (
-//         <div
-//           onClick={() => setIsFilterOpen(false)}
-//           className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40"
-//         />
-//       )}
-
-//       {/* Product Modal */}
-//       {selectedProduct && (
-//         <ProductDetailsModal
-//           product={selectedProduct}
-//           onClose={() => setSelectedProduct(null)}
-//           addToCart={handleAddToCart}
-//         />
-//       )}
-//     </div>
-//   );
-// };
-
-// export default CategoryProductSection;

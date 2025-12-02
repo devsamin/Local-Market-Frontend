@@ -64,7 +64,7 @@ const SellerDashboard = () => {
   const fetchOrders = async () => {
   try {
     const res = await axios.get(
-      "http://127.0.0.1:8000/api/orders/",
+      "http://127.0.0.1:8000/api/orders/seller-orders/",
       { headers: { Authorization: `Bearer ${token}` } }
     );
     console.log("Seller Orders:", res.data);
