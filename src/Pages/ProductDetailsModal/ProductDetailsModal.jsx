@@ -11,6 +11,20 @@ const ProductDetailsModal = ({ product, onClose, addToCart }) => {
     product.image4 || "https://i.ibb.co.com/V0CWTJQR/images.jpg",
   ];
 
+const renderStars = (rating) => {
+  return [...Array(5)].map((_, i) => (
+    <FiStar
+      key={i}
+      className={
+        i < Math.round(rating)
+          ? "w-4 h-4 text-yellow-400 fill-yellow-400"
+          : "w-4 h-4 text-gray-300"
+      }
+    />
+  ));
+};
+
+
   return (
     <>
       {/* Overlay */}
@@ -80,13 +94,20 @@ const ProductDetailsModal = ({ product, onClose, addToCart }) => {
               </div>
 
               {/* Rating */}
-              <div className="flex items-center gap-1 text-yellow-500">
-                <FiStar className="fill-yellow-500" />
-                <span className="font-medium">{product.rating}</span>
-                <span className="text-gray-500 text-sm">
-                  ({product.reviews || 0} রিভিউ)
-                </span>
-              </div>
+             {/* Rating */}
+<div className="flex items-center gap-1 text-sm">
+  {renderStars(product.average_rating || 0)}
+  <span className="text-gray-700 ml-1 font-medium">
+    {Number(product.average_rating || 0).toFixed(1)}
+  </span>
+
+  {product.total_reviews !== undefined && (
+    <span className="text-gray-500 text-sm ml-1">
+      ({product.total_reviews} রিভিউ)
+    </span>
+  )}
+</div>
+
 
               {/* Location & Verified */}
               <div className="flex items-center gap-3 text-sm text-gray-600">
@@ -109,11 +130,12 @@ const ProductDetailsModal = ({ product, onClose, addToCart }) => {
               {/* Seller + Cart Button */}
               <div className="flex items-center justify-between pt-2">
                 <p className="text-sm text-gray-600">
-                  বিক্রেতা:{" "}
-                  <span className="font-medium">
-                    {product.seller || "অজানা"}
-                  </span>
-                </p>
+  বিক্রেতা :{" "}
+  <span className="font-medium">
+    {product.seller_name || "অজানা"}
+  </span>
+</p>
+
                 <button
                   onClick={() => addToCart(product)}
                   className="flex items-center gap-2 bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800 transition"

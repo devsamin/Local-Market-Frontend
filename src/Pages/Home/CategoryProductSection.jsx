@@ -90,6 +90,21 @@ toast.success("পণ্যটি সফলভাবে কার্টে য�
     }
   };
 
+
+  const renderStars = (rating) => {
+  return [...Array(5)].map((_, i) => (
+    <FiStar
+      key={i}
+      className={
+        i < Math.round(rating)
+          ? "w-4 h-4 text-yellow-400 fill-yellow-400"
+          : "w-4 h-4 text-gray-300"
+      }
+    />
+  ));
+};
+
+
   return (
     <div className="relative p-3 sm:p-4">
       {/* Header Section */}
@@ -200,12 +215,12 @@ toast.success("পণ্যটি সফলভাবে কার্টে য�
                   </div>
 
                   <div className="flex items-center gap-1 text-sm">
-                    <FiStar className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-                    <span>{product.rating || 0}</span>
-                    <span className="text-gray-400">
-                      ({product.reviews || 0})
-                    </span>
-                  </div>
+  {renderStars(product.average_rating || 0)}
+  <span className="text-gray-700 ml-1">
+    {/* {Number(product.average_rating || 0).toFixed(1)} */}
+  </span>
+</div>
+
                 </div>
 
                 {/* Location + Verified */}
@@ -240,7 +255,7 @@ toast.success("পণ্যটি সফলভাবে কার্টে য�
                     কার্টে যোগ করুন
                   </button> */}
                   {/* Add to Cart Button */}
-{!userData?.role==="seller" ? (
+{userData?.role !== "seller" ? (
   <button
     onClick={(e) => { e.stopPropagation(); handleAddToCart(product); }}
     className="ml-auto flex items-center justify-center gap-1 bg-black text-white text-sm rounded-md px-3 py-1.5 hover:bg-gray-800"

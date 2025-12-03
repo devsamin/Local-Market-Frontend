@@ -1,7 +1,7 @@
 
 
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { FaTrashAlt } from "react-icons/fa";
 import { IoArrowBack } from "react-icons/io5";
@@ -10,12 +10,15 @@ import OrderConfirmModal from "../OrderConfirmModal/OrderConfirmModal";
 
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { CartContext } from "../../contexts/CartContext/CartContext";
 
 const BuyerCart = () => {
   const [cartItems, setCartItems] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(true);
   const token = localStorage.getItem("access");
+
+  const {  removeFromCart } = useContext(CartContext);
 
   // ✅ Load Cart Items from API
   useEffect(() => {
@@ -84,6 +87,8 @@ console.log(cartItems);
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setCartItems((prev) => prev.filter((i) => i.id !== id));
+      // ✅ Context update for global cart count
+    removeFromCart(item.product.id);
       // ✅ Show success toast
     toast.success("পণ্যটি সফলভাবে মুছে ফেলা হয়েছে!");
     } catch (err) {

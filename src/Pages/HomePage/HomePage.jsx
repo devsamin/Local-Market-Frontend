@@ -48,6 +48,7 @@ const HomePage = () => {
 
         setCategories([{ id: 0, name: "সব" }, ...catRes.data]);
         setProducts(prodRes.data);
+        console.log(prodRes.data);
       } catch (error) {
         console.error("Error loading data:", error);
       }
