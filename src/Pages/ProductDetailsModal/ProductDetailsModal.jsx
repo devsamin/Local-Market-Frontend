@@ -6,9 +6,9 @@ const ProductDetailsModal = ({ product, onClose, addToCart }) => {
 
   // 🔥 নিচের ৩টা অতিরিক্ত ইমেজ (demo purpose)
   const extraImages = [
-    product.image2 || "https://i.ibb.co.com/chY6MqJW/photo-1441984904996-e0b6ba687e04-crop-entropy-cs-tinysrgb-fit-max-fm-jpg-ixid-M3w3-Nzg4-Nzd8-MHwxf-H.jpg",
-    product.image3 || "https://i.ibb.co.com/PvbNN8pS/tshirt-hanging-shirt-shop-generative-ai-971989-3350.jpg",
-    product.image4 || "https://i.ibb.co.com/V0CWTJQR/images.jpg",
+    product.image || "https://i.ibb.co.com/chY6MqJW/photo-1441984904996-e0b6ba687e04-crop-entropy-cs-tinysrgb-fit-max-fm-jpg-ixid-M3w3-Nzg4-Nzd8-MHwxf-H.jpg",
+    product.image2 || "https://i.ibb.co.com/PvbNN8pS/tshirt-hanging-shirt-shop-generative-ai-971989-3350.jpg",
+    product.image3 || "https://i.ibb.co.com/V0CWTJQR/images.jpg",
   ];
 
 const renderStars = (rating) => {

@@ -20,6 +20,7 @@ import Fuse from "fuse.js";
 const CategoryProductSection = ({ products = [], category = "সব", searchTerm = "" }) => {
   // 🔹 State
   const [isFilterOpen, setIsFilterOpen] = useState(false); // filter drawer
+  const [locationTerm, setLocationTerm] = useState(""); // Location filter
   const [priceRange, setPriceRange] = useState(50000); // price filter
   const [rating, setRating] = useState(0); // rating filter
   const [selectedProduct, setSelectedProduct] = useState(null); // modal product
@@ -51,12 +52,32 @@ const CategoryProductSection = ({ products = [], category = "সব", searchTerm
   }, [filteredByCategory, searchTerm]);
 
   // 🔹 Apply price and rating filters
-  const finalProducts = useMemo(() => {
-    return filteredBySearch.filter(
-      (p) => parseFloat(p.price) <= priceRange && (p.rating || 0) >= rating
-    );
-  }, [filteredBySearch, priceRange, rating]);
+  // const finalProducts = useMemo(() => {
+  //   return filteredBySearch.filter(
+  //     (p) => parseFloat(p.price) <= priceRange && (p.rating || 0) >= rating
+  //   );
+  // }, [filteredBySearch, priceRange, rating]);
 
+ // 🔹 Filter by location (Bangla + English + upper/lower case)
+const finalProducts = useMemo(() => {
+  if (!locationTerm) return filteredBySearch;
+
+  const normalized = locationTerm.trim().toLowerCase();
+
+  const fuse = new Fuse(filteredBySearch, {
+    keys: ["seller_location"],     // 🔥 Correct field
+    threshold: 0.4,                // 60% fuzzy
+    ignoreLocation: true,
+    distance: 100,
+    includeScore: false,
+    isCaseSensitive: false,        // 🔥 uppercase/lowercase supported
+  });
+
+  return fuse
+    .search(normalized)
+    .map((r) => r.item);
+
+}, [filteredBySearch, locationTerm]);
 
   // 🔹 Add product to cart
   const handleAddToCart = async (product) => {
@@ -117,12 +138,18 @@ toast.success("পণ্যটি সফলভাবে কার্টে য�
         </div>
 
         <div className="flex items-center gap-2">
-          <button
-            onClick={() => setIsFilterOpen(true)}
-            className="justify-center whitespace-nowrap rounded-md text-sm font-medium border bg-background text-foreground hover:bg-gray-300 hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50 h-9 px-4 py-2 flex items-center gap-2"
-          >
-            <FiFilter className="w-4 h-4" /> ফিল্টার
-          </button>
+           {/* 🔹 Location Search Input */}
+        {/* 🔹 Location Search Input with Icon (Professional UI) */}
+<div className="relative w-full sm:w-64">
+  <FiMapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 w-4 h-4" />
+  <input
+    type="text"
+    placeholder="লোকেশন অনুযায়ী খুঁজুন..."
+    value={locationTerm}
+    onChange={(e) => setLocationTerm(e.target.value)}
+    className="w-full border rounded pl-10 pr-3 py-2 text-sm focus:ring-2 focus:ring-black outline-none transition-all"
+  />
+</div>
 
           {/* <Link
             to="/cart"
@@ -227,7 +254,8 @@ toast.success("পণ্যটি সফলভাবে কার্টে য�
                 <div className="flex items-center justify-between text-sm">
                   <div className="flex items-center gap-2 text-gray-600">
                     <FiMapPin className="w-3 h-3" />
-                    <span>{userData?.location || "ঢাকা"}</span>
+                    <span>{product.seller_location || "লোকেশন নেই"}</span>
+
 
                     {product.verified && (
                       <FiCheckCircle

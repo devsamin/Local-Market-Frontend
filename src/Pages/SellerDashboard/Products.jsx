@@ -5,6 +5,7 @@ import axios from "axios";
 import { FiEye, FiEdit2, FiTrash2 } from "react-icons/fi";
 import AddProductModal from "./AddProductModal/AddProductModal";
 import EditProductModal from "./EditProductModal/EditProductModal"; 
+import ProductDetailsModal from "../ProductDetailsModal/ProductDetailsModal";
 import { AuthContext } from "../../contexts/AuthContext/AuthProvider";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -17,6 +18,8 @@ const Products = () => {
   const { user } = useContext(AuthContext);
   const token = localStorage.getItem("access");
   const sellerId = user?.id || localStorage.getItem("id");
+  const [selectedProduct, setSelectedProduct] = useState(null);
+
 // console.log("Seller ID:", sellerId);
 
   // ✅ Fetch seller’s products
@@ -140,9 +143,13 @@ const Products = () => {
                 <div className="border-t my-1"></div>
 
                 <div className="flex gap-1">
-                  <button className="flex-1 flex items-center justify-center gap-1 text-[12px] border rounded px-2 py-1 hover:bg-gray-100">
-                    <FiEye className="w-3 h-3" /> দেখুন
-                  </button>
+                  <button
+  onClick={() => setSelectedProduct(product)}
+  className="flex-1 flex items-center justify-center gap-1 text-[12px] border rounded px-2 py-1 hover:bg-gray-100"
+>
+  <FiEye className="w-3 h-3" /> দেখুন
+</button>
+
                   <button
                     onClick={() => setEditProduct(product)} // 👈 open edit modal
                     className="flex-1 flex items-center justify-center gap-1 text-[12px] border rounded px-2 py-1 hover:bg-gray-100"
@@ -178,6 +185,15 @@ const Products = () => {
           onUpdate={handleProductUpdate}
         />
       )}
+      {/* === View Product Modal === */}
+      {selectedProduct && (
+  <ProductDetailsModal
+    product={selectedProduct}
+    onClose={() => setSelectedProduct(null)}
+    // addToCart={(p) => console.log("Add to Cart:", p)} // চাইলে আপনার cart function দিন
+  />
+)}
+
     </div>
   );
 };

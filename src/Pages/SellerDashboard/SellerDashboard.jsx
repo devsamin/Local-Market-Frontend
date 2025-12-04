@@ -75,28 +75,24 @@ const SellerDashboard = () => {
 };
 
   // === Rating API ===
-  const fetchRatings = async () => {
+ // === Rating API ===
+const fetchRatings = async () => {
   try {
     const res = await axios.get(
-      "http://127.0.0.1:8000/api/reviews/",
+      "http://127.0.0.1:8000/api/dashboard/seller-dashboard/",
       { headers: { Authorization: `Bearer ${token}` } }
     );
 
-    // seller-wise filter
-    const sellerReviews = res.data.filter(
-      (rev) => rev.product.seller === sellerId
-    );
+    console.log("Dashboard Ratings Response:", res.data);
 
-    if (sellerReviews.length > 0) {
-      const avg =
-        sellerReviews.reduce((sum, item) => sum + item.rating, 0) /
-        sellerReviews.length;
-      setAvgRating(avg.toFixed(1));
-    } else {
-      setAvgRating(0);
-    }
+    // Extract reviews and average from the API
+    const sellerReviews = res.data.recent_reviews || [];
+    const averageRating = res.data.average_rating || 0;
 
-    console.log("Filtered Reviews:", sellerReviews);
+    // Set state
+    setAvgRating(averageRating.toFixed(1));
+
+    console.log("Seller Reviews:", sellerReviews);
   } catch (error) {
     console.log("Review API Error:", error);
   }

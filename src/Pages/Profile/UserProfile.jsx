@@ -71,6 +71,7 @@ const UserProfile = () => {
       });
 
       setOrders(res.data);
+      console.log("Fetched Orders:", res.data);
     } catch (error) {
       console.error("Order Fetch Error:", error);
       toast.error("অর্ডার লোড করতে ব্যর্থ হয়েছে!");
@@ -218,7 +219,7 @@ const UserProfile = () => {
             {!editing ? (
               <button
                 onClick={() => setEditing(true)}
-                className="flex items-center gap-2 bg-gray-900 text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition"
+                className="flex mt-8 items-center gap-2 bg-gray-900 text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition"
               >
                 <FiEdit3 /> প্রোফাইল সম্পাদনা
               </button>
@@ -399,118 +400,160 @@ const UserProfile = () => {
   </div>
 )}
 
-          {/* ORDERS TAB */}
-          {activeTab === "orders" && (
-            <div>
-              <h3 className="text-lg font-semibold mb-4">অর্ডার ইতিহাস</h3>
-
-              {orderLoading ? (
-                <p className="text-gray-500">অর্ডার লোড হচ্ছে...</p>
-              ) : orders.length === 0 ? (
-                <p className="text-gray-500 text-sm">
-                  কোন অর্ডার পাওয়া যায়নি।
-                </p>
-              ) : (
-                <div className="space-y-4">
-                  {orders.map((order) => (
-                    
-                    <div
-                      key={order.id}
-                      className="border rounded-lg p-4 bg-gray-50 shadow-sm"
-                    >
-                      <div className="flex justify-between">
-                        <h4 className="font-bold">অর্ডার #{order.id}</h4>
-
-                        <span
-                          className={`text-sm px-2 py-1 rounded font-semibold ${
-                            order.status === "delivered"
-                              ? "bg-green-100 text-green-600"
-                              : order.status === "pending"
-                              ? "bg-yellow-100 text-yellow-600"
-                              : "bg-red-100 text-red-600"
-                          }`}
-                        >
-                          {order.status}
-                        </span>
-                      </div>
-
-                      <p className="text-sm text-gray-600 mt-1">
-                        তারিখ: {order.created_at?.slice(0, 10)}
-                      </p>
-
-                      <div className="mt-2 space-y-2">
-                        {order.items?.map((item) => (
-                          <div
-                            key={item.id}
-                            className="flex justify-between items-center text-sm text-gray-700"
-                          >
-                            <span>{item.product_name}</span>
-                            <div className="flex gap-2">
-                              <span>
-                                {item.quantity} × {item.price}৳
-                              </span>
-                              {/* Show Review Button if order completed & no review */}
-                              {order.status === "delivered" &&  (
-                                <button
-                                  onClick={() => openReviewModal(item)}
-                                  className="px-2 py-1 bg-indigo-600 text-white text-xs rounded hover:bg-indigo-700"
-                                >
-                                  রিভিউ যোগ করুন
-                                </button>
-                                
-                              )}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-
-                      <div className="text-right text-gray-900 font-semibold mt-2">
-                        মোট: {order.total_price} ৳
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* REVIEWS TAB */}
-          {activeTab === "reviews" && (
+ {/* ORDERS TAB */}
+{activeTab === "orders" && (
   <div>
-    <h3 className="text-lg font-semibold mb-4">আপনার রিভিউসমূহ</h3>
+    <h3 className="text-2xl font-bold mb-6">অর্ডার ইতিহাস</h3>
 
-    {/* Loading state */}
+    {orderLoading ? (
+      <p className="text-gray-500">অর্ডার লোড হচ্ছে...</p>
+    ) : orders.length === 0 ? (
+      <p className="text-gray-500 text-sm">কোন অর্ডার পাওয়া যায়নি।</p>
+    ) : (
+      <div className="space-y-6">
+        {orders.map((order) => (
+          <div
+            key={order.id}
+            className="border rounded-xl p-5 bg-white shadow-md hover:shadow-lg transition-shadow duration-300"
+          >
+            {/* Order Header */}
+            <div className="flex justify-between items-center mb-3">
+              <h4 className="font-semibold text-lg">অর্ডার #{order.id}</h4>
+              <span
+                className={`text-sm px-3 py-1 rounded-full font-medium ${
+                  order.status === "delivered"
+                    ? "bg-green-100 text-green-700"
+                    : order.status === "pending"
+                    ? "bg-yellow-100 text-yellow-700"
+                    : "bg-red-100 text-red-700"
+                }`}
+              >
+                {order.status}
+              </span>
+            </div>
+
+            <p className="text-sm text-gray-500 mb-4">
+              তারিখ: {new Date(order.created_at).toLocaleDateString("bn-BD")}
+            </p>
+
+            {/* Order Items */}
+            <div className="space-y-4">
+              {order.items?.map((item) => (
+                <div
+                  key={item.id}
+                  className="flex items-center gap-4 p-3 border rounded-lg hover:bg-gray-50 transition-colors duration-200"
+                >
+                  {/* Product Image */}
+                  <img
+                    src={item.product.image}
+                    alt={item.product.name}
+                    className="w-16 h-16 object-cover rounded-lg border"
+                  />
+
+                  {/* Product Info */}
+                  <div className="flex-1">
+                    <h5 className="font-medium">{item.product.name}</h5>
+                    <p className="text-gray-500 text-sm mt-1">
+                      {item.quantity} × {item.price}৳
+                    </p>
+                  </div>
+
+                  {/* Review Button */}
+                  {order.status === "delivered" && !item.review && (
+                    <button
+                      onClick={() => openReviewModal(item)}
+                      className="px-3 py-1 bg-indigo-600 text-white text-sm rounded-lg hover:bg-indigo-700 transition-colors"
+                      type="button"
+                    >
+                      রিভিউ যোগ করুন
+                    </button>
+                  )}
+
+                  {/* Already Reviewed */}
+                  {order.status === "delivered" && item.review && (
+                    <span className="px-3 py-1 text-sm rounded-lg bg-gray-200 text-gray-700">
+                      রিভিউ করা হয়েছে
+                    </span>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            {/* Order Total */}
+            <div className="text-right text-gray-900 font-semibold mt-4 text-lg">
+              মোট: {order.total_price} ৳
+            </div>
+          </div>
+        ))}
+      </div>
+    )}
+  </div>
+)}
+
+
+    {/* REVIEWS TAB */}
+{activeTab === "reviews" && (
+  <div>
+    <h3 className="text-2xl font-bold mb-6">আপনার রিভিউসমূহ</h3>
+
     {orderLoading ? (
       <p className="text-gray-500">রিভিউ লোড হচ্ছে...</p>
     ) : (
       <>
         {orders
-          .flatMap(order => order.items || [])
-          .filter(item => item.review) // শুধু যাদের review আছে
-          .map(item => (
+          .flatMap((order) => order.items || [])
+          .filter((item) => item.review) // শুধু যাদের review আছে
+          .map((item) => (
             <div
               key={item.id}
-              className="border rounded-lg p-4 bg-gray-50 shadow-sm mb-3"
+              className="flex gap-4 p-4 border rounded-xl bg-white shadow-md hover:shadow-lg transition-shadow duration-300"
             >
-              <div className="flex justify-between items-center">
-                <span className="font-semibold">{item.product_name}</span>
-                <span className="text-sm text-yellow-500">
-                  ★ {item.review.rating}
-                </span>
+              {/* Product Image */}
+              <img
+                src={item.product.image}
+                alt={item.product.name}
+                className="w-20 h-20 object-cover rounded-lg border"
+              />
+
+              {/* Review Content */}
+              <div className="flex-1 flex flex-col justify-between">
+                <div>
+                  <h5 className="font-semibold text-lg">{item.product.name}</h5>
+                  <div className="flex items-center gap-2 mt-1">
+                    {/* Star rating */}
+                    <span className="text-yellow-500 font-medium">
+                      ★ {item.review.rating}
+                    </span>
+                    <span className="text-gray-500 text-sm">
+                      ({item.review.rating}/5)
+                    </span>
+                  </div>
+                  {item.review.comment && (
+                    <p className="text-gray-700 mt-2">{item.review.comment}</p>
+                  )}
+                </div>
+
+                {/* Order info or date (optional) */}
+                <p className="text-gray-400 text-sm mt-2">
+                  অর্ডার তারিখ: {new Date(item.created_at).toLocaleDateString("bn-BD")}
+                </p>
               </div>
-              {item.review.comment && (
-                <p className="text-gray-700 mt-1">{item.review.comment}</p>
-              )}
             </div>
           ))}
+
         {/* যদি কোন review না থাকে */}
-        {orders.flatMap(order => order.items || []).filter(item => item.review).length === 0 && (
-          <p className="text-gray-500 text-sm">আপনার কোন রিভিউ নেই।</p>
+        {orders
+          .flatMap((order) => order.items || [])
+          .filter((item) => item.review).length === 0 && (
+          <p className="text-gray-500 text-sm mt-4">
+            আপনার কোন রিভিউ নেই।
+          </p>
         )}
       </>
     )}
   </div>
 )}
+
 
           {/* SETTINGS */}
           {activeTab === "settings" && (

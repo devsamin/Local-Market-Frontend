@@ -30,6 +30,7 @@ const RegisterPage = () => {
   };
 
   const onSubmit = async (data) => {
+    console.log("Form Data:", data);
     setErrorMsg("");
     setLoading(true);
     try {
@@ -62,7 +63,7 @@ const RegisterPage = () => {
         position: "top-center",
         autoClose: 3000,
       });
-
+      console.log("Registration Success:", res.data);
       navigate("/login");
       // localStorage.setItem("user", JSON.stringify(createdUser));
     } catch (error) {
@@ -284,20 +285,28 @@ const RegisterPage = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-1">১৭ সংখ্যার NID নম্বর *</label>
-                <div className="relative">
-                  <FiFileText className="absolute left-3 top-3 text-gray-400" />
-                  <input
-                    {...register("nidNumber", {
-                      required: "NID নম্বর দিন",
-                      pattern: { value: /^[0-9]{17}$/, message: "১৭ সংখ্যার NID দিন" },
-                    })}
-                    type="text"
-                    placeholder="NID নম্বর লিখুন"
-                    className="input input-bordered w-full pl-10 h-10"
-                  />
-                </div>
-              </div>
+  <label className="block text-sm font-medium mb-1">১৭ সংখ্যার NID নম্বর *</label>
+  <div className="relative">
+    <FiFileText className="absolute left-3 top-3 text-gray-400" />
+    <input
+      {...register("nidNumber", {
+        required: "NID নম্বর দিন",
+        pattern: { value: /^[0-9]{17}$/, message: "১৭ সংখ্যার NID দিন" },
+        minLength: { value: 17, message: "NID অবশ্যই ১৭ সংখ্যার হতে হবে" },
+        maxLength: { value: 17, message: "NID অবশ্যই ১৭ সংখ্যার হতে হবে" },
+      })}
+      type="text"
+      inputMode="numeric"
+      maxLength={17}
+      placeholder="NID নম্বর লিখুন"
+      className="input input-bordered w-full pl-10 h-10"
+    />
+  </div>
+  {errors.nidNumber && (
+    <p className="text-red-600 text-sm mt-1">{errors.nidNumber.message}</p>
+  )}
+</div>
+
 
               <div>
                 <label className="block text-sm font-medium mb-1">ব্যাংক অ্যাকাউন্ট নম্বর *</label>
