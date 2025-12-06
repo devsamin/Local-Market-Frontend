@@ -7,7 +7,7 @@ import { FaTrashAlt } from "react-icons/fa";
 import { IoArrowBack } from "react-icons/io5";
 import { Link } from "react-router-dom";
 import OrderConfirmModal from "../OrderConfirmModal/OrderConfirmModal";
-
+import { BASE_URL } from "../../config.js/config"
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { CartContext } from "../../contexts/CartContext/CartContext";
@@ -28,7 +28,7 @@ const BuyerCart = () => {
           headers: { Authorization: `Bearer ${token}` },
         });
         // DRF CartViewSet returns cart with items array
-        console.log(res.data);  
+        console.log("cart",res.data);  
         setCartItems(res.data.items || []);
       } catch (err) {
         console.error("Failed to load cart:", err);
@@ -129,76 +129,100 @@ console.log(cartItems);
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* 🛒 Left Section */}
-        <div className="lg:col-span-2 space-y-5">
-          <h2 className="text-2xl font-bold text-gray-800">🛒 কার্ট আইটেমস</h2>
+        <div className="lg:col-span-2 space-y-6">
+  <h2 className="text-2xl font-bold text-gray-900">🛒 কার্ট আইটেমস</h2>
 
-          {cartItems.length === 0 ? (
-            <div className="text-center text-gray-500 py-10 border rounded-xl">
-              🛍️ আপনার কার্ট বর্তমানে খালি
-              <div className="mt-4">
-                <Link
-                  to="/"
-                  className="px-5 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition"
-                >
-                  পণ্য ব্রাউজ করুন
-                </Link>
-              </div>
-            </div>
-          ) : (
-            cartItems.map((item) => (
-              <div
-                key={item.id}
-                className="bg-white border rounded-xl shadow p-4 flex items-center justify-between"
-              >
-                <div className="flex items-center gap-5">
-                  <img
-                    src={item.product.image}
-                    alt={item.product.name}
-                    className="w-24 h-24 object-cover rounded-md"
-                  />
-                  <div className="space-y-1">
-                    <h3 className="text-lg font-semibold">{item.product.name}</h3>
-                    <p className="text-gray-500 text-sm">{item.product.category}</p>
-                    <p className="text-red-500 text-xs">
-                      মাত্র {item.quantity} টি বাকি
-                    </p>
-                  </div>
-                </div>
+  {cartItems.length === 0 ? (
+    <div className="text-center text-gray-500 py-12 border rounded-xl bg-white shadow-sm">
+      🛍️ আপনার কার্ট খালি
+      <div className="mt-4">
+        <Link
+          to="/"
+          className="px-5 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition"
+        >
+          পণ্য ব্রাউজ করুন
+        </Link>
+      </div>
+    </div>
+  ) : (
+    cartItems.map((item) => (
+      <div
+        key={item.id}
+        className="flex items-center justify-between bg-white border border-gray-200 rounded-xl shadow-sm p-5 hover:shadow-md transition"
+      >
+        {/* Product Info */}
+        <div className="flex items-center gap-5">
+          <img
+            src={`${BASE_URL}${item.product.image}`}  
+            alt={item.product.name}
+            className="w-24 h-24 object-cover rounded-lg border"
+          />
 
-                <div className="text-right">
-                  <p className="text-lg font-semibold text-gray-700">
-                    ৳{item.product.discounted_price.toLocaleString()}
-                  </p>
-                  <div className="flex items-center justify-end gap-2 mt-2">
-                    <button
-                      onClick={() => decreaseQty(item.id)}
-                      className="px-2 py-1 border rounded-md hover:bg-gray-950 hover:text-white"
-                    >
-                      -
-                    </button>
-                    <span className="px-3 font-medium">{item.quantity}</span>
-                    <button
-                      onClick={() => increaseQty(item.id)}
-                      className="px-2 py-1 border rounded-md hover:bg-gray-950 hover:text-white"
-                    >
-                      +
-                    </button>
-                  </div>
-                  <p className="text-gray-600 mt-1">
-                    সাবটোটাল : ৳
-                    {(item.product.discounted_price * item.quantity).toLocaleString()}
-                  </p>
-                  <button
-                    onClick={() => deleteItem(item.id)}
-                    className="text-red-500 mt-2 ml-20 flex items-center gap-1 text-sm hover:text-red-700"
-                  >
-                    <FaTrashAlt /> মুছুন
-                  </button>
-                </div>
-              </div>
-            ))
-          )}
+          <div className="space-y-1">
+            <h3 className="text-lg font-semibold text-gray-800">
+              {item.product.name}
+            </h3>
+
+            <p className="text-gray-500 text-sm">
+              {item.product.category}
+            </p>
+
+            <p className="text-red-600 text-xs font-medium">
+              মাত্র {item.product.stock} টি বাকি
+            </p>
+          </div>
         </div>
+
+        {/* Right Side */}
+        <div className="text-right min-w-[180px]">
+
+          {/* Price */}
+          <p className="text-lg font-bold text-gray-900">
+            ৳{item.product.discounted_price.toLocaleString()}
+          </p>
+
+          {/* Quantity Controls */}
+          <div className="flex items-center justify-end gap-1 mt-3">
+
+            <button
+              onClick={() => decreaseQty(item.id)}
+              className="p-2 rounded-md border hover:bg-gray-100 transition"
+            >
+              −
+            </button>
+
+            <span className="px-4 py-1 bg-gray-50 border rounded-md font-semibold">
+              {item.quantity}
+            </span>
+
+            <button
+              onClick={() => increaseQty(item.id)}
+              className="p-2 rounded-md border hover:bg-gray-100 transition"
+            >
+              +
+            </button>
+          </div>
+
+          {/* Subtotal */}
+          <p className="text-gray-600 text-sm mt-2">
+            সাবটোটাল:{" "}
+            <span className="font-semibold">
+              ৳{(item.product.discounted_price * item.quantity).toLocaleString()}
+            </span>
+          </p>
+
+          {/* Delete */}
+          <button
+            onClick={() => deleteItem(item.id)}
+            className="text-red-600 mt-3 flex items-center gap-1 text-sm hover:text-red-800 ml-auto"
+          >
+            <FaTrashAlt /> মুছুন
+          </button>
+        </div>
+      </div>
+    ))
+  )}
+</div>
 
         {/* 📦 Right Section: Order Summary */}
         {cartItems.length > 0 && (
