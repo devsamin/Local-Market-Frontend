@@ -214,15 +214,16 @@
 
 
 import { ImHome } from "react-icons/im";
-import { IoLocationOutline, IoSettingsOutline } from "react-icons/io5";
+import { IoLocationOutline, IoSettingsOutline, IoStarOutline } from "react-icons/io5";
 import { FiShoppingCart, FiLogOut } from "react-icons/fi";
 import { FaRegUser, FaUserCircle } from "react-icons/fa";
-import { MdOutlineHistory } from "react-icons/md";
+import { MdOutlineHistory, MdStarBorder } from "react-icons/md";
 import { Link } from "react-router-dom";
 import { useState, useEffect, useContext, useRef } from "react";
 import { CartContext } from "../contexts/CartContext/CartContext";
 import { AuthContext } from "../contexts/AuthContext/AuthProvider";
 import { BASE_URL } from "../config.js/config";
+import SellerAddSpecialOfferModal from "../Pages/SellerAddSpecialOfferModal/SellerAddSpecialOfferModal"; // import the modal
 
 const Navbar = ({ searchTerm, setSearchTerm }) => {
   const [open, setOpen] = useState(false);
@@ -232,6 +233,9 @@ const Navbar = ({ searchTerm, setSearchTerm }) => {
 
   const storedUser = JSON.parse(localStorage.getItem("user"));
   const role = user?.role || storedUser?.role || "No role";
+
+  const [openOfferModal, setOpenOfferModal] = useState(false);
+  
 
   // Close dropdown if clicking outside
   useEffect(() => {
@@ -407,13 +411,41 @@ const Navbar = ({ searchTerm, setSearchTerm }) => {
                     অর্ডার ইতিহাস
                   </Link>
                 ) : (
-                  <Link
-                    to="/seller-dashboard"
-                    className="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 text-gray-700"
-                  >
-                    <MdOutlineHistory className="text-lg text-gray-500" />
-                    বিক্রেতা ড্যাশবোর্ড
-                  </Link>
+                  // <Link
+                  //   to="/seller-dashboard"
+                  //   className="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 text-gray-700"
+                  // >
+                  //   <MdOutlineHistory className="text-lg text-gray-500" />
+                  //   বিক্রেতা ড্যাশবোর্ড
+                  // </Link>
+                  <>
+    <Link
+      to="/seller-dashboard"
+      className="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 text-gray-700"
+    >
+      <MdOutlineHistory className="text-lg text-gray-500" />
+      বিক্রেতা ড্যাশবোর্ড
+    </Link>
+
+    <button
+      onClick={() => setOpenOfferModal(true)}
+      className="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 text-gray-700"
+    >
+      <IoStarOutline/>
+
+ বিশেষ অফার
+    </button>
+    {/* Modal */}
+      <SellerAddSpecialOfferModal
+  isOpen={openOfferModal}
+  onClose={() => setOpenOfferModal(false)}
+  onSuccess={() => {
+    console.log("Offer added successfully");
+  }}
+/>
+
+  </>
+                  
                 )}
 
                 <Link
@@ -422,6 +454,8 @@ const Navbar = ({ searchTerm, setSearchTerm }) => {
                 >
                   <IoSettingsOutline className="text-lg text-gray-500" /> সেটিংস
                 </Link>
+
+             
 
                 <hr className="my-1" />
 
