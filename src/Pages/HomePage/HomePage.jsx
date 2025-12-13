@@ -38,6 +38,18 @@ const HomePage = () => {
 
    const { searchTerm } = useOutletContext();
 
+  const [offers, setOffers] = useState([]);  // ⭐ NEW
+
+  // ⭐ Fetch Offers
+  const fetchOffers = async () => {
+    try {
+      const res = await axios.get(`http://127.0.0.1:8000/api/offers/`);
+      setOffers(res.data);
+    } catch (error) {
+      console.error("Error loading offers:", error);
+    }
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -55,7 +67,14 @@ const HomePage = () => {
     };
 
     fetchData();
+    fetchOffers(); // ⭐ Load offers when page loads
   }, []);
+
+  // ⭐ instant update function
+const handleOfferAdded = (newOffer) => {
+  setOffers((prev) => [newOffer, ...prev]);
+};
+
 
   return (
     <div>
@@ -68,7 +87,9 @@ const HomePage = () => {
         setSelectedCategory={setSelectedCategory}
       />
 
-      <SpecialOffers />
+      {/* <SpecialOffers />
+      {/* ⭐ Pass offers + refresh function */}
+      <SpecialOffers offers={offers} fetchOffers={fetchOffers} /> 
 
       <CategoryProductSection
         products={products}
