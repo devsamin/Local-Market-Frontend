@@ -36,19 +36,22 @@ const HomePage = () => {
   const [products, setProducts] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("সব");
 
-   const { searchTerm } = useOutletContext();
+   const { searchTerm , refreshOffers } = useOutletContext();
 
-  const [offers, setOffers] = useState([]);  // ⭐ NEW
+  const [offers, setOffers] = useState([]);
 
-  // ⭐ Fetch Offers
   const fetchOffers = async () => {
     try {
-      const res = await axios.get(`http://127.0.0.1:8000/api/offers/`);
+      const res = await axios.get("http://127.0.0.1:8000/api/offers/");
       setOffers(res.data);
     } catch (error) {
       console.error("Error loading offers:", error);
     }
   };
+
+  useEffect(() => {
+    fetchOffers();
+  }, [refreshOffers]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -67,13 +70,7 @@ const HomePage = () => {
     };
 
     fetchData();
-    fetchOffers(); // ⭐ Load offers when page loads
   }, []);
-
-  // ⭐ instant update function
-const handleOfferAdded = (newOffer) => {
-  setOffers((prev) => [newOffer, ...prev]);
-};
 
 
   return (
@@ -89,7 +86,7 @@ const handleOfferAdded = (newOffer) => {
 
       {/* <SpecialOffers />
       {/* ⭐ Pass offers + refresh function */}
-      <SpecialOffers offers={offers} fetchOffers={fetchOffers} /> 
+      <SpecialOffers offers={offers}  /> 
 
       <CategoryProductSection
         products={products}

@@ -23,11 +23,16 @@ import Footer from '../ShearComponents/Footer';
 
 const RootLayout = () => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [refreshOffers, setRefreshOffers] = useState(0);
 
   return (
     <div>
-      <Navbar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-      <Outlet context={{ searchTerm }} />
+     <Navbar
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+        onOfferAdded={() => setRefreshOffers(prev => prev + 1)}
+      />
+      <Outlet context={{ searchTerm, refreshOffers }} />
       <Footer />
     </div>
   );

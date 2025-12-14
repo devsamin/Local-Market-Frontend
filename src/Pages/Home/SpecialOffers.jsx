@@ -166,34 +166,154 @@
 
 // export default SpecialOffers;
 
+// import { FaTag } from "react-icons/fa";
 
-import React, { useEffect } from "react";
-import { FaTag } from "react-icons/fa";
+// const SpecialOffers = ({ offers = [] }) => {
+//   return (
+//     <section className="w-full bg-gradient-to-b from-white to-gray-50 py-10">
 
-const SpecialOffers = ({ offers,fetchOffers  }) => {
+//       {/* Header */}
+//       <div className="flex items-center gap-2 px-6 mb-6">
+//         <FaTag className="text-[#16a34a] text-2xl" />
+//         <h2 className="text-3xl font-bold text-gray-800">বিশেষ অফার</h2>
+//       </div>
 
+//       {offers.length === 0 && (
+//         <p className="text-center text-gray-500 text-lg py-10">
+//           বর্তমানে কোনো বিশেষ অফার নেই
+//         </p>
+//       )}
+
+//       {/* 🔥 Horizontal Scroll */}
+//       <div className="overflow-x-auto px-6">
+//         <div className="flex gap-6 min-w-full">
+
+//           {offers.map((offer) => (
+//             <div
+//               key={offer.id}
+//               className="
+//                 min-w-[33.33%]
+//                 relative 
+//                 rounded-xl 
+//                 overflow-hidden 
+//                 shadow-md 
+//                 hover:shadow-xl 
+//                 transition-all
+//                 duration-300
+//                 group
+//               "
+//             >
+//               <img
+//                 src={offer.image}
+//                 alt={offer.title}
+//                 className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-500"
+//               />
+
+//               {/* Overlay */}
+//               <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+
+//               {/* Badge */}
+//               <span
+//                 className={`absolute top-4 left-4 text-white text-sm px-4 py-1 rounded-full ${offer.badgeColor}`}
+//               >
+//                 {offer.badge}
+//               </span>
+
+//               {/* Text */}
+//               <div className="absolute bottom-4 left-4 text-white">
+//                 <h3 className="text-xl font-bold mb-1">{offer.title}</h3>
+//                 <p className="text-sm opacity-90">{offer.subtitle}</p>
+//               </div>
+//             </div>
+//           ))}
+
+//         </div>
+//       </div>
+
+//     </section>
+//   );
+// };
+
+// export default SpecialOffers;
+
+
+import { FaTag, FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { useRef, useEffect } from "react";
+
+const SpecialOffers = ({ offers = [] }) => {
+  const sliderRef = useRef(null);
+
+  // 👉 Arrow scroll
+  const scroll = (direction) => {
+    const width = sliderRef.current.clientWidth;
+    sliderRef.current.scrollBy({
+      left: direction === "left" ? -width : width,
+      behavior: "smooth",
+    });
+  };
+
+  // 👉 Auto scroll
   useEffect(() => {
-    fetchOffers(); // ⭐ Offer যোগের পর সাথে সাথেই refresh হবে
-  }, [fetchOffers]);
+    const interval = setInterval(() => {
+      if (sliderRef.current) {
+        sliderRef.current.scrollBy({
+          left: sliderRef.current.clientWidth,
+          behavior: "smooth",
+        });
+      }
+    }, 4000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   return (
-    <section className="w-full bg-gradient-to-b from-white to-gray-50 py-10">
-      <div className="flex items-center gap-2 px-6 mb-6">
-        <FaTag className="text-[#16a34a] text-2xl" />
-        <h2 className="text-3xl font-bold text-gray-800">বিশেষ অফার</h2>
+    <section className="relative py-10 bg-gradient-to-b from-white to-gray-50">
+
+      {/* Header */}
+      <div className="flex items-center justify-between px-6 mb-6">
+        <div className="flex items-center gap-2">
+          <FaTag className="text-green-600 text-2xl" />
+          <h2 className="text-3xl font-bold text-gray-800">বিশেষ অফার</h2>
+        </div>
+
+        {/* Arrow Buttons */}
+        <div className="flex gap-2">
+          <button
+            onClick={() => scroll("left")}
+            className="p-2 rounded-full border bg-white shadow hover:bg-gray-100"
+          >
+            <FaChevronLeft />
+          </button>
+          <button
+            onClick={() => scroll("right")}
+            className="p-2 rounded-full border bg-white shadow hover:bg-gray-100"
+          >
+            <FaChevronRight />
+          </button>
+        </div>
       </div>
 
-      {offers.length === 0 && (
-        <p className="text-center text-gray-500 text-lg py-10">
-          বর্তমানে কোনো বিশেষ অফার নেই
-        </p>
-      )}
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-6">
+      {/* Slider */}
+      <div
+        ref={sliderRef}
+        className="
+          flex gap-6 px-6 overflow-x-auto scroll-smooth
+          scrollbar-hide
+          cursor-grab active:cursor-grabbing
+        "
+      >
         {offers.map((offer) => (
           <div
             key={offer.id}
-            className="relative rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 group"
+            className="
+              min-w-[85%]
+              sm:min-w-[45%]
+              lg:min-w-[30%]
+              xl:min-w-[24%]
+              relative rounded-xl overflow-hidden
+              shadow-md hover:shadow-xl transition-all
+              group
+            "
           >
             <img
               src={offer.image}
@@ -201,16 +321,19 @@ const SpecialOffers = ({ offers,fetchOffers  }) => {
               className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-500"
             />
 
+            {/* Overlay */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
 
+            {/* Badge */}
             <span
-              className={`absolute top-4 left-4 text-white text-sm px-4 py-1 rounded-full ${offer.badgeColor}`}
+              className={`absolute top-4 left-4 px-4 py-1 text-sm text-white rounded-full ${offer.badgeColor}`}
             >
               {offer.badge}
             </span>
 
+            {/* Text */}
             <div className="absolute bottom-4 left-4 text-white">
-              <h3 className="text-xl font-bold mb-1">{offer.title}</h3>
+              <h3 className="text-xl font-bold">{offer.title}</h3>
               <p className="text-sm opacity-90">{offer.subtitle}</p>
             </div>
           </div>

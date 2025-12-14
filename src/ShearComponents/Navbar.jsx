@@ -225,7 +225,7 @@ import { AuthContext } from "../contexts/AuthContext/AuthProvider";
 import { BASE_URL } from "../config.js/config";
 import SellerAddSpecialOfferModal from "../Pages/SellerAddSpecialOfferModal/SellerAddSpecialOfferModal"; // import the modal
 
-const Navbar = ({ searchTerm, setSearchTerm }) => {
+const Navbar = ({ searchTerm, setSearchTerm, onOfferAdded  }) => {
   const [open, setOpen] = useState(false);
   const { user, logout } = useContext(AuthContext);
   const { cartItems } = useContext(CartContext);
@@ -439,9 +439,7 @@ const Navbar = ({ searchTerm, setSearchTerm }) => {
       <SellerAddSpecialOfferModal
   isOpen={openOfferModal}
   onClose={() => setOpenOfferModal(false)}
-  onSuccess={() => {
-    console.log("Offer added successfully");
-  }}
+  onSuccess={onOfferAdded}
 />
 
   </>

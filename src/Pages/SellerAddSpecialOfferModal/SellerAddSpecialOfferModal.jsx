@@ -201,17 +201,18 @@ const SellerAddSpecialOfferModal = ({ isOpen, onClose, onSuccess }) => {
     formData.append("image", image);
 
     try {
-      await axios.post(`${BASE_URL}/api/offers/`, formData, {
+      const res = await axios.post(`${BASE_URL}/api/offers/`, formData, {
         headers: { 
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data" },
       });
 
       toast.success("সফলভাবে অফার যোগ করা হয়েছে!");
-      setLoading(false);
-
+      
       onSuccess(); // Refresh offers
       onClose(); // Close modal
+      // ✅ IMPORTANT
+    setLoading(false);
     } catch (error) {
       console.error("Error:", error);
       toast.error("অফার যোগ করতে সমস্যা হয়েছে!");
