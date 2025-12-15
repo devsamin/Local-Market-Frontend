@@ -10,6 +10,14 @@ import { BASE_URL } from "../../config.js/config";
 import { toast } from "react-hot-toast";
 
 import ReviewModal from "../ReviewModal/ReviewModal";
+import { MdCurrencyExchange } from "react-icons/md";
+
+
+import {
+  HiCheckCircle,
+  HiClock,
+  HiXCircle,
+} from "react-icons/hi";
 
 const UserProfile = () => {
   const [activeTab, setActiveTab] = useState("personal");
@@ -420,16 +428,25 @@ const UserProfile = () => {
             <div className="flex justify-between items-center mb-3">
               <h4 className="font-semibold text-lg">অর্ডার #{order.id}</h4>
               <span
-                className={`text-sm px-3 py-1 rounded-full font-medium ${
-                  order.status === "delivered"
-                    ? "bg-green-100 text-green-700"
-                    : order.status === "pending"
-                    ? "bg-yellow-100 text-yellow-700"
-                    : "bg-red-100 text-red-700"
-                }`}
-              >
-                {order.status}
-              </span>
+  className={`inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold rounded-full
+    ${
+      order.status === "delivered"
+        ? "bg-green-100 text-green-700"
+        : order.status === "pending"
+        ? "bg-yellow-100 text-yellow-700"
+        : "bg-red-100 text-red-700"
+    }`}
+>
+  {order.status === "delivered" && <HiCheckCircle className="text-sm" />}
+  {order.status === "pending" && <HiClock className="text-sm" />}
+  {order.status === "cancelled" && <HiXCircle className="text-sm" />}
+
+  {order.status === "delivered"
+    ? "ডেলিভার্ড"
+    : order.status === "pending"
+    ? "পেন্ডিং"
+    : "বাতিল"}
+</span>
             </div>
 
             <p className="text-sm text-gray-500 mb-4">
@@ -461,28 +478,52 @@ const UserProfile = () => {
                   {/* Review Button */}
                   {order.status === "delivered" && !item.review && (
                     <button
-                      onClick={() => openReviewModal(item)}
-                      className="px-3 py-1 bg-indigo-600 text-white text-sm rounded-lg hover:bg-indigo-700 transition-colors"
-                      type="button"
-                    >
-                      রিভিউ যোগ করুন
-                    </button>
+  onClick={() => openReviewModal(item)}
+  type="button"
+  className="
+    inline-flex items-center gap-2
+    px-4 py-2
+    text-sm font-medium
+    text-white
+    rounded-full
+    bg-gradient-to-r from-indigo-600 to-violet-600
+    hover:from-indigo-700 hover:to-violet-700
+    shadow-md hover:shadow-lg
+    transition-all duration-300
+    active:scale-95
+  "
+>
+  ⭐ রিভিউ দিন
+</button>
+
                   )}
 
                   {/* Already Reviewed */}
-                  {order.status === "delivered" && item.review && (
-                    <span className="px-3 py-1 text-sm rounded-lg bg-gray-200 text-gray-700">
-                      রিভিউ করা হয়েছে
-                    </span>
-                  )}
+{order.status === "delivered" && item.review && (
+  <span
+    className="
+      inline-flex items-center gap-1
+      px-3 py-1
+      text-xs font-semibold
+      rounded-full
+      bg-green-100 text-green-700
+      border border-green-200
+    "
+  >
+    ✔ রিভিউ করা হয়েছে
+  </span>
+)}
                 </div>
               ))}
             </div>
 
             {/* Order Total */}
-            <div className="text-right text-gray-900 font-semibold mt-4 text-lg">
-              মোট: {order.total_price} ৳
-            </div>
+            <div className="mt-4 flex justify-end items-center gap-2">
+  <MdCurrencyExchange className="text-gray-500 text-lg" />
+  <span className="text-lg font-semibold text-gray-900">
+    {order.total_price}
+  </span>
+</div>
           </div>
         ))}
       </div>

@@ -310,6 +310,31 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+
+
+/* ===========================
+   বাংলা → ইংরেজি সংখ্যা কনভার্ট
+=========================== */
+// const bnToEnNumber = (value) => {
+//   if (!value) return value;
+
+//   const bnDigits = {
+//     "০": "0",
+//     "১": "1",
+//     "২": "2",
+//     "৩": "3",
+//     "৪": "4",
+//     "৫": "5",
+//     "৬": "6",
+//     "৭": "7",
+//     "৮": "8",
+//     "৯": "9",
+//   };
+
+//   return value.toString().replace(/[০-৯]/g, (d) => bnDigits[d]);
+// };
+
+
 const AddProductModal = ({ onClose, onAdd }) => {
   const {
     register,
@@ -355,6 +380,12 @@ const AddProductModal = ({ onClose, onAdd }) => {
       formData.append("price", data.price);
       formData.append("stock", data.stock || 0);
       formData.append("discount", data.discount || 0);
+
+      // ✅ বাংলা + ইংরেজি → English number
+      // formData.append("price", bnToEnNumber(data.price));
+      // formData.append("stock", bnToEnNumber(data.stock));
+      // formData.append("discount", bnToEnNumber(data.discount || 0));
+
       formData.append("category_ids", data.category);
 
       if (data.image && data.image[0]) formData.append("image", data.image[0]);
@@ -390,7 +421,7 @@ const AddProductModal = ({ onClose, onAdd }) => {
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-gray-500 hover:text-gray-800"
+          className="absolute bg-gray-950 rounded-full top-4 right-4 text-white hover:text-white p-1"
         >
           <FiX size={20} />
         </button>
@@ -463,7 +494,7 @@ const AddProductModal = ({ onClose, onAdd }) => {
               </label>
               <input
                 {...register("price", { required: "মূল্য অবশ্যক" })}
-                type="number"
+                type="text"
                 step="any"
                 placeholder="0"
                 min="0"
@@ -478,9 +509,9 @@ const AddProductModal = ({ onClose, onAdd }) => {
               </label>
               <input
                 {...register("stock", { required: "স্টক সংখ্যা অবশ্যক" })}
-                type="number"
+                type="text"
                 step="any"
-                placeholder="0"
+                placeholder="0 "
                 min="0"
                 className="w-full border rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-gray-800 outline-none relative z-10"
               />
@@ -491,7 +522,7 @@ const AddProductModal = ({ onClose, onAdd }) => {
               <label className="block text-sm text-gray-600 mb-1">ছাড় (%)</label>
               <input
                 {...register("discount")}
-                type="number"
+                type="text"
                 step="any"
                 placeholder="10"
                 min="0"
