@@ -7,6 +7,7 @@ import { FiUser, FiPhone, FiMail, FiLock, FiBriefcase, FiFileText, FiCreditCard 
 import { AuthContext } from "../../contexts/AuthContext/AuthProvider";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { ImHome } from "react-icons/im";
 
 const RegisterPage = () => {
   const [role, setRole] = useState("buyer");
@@ -93,7 +94,7 @@ const RegisterPage = () => {
         {/* Header */}
         <div className="flex flex-col items-center mb-6">
           <div className="p-4 bg-black text-white rounded-2xl">
-            <FaStore size={28} />
+            <ImHome size={28} />
           </div>
           <h2 className="text-xl font-bold">LocalMarket এ যোগ দিন</h2>
           <p className="text-sm text-gray-500">নতুন অ্যাকাউন্ট তৈরি করুন</p>

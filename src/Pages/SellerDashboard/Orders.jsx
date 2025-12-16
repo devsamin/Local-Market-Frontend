@@ -274,6 +274,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { AuthContext } from "../../contexts/AuthContext/AuthProvider";
+import { FiShoppingCart } from "react-icons/fi";
 
 const statusStyles = {
   pending: "bg-yellow-100 text-yellow-700",
@@ -360,18 +361,15 @@ const Orders = () => {
                   : ""}
               </p>
             </div>
-            <div className="text-right">
-              <p>
-                Total Price :
-                {items
-                  .reduce(
-                    (total, item) => total + item.price * item.quantity,
-                    0
-                  )
-                  .toLocaleString()}
-                ৳{" "}
-              </p>
-            </div>
+           <div className="flex justify-end items-center mt-2 space-x-2 text-sm font-medium text-gray-700">
+  <FiShoppingCart className="text-blue-500 w-5 h-5" />
+  <span className="text-gray-800">
+    {items
+      .reduce((total, item) => total + item.price * item.quantity, 0)
+      .toLocaleString()}{" "}
+    ৳
+  </span>
+</div>
           </div>
 
           {/* Items */}
@@ -400,26 +398,26 @@ const Orders = () => {
                 </div>
 
                 {/* Status Dropdown */}
-                <div>
-                  <select
-                    value={item.status}
-                    onChange={(e) =>
-                      handleStatusChange(item.id, e.target.value)
-                    }
-                    className="border rounded p-2 text-sm"
-                  >
-                    <option value="pending">অপেক্ষমান</option>
-                    <option value="shipped">পরিবহন</option>
-                    <option value="delivered">সম্পন্ন</option>
-                  </select>
-                  <span
-                    className={`ml-2 px-2 py-1 text-sm rounded-full ${
-                      statusStyles[item.status]
-                    }`}
-                  >
-                    {item.status}
-                  </span>
-                </div>
+                <div className="flex items-center space-x-3">
+  <select
+    value={item.status}
+    onChange={(e) => handleStatusChange(item.id, e.target.value)}
+    className="border border-gray-300 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+  >
+    <option value="pending">অপেক্ষমান</option>
+    <option value="shipped">পরিবহন</option>
+    <option value="delivered">সম্পন্ন</option>
+  </select>
+
+  <span
+    className={`px-3 py-1 rounded-full text-sm font-semibold ${
+      statusStyles[item.status] || "bg-gray-200 text-gray-800"
+    }`}
+  >
+    {item.status === "pending" ? "অপেক্ষমান" : item.status === "shipped" ? "পরিবহন" : "সম্পন্ন"}
+  </span>
+</div>
+
               </div>
             ))}
           </div>

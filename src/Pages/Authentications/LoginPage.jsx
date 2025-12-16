@@ -7,6 +7,7 @@ import axios from "axios";
 import { AuthContext } from "../../contexts/AuthContext/AuthProvider";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { ImHome } from "react-icons/im";
 
 const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -75,7 +76,7 @@ const LoginPage = () => {
         {/* Logo */}
         <div className="flex flex-col items-center mb-6">
           <div className="p-4 bg-black text-white rounded-2xl">
-            <FaStore size={28} />
+            <ImHome size={28} />
           </div>
           <h2 className="mt-4 text-xl font-semibold text-gray-800">
             LocalMarket এ স্বাগতম
