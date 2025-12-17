@@ -9,6 +9,8 @@ import RegisterPage from "../Pages/Authentications/RegisterPage";
 import LoginPage from "../Pages/Authentications/LoginPage";
 import SellerDashboard from "../Pages/SellerDashboard/SellerDashboard";
 import UserProfile from "../Pages/Profile/UserProfile";
+import PaymentSuccess from "../Pages/BuyerCart/PaymentSuccess/PaymentSuccess";
+import PaymentFailed from "../Pages/BuyerCart/PaymentFailed/PaymentFailed";
 // import BuyerOrders from "../Pages/Profile/BuyerOrders";
 
 export const router = createBrowserRouter([
@@ -47,6 +49,14 @@ export const router = createBrowserRouter([
       {
         path: "/seller-dashboard",
         element: <SellerDashboard />,
+      },
+      {
+        path: "/payment-success",
+        element: <PaymentSuccess />,
+      },
+      {
+        path: "/payment-failed",
+        element: <PaymentFailed />,
       },
     ],
   },
