@@ -411,23 +411,36 @@ const BuyerCart = () => {
   };
 
   /* ================= PAYMENT ================= */
-  const handlePayment = async () => {
-    if (paymentLoading) return;
+ const handleCheckout = async () => {
+  try {
+    // 1️⃣ Create Order
+    const orderRes = await axios.post(
+      "http://127.0.0.1:8000/api/orders/orders/checkout/",
+      {},
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
 
-    setPaymentLoading(true);
-    try {
-      const res = await axios.post(
-        "http://127.0.0.1:8000/api/payment/initiate/",
-        {},
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-console.log(res.data.payment_url);
-      window.location.href = res.data.payment_url;
-    } catch (err) {
-      toast.error("পেমেন্ট শুরু করা যায়নি");
-      setPaymentLoading(false);
-    }
-  };
+    const { order_id } = orderRes.data;
+
+    // 2️⃣ Create Stripe Session
+    const stripeRes = await axios.post(
+      "http://127.0.0.1:8000/api/payment/stripe/checkout/",
+      { order_id },
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+
+    // 3️⃣ Redirect to Stripe
+    window.location.href = stripeRes.data.checkout_url;
+
+  } catch (err) {
+    toast.error("পেমেন্ট শুরু করা যায়নি");
+  }
+};
+
 
   /* ================= TOTALS ================= */
   const subtotal = cartItems.reduce(
@@ -547,7 +560,7 @@ console.log(res.data.payment_url);
 
             <button
               disabled={paymentLoading}
-              onClick={handlePayment}
+              onClick={handleCheckout}
               className={`w-full py-2 rounded-lg text-white font-semibold ${
                 paymentLoading
                   ? "bg-gray-400 cursor-not-allowed"
