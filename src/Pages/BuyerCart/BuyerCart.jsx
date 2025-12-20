@@ -305,7 +305,7 @@
 
 import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
-import { FaTrashAlt } from "react-icons/fa";
+import { FaMinus, FaPlus, FaTrashAlt } from "react-icons/fa";
 import { IoArrowBack } from "react-icons/io5";
 import { Link } from "react-router-dom";
 import OrderConfirmModal from "../OrderConfirmModal/OrderConfirmModal";
@@ -498,26 +498,29 @@ const BuyerCart = () => {
                     <button
                       disabled={itemLoading === item.id}
                       onClick={() => decreaseQty(item.id)}
-                      className="px-3 py-1 border rounded"
+                      className="px-3 py-1 border rounded cursor-pointer"
                     >
-                      −
+                      <FaMinus size={12}/>
                     </button>
 
-                    <span className="px-4 py-1 border rounded bg-gray-50">
-                      {item.quantity}
-                    </span>
+                    <span
+      className="min-w-[40px] text-center text-sm font-medium 
+                 bg-gray-50 border rounded-md py-1 "
+    >
+      {item.quantity}
+    </span>
 
                     <button
                       disabled={itemLoading === item.id}
                       onClick={() => increaseQty(item.id)}
-                      className="px-3 py-1 border rounded"
+                      className="px-3 py-1 border rounded cursor-pointer"
                     >
-                      +
+                      <FaPlus size={12} />
                     </button>
                   </div>
 
                   <p className="text-sm mt-2">
-                    সাবটোটাল:{" "}
+                    সাবটোটাল :{" "}
                     <b>
                       ৳
                       {(item.product.discounted_price * item.quantity).toLocaleString()}
