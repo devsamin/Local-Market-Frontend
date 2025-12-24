@@ -1,9 +1,13 @@
 import React from "react";
+import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
 
 const PaymentSuccess = () => {
   return (
     <div className="flex flex-col justify-center items-center min-h-screen text-center p-6 bg-green-50">
+      <Helmet>
+        <title>পেমেন্ট সফল হয়েছে | LocalMarket</title>
+      </Helmet>
       <h1 className="text-4xl font-bold text-green-700 mb-4">🎉 পেমেন্ট সফল হয়েছে!</h1>
       <p className="text-gray-700 mb-6">
         আপনার অর্ডার প্রাপ্তি এবং ডেলিভারির জন্য ধন্যবাদ।  

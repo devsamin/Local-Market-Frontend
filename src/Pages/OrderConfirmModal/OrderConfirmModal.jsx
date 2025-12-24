@@ -5,6 +5,7 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import  { useContext } from "react";
 import { CartContext } from "../../contexts/CartContext/CartContext";
+import { Helmet } from "react-helmet-async";
 const OrderConfirmModal = ({ isOpen, onClose }) => {
   const [step, setStep] = useState(1);
   const [deliveryType, setDeliveryType] = useState("home");
@@ -52,6 +53,9 @@ const OrderConfirmModal = ({ isOpen, onClose }) => {
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 overflow-auto">
+      <Helmet>
+        <title>অর্ডার নিশ্চিতকরণ | LocalMarket</title>
+      </Helmet>
       <div className="bg-white w-[90%] max-w-lg rounded-2xl shadow-xl relative p-6 overflow-y-auto max-h-[90vh]">
         {/* Close Button */}
         <button

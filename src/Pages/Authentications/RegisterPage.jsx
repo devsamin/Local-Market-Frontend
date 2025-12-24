@@ -8,6 +8,7 @@ import { AuthContext } from "../../contexts/AuthContext/AuthProvider";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { ImHome } from "react-icons/im";
+import { Helmet } from "react-helmet-async";
 
 const RegisterPage = () => {
   const [role, setRole] = useState("buyer");
@@ -90,6 +91,9 @@ const RegisterPage = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-3 py-6">
+      <Helmet>
+        <title>রেজিস্টার পৃষ্ঠা | LocalMarket</title>
+      </Helmet>
       <div className="bg-white shadow-xl rounded-2xl w-full max-w-3xl p-8">
         {/* Header */}
         <div className="flex flex-col items-center mb-6">

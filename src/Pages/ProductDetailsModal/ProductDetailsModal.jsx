@@ -2,6 +2,7 @@
 
 
 import React, { useState } from "react";
+import { Helmet } from "react-helmet-async";
 import { FiX, FiShoppingCart, FiStar, FiMapPin, FiCheckCircle } from "react-icons/fi";
 // import { toast } from "react-hot-toast";
 
@@ -33,6 +34,9 @@ const ProductDetailsModal = ({ product, onClose, addToCart, loadingProductId }) 
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <Helmet>
+        <title>{product.name} | LocalMarket</title>
+      </Helmet>
       <div className="bg-white w-full max-w-4xl rounded-xl shadow-lg relative overflow-hidden">
         
         {/* Close Button */}

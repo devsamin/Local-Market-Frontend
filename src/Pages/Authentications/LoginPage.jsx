@@ -8,6 +8,7 @@ import { AuthContext } from "../../contexts/AuthContext/AuthProvider";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { ImHome } from "react-icons/im";
+import { Helmet } from "react-helmet-async";
 
 const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -72,6 +73,9 @@ const LoginPage = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 px-4">
+      <Helmet>
+        <title>লগইন পৃষ্ঠা | LocalMarket</title>
+      </Helmet>
       <div className="bg-white rounded-3xl shadow-2xl p-8 w-full max-w-md transition-all duration-300 hover:shadow-gray-300">
         {/* Logo */}
         <div className="flex flex-col items-center mb-6">

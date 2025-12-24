@@ -30,6 +30,7 @@ import SpecialOffers from "../Home/SpecialOffers";
 import CategoryProductSection from "../Home/CategoryProductSection";
 // import Navbar from "../../ShearComponents/Navbar";
 import { useOutletContext } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 
 const HomePage = () => {
   const [categories, setCategories] = useState([]);
@@ -75,6 +76,9 @@ const HomePage = () => {
 
   return (
     <div>
+      <Helmet>
+        <title>হোম পেজ | LocalMarket</title>
+      </Helmet>
       
 
 

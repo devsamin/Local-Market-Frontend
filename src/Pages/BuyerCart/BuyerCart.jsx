@@ -313,6 +313,7 @@ import { BASE_URL } from "../../config.js/config";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { CartContext } from "../../contexts/CartContext/CartContext";
+import { Helmet } from "react-helmet-async";
 
 const BuyerCart = () => {
   const [cartItems, setCartItems] = useState([]);
@@ -460,6 +461,9 @@ const BuyerCart = () => {
 
   return (
     <div className="max-w-7xl mx-auto p-6">
+      <Helmet>
+        <title>কার্ট | LocalMarket</title>
+      </Helmet>
       {/* BACK */}
       <Link to="/" className="flex items-center gap-2 mb-4 text-gray-600">
         <IoArrowBack /> কেনাকাটা চালিয়ে যান

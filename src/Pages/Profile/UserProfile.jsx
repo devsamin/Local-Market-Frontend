@@ -18,6 +18,7 @@ import {
   HiClock,
   HiXCircle,
 } from "react-icons/hi";
+import { Helmet } from "react-helmet-async";
 
 const UserProfile = () => {
   const [activeTab, setActiveTab] = useState("personal");
@@ -168,8 +169,29 @@ const UserProfile = () => {
       </div>
     );
 
+    // Tab-wise title
+  const getTabTitle = () => {
+    switch (activeTab) {
+      case "personal":
+        return "ব্যক্তিগত তথ্য";
+      case "orders":
+        return "অর্ডার ইতিহাস";
+      case "reviews":
+        return "রিভিউসমূহ";
+      case "settings":
+        return "সেটিংস";
+      default:
+        return "প্রোফাইল";
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 flex justify-center py-10 px-4">
+      <Helmet>
+      <title>{getTabTitle()} | LocalMart</title>
+      <link rel="icon" type="image/svg+xml" href="/icons/home.svg" /> 
+      {/* You can use your ImHome icon here converted to SVG or PNG */}
+    </Helmet>
       <div className="w-full max-w-5xl bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row items-center sm:items-start justify-between border-b border-gray-200 pb-5">
