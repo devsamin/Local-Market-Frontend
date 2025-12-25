@@ -370,24 +370,46 @@ const BuyerCart = () => {
   };
 
   /* ================= DECREASE ================= */
-  const decreaseQty = async (id) => {
-    const item = cartItems.find((i) => i.id === id);
-    if (!item) return;
+  // const decreaseQty = async (id) => {
+  //   const item = cartItems.find((i) => i.id === id);
+  //   if (!item) return;
 
-    setItemLoading(id);
-    try {
-      const res = await axios.post(
-        "http://127.0.0.1:8000/api/cart/decrease_item/",
-        { product_id: item.product.id },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      setCartItems(res.data.cart.items || []);
-    } catch (err) {
-      toast.error("পরিমাণ কমানো যায়নি");
-    } finally {
-      setItemLoading(null);
-    }
-  };
+  //   setItemLoading(id);
+  //   try {
+  //     const res = await axios.post(
+  //       "http://127.0.0.1:8000/api/cart/decrease_item/",
+  //       { product_id: item.product.id },
+  //       { headers: { Authorization: `Bearer ${token}` } }
+  //     );
+  //     setCartItems(res.data.cart.items || []);
+  //   } catch (err) {
+  //     toast.error("পরিমাণ কমানো যায়নি");
+  //   } finally {
+  //     setItemLoading(null);
+  //   }
+  // };
+  const decreaseQty = async (id) => {
+  const item = cartItems.find((i) => i.id === id);
+  if (!item) return;
+
+  setItemLoading(id);
+
+  try {
+    await axios.post(
+      "http://127.0.0.1:8000/api/cart/decrease_item/",
+      { product_id: item.product.id },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    // ✅ single source of truth
+    await loadCart();
+
+  } catch (err) {
+    toast.error("পরিমাণ কমানো যায়নি");
+  } finally {
+    setItemLoading(null);
+  }
+};
 
   /* ================= DELETE ================= */
   const deleteItem = async (id) => {
@@ -413,14 +435,13 @@ const BuyerCart = () => {
 
   /* ================= PAYMENT ================= */
  const handleCheckout = async () => {
+  setPaymentLoading(true); // 🔹 START loading
   try {
     // 1️⃣ Create Order
     const orderRes = await axios.post(
       "http://127.0.0.1:8000/api/orders/orders/checkout/",
       {},
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
+      { headers: { Authorization: `Bearer ${token}` } }
     );
 
     const { order_id } = orderRes.data;
@@ -429,9 +450,7 @@ const BuyerCart = () => {
     const stripeRes = await axios.post(
       "http://127.0.0.1:8000/api/payment/stripe/checkout/",
       { order_id },
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
+      { headers: { Authorization: `Bearer ${token}` } }
     );
 
     // 3️⃣ Redirect to Stripe
@@ -439,6 +458,9 @@ const BuyerCart = () => {
 
   } catch (err) {
     toast.error("পেমেন্ট শুরু করা যায়নি");
+    console.error(err);
+  } finally {
+    setPaymentLoading(false); // 🔹 STOP loading
   }
 };
 
