@@ -7,7 +7,9 @@ import axios from "axios";
 import { AuthContext } from "../../contexts/AuthContext/AuthProvider";
 import { useNavigate, useLocation } from "react-router-dom";
 import { BASE_URL } from "../../config.js/config";
-import { toast } from "react-hot-toast";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 
 import ReviewModal from "../ReviewModal/ReviewModal";
 import { MdCurrencyExchange } from "react-icons/md";
@@ -40,6 +42,54 @@ const UserProfile = () => {
 
   const location = useLocation();
   const urlTab = new URLSearchParams(location.search).get("tab");
+
+  const [passwordData, setPasswordData] = useState({
+  current_password: "",
+  new_password: "",
+  confirm_password: "",
+});
+const [passLoading, setPassLoading] = useState(false);
+
+const handlePasswordChange = (e) => {
+  const { name, value } = e.target;
+  setPasswordData({ ...passwordData, [name]: value });
+};
+
+const handleChangePassword = async () => {
+  if (passwordData.new_password !== passwordData.confirm_password) {
+    toast.error("নতুন পাসওয়ার্ড মিলছে না");
+    return;
+  }
+
+  try {
+    setPassLoading(true);
+    const token = localStorage.getItem("access");
+
+    await axios.post(
+      `${BASE_URL}/api/users/change-password/`,
+      {
+        current_password: passwordData.current_password,
+        new_password: passwordData.new_password,
+      },
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+
+    toast.success("পাসওয়ার্ড পরিবর্তন হয়েছে, আবার লগইন করুন 🔐");
+
+    logout(); // clear auth
+    navigate("/login");
+  } catch (error) {
+    toast.error(
+      error.response?.data?.current_password?.[0] ||
+        "পাসওয়ার্ড পরিবর্তন ব্যর্থ"
+    );
+  } finally {
+    setPassLoading(false);
+  }
+};
+
 
   useEffect(() => {
     if (urlTab) setActiveTab(urlTab);
@@ -619,11 +669,50 @@ const UserProfile = () => {
 
 
           {/* SETTINGS */}
-          {activeTab === "settings" && (
+          {/* {activeTab === "settings" && (
             <p className="text-gray-500 text-sm">
               সেটিংস অপশন আসছে খুব শীঘ্রই…
             </p>
-          )}
+          )} */}
+          {/* SETTINGS */}
+{activeTab === "settings" && (
+  <div className="max-w-md space-y-4">
+    <h3 className="text-lg font-semibold mb-2">পাসওয়ার্ড পরিবর্তন</h3>
+
+    <input
+      type="password"
+      name="current_password"
+      placeholder="বর্তমান পাসওয়ার্ড"
+      onChange={handlePasswordChange}
+      className="w-full border rounded-lg px-3 py-2"
+    />
+
+    <input
+      type="password"
+      name="new_password"
+      placeholder="নতুন পাসওয়ার্ড"
+      onChange={handlePasswordChange}
+      className="w-full border rounded-lg px-3 py-2"
+    />
+
+    <input
+      type="password"
+      name="confirm_password"
+      placeholder="নতুন পাসওয়ার্ড নিশ্চিত করুন"
+      onChange={handlePasswordChange}
+      className="w-full border rounded-lg px-3 py-2"
+    />
+
+    <button
+      onClick={handleChangePassword}
+      disabled={passLoading}
+      className="w-full bg-black text-white py-2 rounded-lg hover:bg-gray-800 transition"
+    >
+      {passLoading ? "আপডেট হচ্ছে..." : "পাসওয়ার্ড আপডেট করুন"}
+    </button>
+  </div>
+)}
+
         </div>
       </div>
 
