@@ -38,7 +38,7 @@ const LoginPage = () => {
     setLoading(true); // ✅ Start loading
     try {
       // ✅ Send English role to backend
-      const res = await axios.post("http://127.0.0.1:8000/api/users/login/", {
+      const res = await axios.post("https://local-market-backend.onrender.com/api/users/login/", {
         username: data.username,
         password: data.password,
         role: roleMap[role],
@@ -47,7 +47,7 @@ const LoginPage = () => {
       localStorage.setItem("access", res.data.access);
       localStorage.setItem("refresh", res.data.refresh);
 
-      const profileRes = await axios.get("http://127.0.0.1:8000/api/users/profile/", {
+      const profileRes = await axios.get("https://local-market-backend.onrender.com/api/users/profile/", {
         headers: { Authorization: `Bearer ${res.data.access}` },
       });
 

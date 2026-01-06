@@ -28,7 +28,7 @@ const Products = () => {
       setLoading(true);
       console.log("Fetching products for seller_id:", sellerId);
       const res = await axios.get(
-        `http://127.0.0.1:8000/api/products/?seller_id=${sellerId}`,
+        `https://local-market-backend.onrender.com/api/products/?seller_id=${sellerId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setProducts(res.data);
@@ -52,7 +52,7 @@ const Products = () => {
   const handleDelete = async (id) => {
     if (!window.confirm("আপনি কি সত্যিই এই পণ্যটি মুছে ফেলতে চান?")) return;
     try {
-      await axios.delete(`http://127.0.0.1:8000/api/products/${id}/`, {
+      await axios.delete(`https://local-market-backend.onrender.com/api/products/${id}/`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setProducts((prev) => prev.filter((p) => p.id !== id));

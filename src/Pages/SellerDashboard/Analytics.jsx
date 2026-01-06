@@ -117,7 +117,7 @@ const Analytics = () => {
 
   const fetchProducts = async () => {
     try {
-      const res = await axios.get("http://127.0.0.1:8000/api/products/", {
+      const res = await axios.get("https://local-market-backend.onrender.com/api/products/", {
         headers: { Authorization: `Bearer ${token}` }
       });
       const sellerProducts = res.data.filter(p=>p.seller===sellerId);

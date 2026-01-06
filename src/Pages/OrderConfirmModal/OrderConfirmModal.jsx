@@ -29,7 +29,7 @@ const OrderConfirmModal = ({ isOpen, onClose }) => {
 
   try {
     const res = await axios.post(
-      "http://127.0.0.1:8000/api/orders/orders/checkout/",
+      "https://local-market-backend.onrender.com/api/orders/orders/checkout/",
       {},
       {
         headers: { Authorization: `Bearer ${token}` },

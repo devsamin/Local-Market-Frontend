@@ -333,7 +333,7 @@ const BuyerCart = () => {
   /* ================= LOAD CART ================= */
   const loadCart = async () => {
     try {
-      const res = await axios.get("http://127.0.0.1:8000/api/cart/", {
+      const res = await axios.get("https://local-market-backend.onrender.com/api/cart/", {
         headers: { Authorization: `Bearer ${token}` },
       });
       setCartItems(res.data.items || []);
@@ -357,7 +357,7 @@ const BuyerCart = () => {
     setItemLoading(id);
     try {
       await axios.post(
-        "http://127.0.0.1:8000/api/cart/add_item/",
+        "https://local-market-backend.onrender.com/api/cart/add_item/",
         { product_id: item.product.id, quantity: 1 },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -396,7 +396,7 @@ const BuyerCart = () => {
 
   try {
     await axios.post(
-      "http://127.0.0.1:8000/api/cart/decrease_item/",
+      "https://local-market-backend.onrender.com/api/cart/decrease_item/",
       { product_id: item.product.id },
       { headers: { Authorization: `Bearer ${token}` } }
     );
@@ -419,7 +419,7 @@ const BuyerCart = () => {
     setItemLoading(id);
     try {
       await axios.post(
-        "http://127.0.0.1:8000/api/cart/remove_item/",
+        "https://local-market-backend.onrender.com/api/cart/remove_item/",
         { product_id: item.product.id },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -439,7 +439,7 @@ const BuyerCart = () => {
   try {
     // 1️⃣ Create Order
     const orderRes = await axios.post(
-      "http://127.0.0.1:8000/api/orders/orders/checkout/",
+      "https://local-market-backend.onrender.com/api/orders/orders/checkout/",
       {},
       { headers: { Authorization: `Bearer ${token}` } }
     );
@@ -448,7 +448,7 @@ const BuyerCart = () => {
 
     // 2️⃣ Create Stripe Session
     const stripeRes = await axios.post(
-      "http://127.0.0.1:8000/api/payment/stripe/checkout/",
+      "https://local-market-backend.onrender.com/api/payment/stripe/checkout/",
       { order_id },
       { headers: { Authorization: `Bearer ${token}` } }
     );

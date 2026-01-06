@@ -215,7 +215,7 @@ const Overview = () => {
   const fetchOverviewData = async () => {
     try {
       const res = await axios.get(
-        "http://127.0.0.1:8000/api/dashboard/seller-dashboard/",
+        "https://local-market-backend.onrender.com/api/dashboard/seller-dashboard/",
         {
           headers: { Authorization: `Bearer ${token}` },
         }

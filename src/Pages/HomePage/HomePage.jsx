@@ -43,7 +43,7 @@ const HomePage = () => {
 
   const fetchOffers = async () => {
     try {
-      const res = await axios.get("http://127.0.0.1:8000/api/offers/");
+      const res = await axios.get("https://local-market-backend.onrender.com/api/offers/");
       setOffers(res.data);
     } catch (error) {
       console.error("Error loading offers:", error);
@@ -58,8 +58,8 @@ const HomePage = () => {
     const fetchData = async () => {
       try {
         const [catRes, prodRes] = await Promise.all([
-          axios.get("http://127.0.0.1:8000/api/category/"),
-          axios.get("http://127.0.0.1:8000/api/products/"),
+          axios.get("https://local-market-backend.onrender.com/api/category/"),
+          axios.get("https://local-market-backend.onrender.com/api/products/"),
         ]);
 
         setCategories([{ id: 0, name: "সব" }, ...catRes.data]);

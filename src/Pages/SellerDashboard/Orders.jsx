@@ -297,7 +297,7 @@ const Orders = () => {
   const fetchOrders = async () => {
     try {
       const res = await axios.get(
-        "http://127.0.0.1:8000/api/orders/seller-orders/",
+        "https://local-market-backend.onrender.com/api/orders/seller-orders/",
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -313,7 +313,7 @@ const Orders = () => {
   const handleStatusChange = async (itemId, newStatus) => {
     try {
       const res = await axios.patch(
-        `http://127.0.0.1:8000/api/orders/seller-orders/${itemId}/`,
+        `https://local-market-backend.onrender.com/api/orders/seller-orders/${itemId}/`,
         { status: newStatus },
         { headers: { Authorization: `Bearer ${token}` } }
       );

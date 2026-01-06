@@ -112,7 +112,7 @@ export const CartProvider = ({ children }) => {
     const body = { product_id: product.id, quantity: 1 };
 
     const response = await axios.post(
-      "http://127.0.0.1:8000/api/cart/add_item/",
+      "https://local-market-backend.onrender.com/api/cart/add_item/",
       body,
       config
     );

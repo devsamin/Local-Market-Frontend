@@ -49,7 +49,7 @@ const PaymentSuccess = () => {
 
       try {
         await axios.get(
-          `http://127.0.0.1:8000/api/payment/payment-success/?order_id=${order_id}`,
+          `https://local-market-backend.onrender.com/api/payment/payment-success/?order_id=${order_id}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
 

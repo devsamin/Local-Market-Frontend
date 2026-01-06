@@ -56,7 +56,7 @@ const RegisterPage = () => {
       if (data.photo && data.photo[0]) formData.append("photo", data.photo[0]);
 
       const res = await axios.post(
-        "http://127.0.0.1:8000/api/users/register/",
+        "https://local-market-backend.onrender.com/api/users/register/",
         formData,
         { headers: { "Content-Type": "multipart/form-data" } }
       );
