@@ -279,7 +279,7 @@ const EditProductModal = ({ product, onClose, onUpdate }) => {
       if (newImage3) formData.append("image3", newImage3);
 
       const res = await axios.patch(
-        `http://127.0.0.1:8000/api/products/${product.id}/`,
+        `https://local-market-backend.onrender.com/api/products/${product.id}/`,
         formData,
         {
           headers: {

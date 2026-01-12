@@ -120,7 +120,7 @@ const fetchRatings = async () => {
           <img
             src={
               user?.photo
-                ? `http://127.0.0.1:8000${user.photo}`
+                ? `https://local-market-backend.onrender.com${user.photo}`
                 : "https://i.ibb.co/2ypYw9Y/default-avatar.png"
             }
             alt="Seller"

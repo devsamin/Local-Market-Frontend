@@ -392,7 +392,7 @@ const AddProductModal = ({ onClose, onAdd }) => {
       if (data.image2 && data.image2[0]) formData.append("image2", data.image2[0]);
       if (data.image3 && data.image3[0]) formData.append("image3", data.image3[0]);
 
-      const res = await axios.post("http://127.0.0.1:8000/api/products/", formData, {
+      const res = await axios.post("https://local-market-backend.onrender.com/api/products/", formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",
