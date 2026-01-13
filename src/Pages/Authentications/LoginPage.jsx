@@ -106,7 +106,7 @@ const LoginPage = () => {
               {r === "ক্রেতা" && <FiUser />}
               {r === "বিক্রেতা" && <FaStore />}
               {r === "অ্যাডমিন" && <FiLock />}
-              {r}
+              
             </button>
           ))}
         </div>
