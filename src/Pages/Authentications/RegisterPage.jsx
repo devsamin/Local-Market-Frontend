@@ -31,57 +31,104 @@ const RegisterPage = () => {
     if (file) setPhotoPreview(URL.createObjectURL(file));
   };
 
+  // const onSubmit = async (data) => {
+  //   console.log("Form Data:", data);
+  //   setErrorMsg("");
+  //   setLoading(true);
+  //   try {
+  //     const formData = new FormData();
+  //     formData.append("username", data.fullName);
+  //     formData.append("email", data.email);
+  //     formData.append("password", data.password);
+  //     formData.append("role", role);
+  //     formData.append("phone", data.phone);
+  //     formData.append("location", `${data.city}, ${data.area}`);
+  //     formData.append("address", data.address);
+
+  //     // Seller-only fields
+  //     if (role === "seller") {
+  //       formData.append("businessName", data.businessName || "");
+  //       formData.append("nidNumber", data.nidNumber || "");
+  //       formData.append("bankAccount", data.bankAccount || "");
+  //     }
+
+  //     // Photo upload
+  //     if (data.photo && data.photo[0]) formData.append("photo", data.photo[0]);
+
+  //     const res = await axios.post(
+  //       "https://local-market-backend.onrender.com/api/users/register/",
+  //       formData,
+  //       { headers: { "Content-Type": "multipart/form-data" } }
+  //     );
+
+  //     toast.success("অ্যাকাউন্ট সফলভাবে তৈরি হয়েছে! এখন লগইন করুন 🔐", {
+  //       position: "top-center",
+  //       autoClose: 3000,
+  //     });
+  //     console.log("Registration Success:", res.data);
+  //     navigate("/login");
+  //     // localStorage.setItem("user", JSON.stringify(createdUser));
+  //   } catch (error) {
+  //     console.error("Registration Error:", error.response?.data || error.message);
+  //     // Backend field error display
+  //     if (error.response?.data) {
+  //       const backendErrors = error.response.data;
+  //       const firstError = Object.keys(backendErrors)[0];
+  //       setErrorMsg(`${firstError}: ${backendErrors[firstError][0]}`);
+  //     } else {
+  //       setErrorMsg("Registration failed");
+  //     }
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
   const onSubmit = async (data) => {
-    console.log("Form Data:", data);
-    setErrorMsg("");
-    setLoading(true);
-    try {
-      const formData = new FormData();
-      formData.append("username", data.fullName);
-      formData.append("email", data.email);
-      formData.append("password", data.password);
-      formData.append("role", role);
-      formData.append("phone", data.phone);
-      formData.append("location", `${data.city}, ${data.area}`);
-      formData.append("address", data.address);
+  setErrorMsg("");
+  setLoading(true);
 
-      // Seller-only fields
-      if (role === "seller") {
-        formData.append("businessName", data.businessName || "");
-        formData.append("nidNumber", data.nidNumber || "");
-        formData.append("bankAccount", data.bankAccount || "");
-      }
+  try {
+    const formData = new FormData();
 
-      // Photo upload
-      if (data.photo && data.photo[0]) formData.append("photo", data.photo[0]);
+    formData.append("username", data.fullName);
+    formData.append("email", data.email);
+    formData.append("password", data.password);
+    formData.append("role", role);
+    formData.append("phone", data.phone);
+    formData.append("location", `${data.city}, ${data.area}`);
+    formData.append("address", data.address);
 
-      const res = await axios.post(
-        "https://local-market-backend.onrender.com/api/users/register/",
-        formData,
-        { headers: { "Content-Type": "multipart/form-data" } }
-      );
-
-      toast.success("অ্যাকাউন্ট সফলভাবে তৈরি হয়েছে! এখন লগইন করুন 🔐", {
-        position: "top-center",
-        autoClose: 3000,
-      });
-      console.log("Registration Success:", res.data);
-      navigate("/login");
-      // localStorage.setItem("user", JSON.stringify(createdUser));
-    } catch (error) {
-      console.error("Registration Error:", error.response?.data || error.message);
-      // Backend field error display
-      if (error.response?.data) {
-        const backendErrors = error.response.data;
-        const firstError = Object.keys(backendErrors)[0];
-        setErrorMsg(`${firstError}: ${backendErrors[firstError][0]}`);
-      } else {
-        setErrorMsg("Registration failed");
-      }
-    } finally {
-      setLoading(false);
+    if (role === "seller") {
+      formData.append("businessName", data.businessName || "");
+      formData.append("nidNumber", data.nidNumber || "");
+      formData.append("bankAccount", data.bankAccount || "");
     }
-  };
+
+    if (data.photo && data.photo[0]) {
+      formData.append("photo", data.photo[0]);
+    }
+
+    const res = await axios.post(
+      "https://local-market-backend.onrender.com/api/users/register/",
+      formData
+      // ❌ NO headers here
+    );
+
+    toast.success("অ্যাকাউন্ট সফলভাবে তৈরি হয়েছে!");
+    navigate("/login");
+
+  } catch (error) {
+    if (error.response?.data) {
+      const backendErrors = error.response.data;
+      const firstError = Object.keys(backendErrors)[0];
+      setErrorMsg(`${firstError}: ${backendErrors[firstError][0]}`);
+    } else {
+      setErrorMsg("Registration failed");
+    }
+  } finally {
+    setLoading(false);
+  }
+};
 
   const roleDescription = {
     buyer: "ক্রেতা হিসেবে রেজিস্ট্রেশন করে স্থানীয় বিক্রেতাদের কাছ থেকে পণ্য কিনুন।",
