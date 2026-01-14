@@ -36,9 +36,12 @@ const Navbar = ({ searchTerm, setSearchTerm, onOfferAdded }) => {
     return photo;
   }
 
-  // ✅ Local backend image (fallback)
+  // ✅ Local backend image (only if FileField)
   return `${BASE_URL}${photo}`;
 };
+console.log(user?.photo);
+
+
 
 
   // 🔹 Close dropdown on outside click
@@ -147,7 +150,7 @@ const Navbar = ({ searchTerm, setSearchTerm, onOfferAdded }) => {
                 <div className="absolute right-0 mt-3 w-56 bg-white rounded-lg shadow border">
 
                   {/* 🔹 DROPDOWN HEADER (IMAGE FIXED) */}
-                  <div className="px-4 py-3 border-b flex items-center gap-3">
+                  {/* <div className="px-4 py-3 border-b flex items-center gap-3">
                     {user?.photo ? (
                       <img
                         src={`${BASE_URL}${user.photo}`}
@@ -162,7 +165,19 @@ const Navbar = ({ searchTerm, setSearchTerm, onOfferAdded }) => {
                       <p className="text-sm font-semibold">আমার অ্যাকাউন্ট</p>
                       <p className="text-xs text-green-600 font-bold">{role}</p>
                     </div>
-                  </div>
+                  </div> */}
+                  <div className="px-4 py-3 border-b flex items-center gap-3">
+  <img
+    src={getImageUrl(user?.photo)}
+    alt="Profile"
+    className="w-10 h-10 rounded-full object-cover border"
+  />
+
+  <div>
+    <p className="text-sm font-semibold">আমার অ্যাকাউন্ট</p>
+    <p className="text-xs text-green-600 font-bold">{role}</p>
+  </div>
+</div>
 
                   {/* LINKS */}
                   <Link to="/profile?tab=personal" className="block px-4 py-2 hover:bg-gray-100">
