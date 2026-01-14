@@ -25,21 +25,12 @@ const Navbar = ({ searchTerm, setSearchTerm, onOfferAdded }) => {
 
   const storedUser = JSON.parse(localStorage.getItem("user"));
   const role = user?.role || storedUser?.role || "No role";
-
-  const getImageUrl = (photo) => {
-  if (!photo) {
-    return "https://i.ibb.co/2ypYw9Y/default-avatar.png";
-  }
-
-  // ✅ Cloudinary / external image
-  if (photo.startsWith("http")) {
-    return photo;
-  }
-
-  // ✅ Local backend image (only if FileField)
-  return `${BASE_URL}${photo}`;
+const getImageUrl = (photo) => {
+  return photo || "https://i.ibb.co/2ypYw9Y/default-avatar.png";
 };
-console.log(user?.photo);
+console.log("PHOTO:", user?.photo);
+console.log("IMG URL:", getImageUrl(user?.photo));
+
 
 
 
