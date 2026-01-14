@@ -95,8 +95,7 @@ const AddProductModal = ({ onClose, onAdd }) => {
     formData.append("stock", Number(data.stock));
     formData.append("discount", Number(data.discount || 0));
 
-    // ✔ for many=True serializer
-    formData.append("category_ids[]", data.category);
+    formData.append("category_ids", data.category);
 
     if (data.image?.[0]) formData.append("image", data.image[0]);
     if (data.image2?.[0]) formData.append("image2", data.image2[0]);
