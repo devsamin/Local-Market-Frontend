@@ -25,6 +25,9 @@ const AddProductModal = ({ onClose, onAdd }) => {
   const [categories, setCategories] = useState([]);
   const [imagePreview, setImagePreview] = useState(null);
 
+  const [loading, setLoading] = useState(false);
+
+
   // Fetch categories
   useEffect(() => {
     const fetchCategories = async () => {
@@ -85,7 +88,9 @@ const AddProductModal = ({ onClose, onAdd }) => {
   // };
 
   const onSubmit = async (data) => {
+    if (loading) return
   try {
+    setLoading(true); 
     const token = localStorage.getItem("access");
     const formData = new FormData();
 
@@ -118,6 +123,9 @@ const AddProductModal = ({ onClose, onAdd }) => {
   } catch (error) {
     console.error("❌ Product Add Error:", error.response?.data || error);
     toast.error("❌ পণ্য যোগ করতে সমস্যা হয়েছে!");
+  }
+  finally {
+    setLoading(false); 
   }
 };
 
@@ -300,11 +308,17 @@ const AddProductModal = ({ onClose, onAdd }) => {
               বাতিল
             </button>
             <button
-              type="submit"
-              className="flex-1 bg-gray-900 text-white py-2 rounded-md hover:bg-gray-800 transition-all text-sm font-medium"
-            >
-              পণ্য যোগ করুন
-            </button>
+  type="submit"
+  disabled={loading}
+  className={`flex-1 py-2 rounded-md transition-all text-sm font-medium
+    ${
+      loading
+        ? "bg-gray-400 cursor-not-allowed"
+        : "bg-gray-900 text-white hover:bg-gray-800"
+    }`}
+>
+  {loading ? "যোগ করা হচ্ছে..." : "পণ্য যোগ করুন"}
+</button>
           </div>
         </form>
       </motion.div>
