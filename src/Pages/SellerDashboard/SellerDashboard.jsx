@@ -42,7 +42,7 @@ const SellerDashboard = () => {
   const fetchProducts = async () => {
   try {
     const res = await axios.get(
-      "http://127.0.0.1:8000/api/products/",
+      "https://local-market-backend.onrender.com/api/products/",
       { headers: { Authorization: `Bearer ${token}` } }
     );
 
@@ -118,18 +118,16 @@ const fetchRatings = async () => {
       <div className="flex items-center gap-4 mb-6 bg-white rounded-xl shadow p-5">
         <div className="relative rounded-full h-20 w-20 overflow-hidden">
           <img
-            src={
-              user?.photo
-                ? `https://local-market-backend.onrender.com${user.photo}`
-                : "https://i.ibb.co/2ypYw9Y/default-avatar.png"
-            }
-            alt="Seller"
-            className="w-full h-full object-cover"
-          />
+      src={user?.photo || "https://i.ibb.co/2ypYw9Y/default-avatar.png"}
+      alt="Seller"
+      className="w-full h-full object-cover"
+    />
          </div>
 
         <div className="flex-1">
-          <h1 className="text-lg font-semibold text-gray-800">আহমেদ আলী</h1>
+         <h1 className="text-lg font-semibold text-gray-800">
+      { user?.username || "বিক্রেতা"}
+    </h1>
           <p className="text-sm text-gray-500">বিক্রেতা ড্যাশবোর্ড</p>
 
           <div className="flex items-center gap-6 mt-2">
