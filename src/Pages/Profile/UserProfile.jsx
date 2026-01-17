@@ -189,7 +189,7 @@ const handleChangePassword = async () => {
       });
 
       setProfile(res.data);
-      setPhotoPreview(res.data.photo ? `${BASE_URL}${res.data.photo}` : null);
+      setPhotoPreview(res.data.photo || null);
       updateUser(res.data);
       setEditing(false);
       toast.success("প্রোফাইল সফলভাবে আপডেট হয়েছে!");
