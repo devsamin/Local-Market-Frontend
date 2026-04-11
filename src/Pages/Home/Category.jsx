@@ -1,5 +1,3 @@
-
-
 // // const Category = ({ categories, selectedCategory, setSelectedCategory }) => {
 // //   return (
 // //     <div className="w-full bg-base-100 border-t border-gray-200 py-3 shadow-sm mt-3">
@@ -7,14 +5,14 @@
 // //         {categories.map((cat, index) => (
 // //           <button
 // //             key={index}
-// //             onClick={() => setSelectedCategory(cat.name)} // Handel Click 
+// //             onClick={() => setSelectedCategory(cat.name)} // Handel Click
 // //             className={`flex items-center gap-2 whitespace-nowrap border px-4 py-2 rounded-full font-semibold text-gray-700 hover:bg-[#47474411] hover:text-black transition-all duration-300 ${
 // //               selectedCategory === cat.name
-              
+
 // //                 ? "bg-black text-white"
 // //                 : "bg-white"
 // //             }`}
-            
+
 // //           >
 // //             <span className="text-lg">{cat.icon}</span>
 // //             <span>{cat.name}</span>
@@ -26,8 +24,6 @@
 // // };
 
 // // export default Category;
-
-
 
 // import React from "react";
 
@@ -53,13 +49,11 @@
 
 // export default Category;
 
-
-
 import React from "react";
 
 const Category = ({ categories, selectedCategory, setSelectedCategory }) => {
   return (
-    <div className="w-full bg-base-100 border-t border-gray-200 py-3 shadow-sm mt-3">
+    <div className="w-full bg-white border-t border-gray-200 py-3 shadow-sm mt-3">
       <div
         className="flex items-center gap-3 px-4 md:px-10
                    overflow-x-auto no-scrollbar
@@ -71,9 +65,7 @@ const Category = ({ categories, selectedCategory, setSelectedCategory }) => {
             key={cat.id}
             onClick={() => setSelectedCategory(cat.name)}
             className={`flex items-center gap-2 whitespace-nowrap border px-4 py-2 rounded-full font-semibold text-gray-700 hover:bg-[#47474411] hover:text-black transition-all duration-300 ${
-              selectedCategory === cat.name
-                ? "bg-black text-white"
-                : "bg-white"
+              selectedCategory === cat.name ? "bg-black text-white" : "bg-white"
             }`}
           >
             <span>{cat.name}</span>
