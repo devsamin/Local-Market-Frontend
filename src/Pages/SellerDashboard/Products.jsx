@@ -1,10 +1,8 @@
-
-
 import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { FiEye, FiEdit2, FiTrash2 } from "react-icons/fi";
 import AddProductModal from "./AddProductModal/AddProductModal";
-import EditProductModal from "./EditProductModal/EditProductModal"; 
+import EditProductModal from "./EditProductModal/EditProductModal";
 import ProductDetailsModal from "../ProductDetailsModal/ProductDetailsModal";
 import { AuthContext } from "../../contexts/AuthContext/AuthProvider";
 import { toast } from "react-toastify";
@@ -20,7 +18,7 @@ const Products = () => {
   const sellerId = user?.id || localStorage.getItem("id");
   const [selectedProduct, setSelectedProduct] = useState(null);
 
-// console.log("Seller ID:", sellerId);
+  // console.log("Seller ID:", sellerId);
 
   // ✅ Fetch seller’s products
   const fetchProducts = async () => {
@@ -28,12 +26,15 @@ const Products = () => {
       setLoading(true);
       console.log("Fetching products for seller_id:", sellerId);
       const res = await axios.get(
-        `https://local-market-backend.onrender.com/api/products/?seller_id=${sellerId}`,
-        { headers: { Authorization: `Bearer ${token}` } }
+        `https://local-mart-11yd.onrender.com/api/products/?seller_id=${sellerId}`,
+        { headers: { Authorization: `Bearer ${token}` } },
       );
       setProducts(res.data);
     } catch (error) {
-      console.error("❌ Error fetching products:", error.response?.data || error);
+      console.error(
+        "❌ Error fetching products:",
+        error.response?.data || error,
+      );
     } finally {
       setLoading(false);
     }
@@ -52,25 +53,28 @@ const Products = () => {
   const handleDelete = async (id) => {
     if (!window.confirm("আপনি কি সত্যিই এই পণ্যটি মুছে ফেলতে চান?")) return;
     try {
-      await axios.delete(`https://local-market-backend.onrender.com/api/products/${id}/`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await axios.delete(
+        `https://local-mart-11yd.onrender.com/api/products/${id}/`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
       setProducts((prev) => prev.filter((p) => p.id !== id));
       toast.success("পণ্যটি সফলভাবে মুছে ফেলা হয়েছে!", {
-      position: "top-right",
-    });
+        position: "top-right",
+      });
     } catch (error) {
       console.error("❌ Delete Error:", error.response?.data || error);
       toast.error("পণ্যটি মুছতে সমস্যা হয়েছে!", {
-      position: "top-right",
-    });
+        position: "top-right",
+      });
     }
   };
 
   // ✅ Save Edited Product
   const handleProductUpdate = (updatedProduct) => {
     setProducts((prev) =>
-      prev.map((p) => (p.id === updatedProduct.id ? updatedProduct : p))
+      prev.map((p) => (p.id === updatedProduct.id ? updatedProduct : p)),
     );
     setEditProduct(null); // close modal
   };
@@ -81,7 +85,9 @@ const Products = () => {
     <div className="p-4">
       {/* === Header === */}
       <div className="flex justify-between items-center mb-6">
-        <h3 className="text-lg font-semibold text-gray-800">পণ্য ব্যবস্থাপনা</h3>
+        <h3 className="text-lg font-semibold text-gray-800">
+          পণ্য ব্যবস্থাপনা
+        </h3>
         <button
           onClick={() => setShowAddModal(true)}
           className="inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium bg-gray-900 text-white hover:bg-gray-700 h-9 px-4 py-2"
@@ -144,11 +150,11 @@ const Products = () => {
 
                 <div className="flex gap-1">
                   <button
-  onClick={() => setSelectedProduct(product)}
-  className="flex-1 flex items-center justify-center gap-1 text-[12px] border rounded px-2 py-1 hover:bg-gray-100"
->
-  <FiEye className="w-3 h-3" /> দেখুন
-</button>
+                    onClick={() => setSelectedProduct(product)}
+                    className="flex-1 flex items-center justify-center gap-1 text-[12px] border rounded px-2 py-1 hover:bg-gray-100"
+                  >
+                    <FiEye className="w-3 h-3" /> দেখুন
+                  </button>
 
                   <button
                     onClick={() => setEditProduct(product)} // 👈 open edit modal
@@ -187,16 +193,14 @@ const Products = () => {
       )}
       {/* === View Product Modal === */}
       {selectedProduct && (
-  <ProductDetailsModal
-    product={selectedProduct}
-    onClose={() => setSelectedProduct(null)}
-    // addToCart={(p) => console.log("Add to Cart:", p)} // চাইলে আপনার cart function দিন
-  />
-)}
-
+        <ProductDetailsModal
+          product={selectedProduct}
+          onClose={() => setSelectedProduct(null)}
+          // addToCart={(p) => console.log("Add to Cart:", p)} // চাইলে আপনার cart function দিন
+        />
+      )}
     </div>
   );
 };
 
 export default Products;
-

@@ -97,8 +97,6 @@
 
 // export default Analytics;
 
-
-
 import React, { useEffect, useState, useContext } from "react";
 import { Star } from "lucide-react";
 import axios from "axios";
@@ -112,29 +110,39 @@ const Analytics = () => {
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
-    if(sellerId) fetchProducts();
+    if (sellerId) fetchProducts();
   }, [sellerId]);
 
   const fetchProducts = async () => {
     try {
-      const res = await axios.get("https://local-market-backend.onrender.com/api/products/", {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      const sellerProducts = res.data.filter(p=>p.seller===sellerId);
+      const res = await axios.get(
+        "https://local-mart-11yd.onrender.com/api/products/",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
+      const sellerProducts = res.data.filter((p) => p.seller === sellerId);
       setProducts(sellerProducts);
-    } catch(err) {
+    } catch (err) {
       console.log("Analytics API Error:", err);
     }
-  }
+  };
 
   return (
     <div className="p-6 space-y-6">
       <div className="bg-white rounded-xl border shadow-sm p-5">
         <h3 className="text-lg font-semibold mb-4">জনপ্রিয় পণ্য</h3>
-        {products.map((p,i)=>(
-          <div key={i} className="flex items-center justify-between border-b pb-3 last:border-none">
+        {products.map((p, i) => (
+          <div
+            key={i}
+            className="flex items-center justify-between border-b pb-3 last:border-none"
+          >
             <div className="flex items-center gap-3">
-              <img src={p.image || "https://via.placeholder.com/50"} alt={p.name} className="w-12 h-12 rounded-lg"/>
+              <img
+                src={p.image || "https://via.placeholder.com/50"}
+                alt={p.name}
+                className="w-12 h-12 rounded-lg"
+              />
               <div>
                 <h4 className="text-sm font-medium">{p.name}</h4>
                 <p className="text-xs text-gray-500">৳{p.price}</p>
@@ -148,7 +156,7 @@ const Analytics = () => {
         ))}
       </div>
     </div>
-  )
-}
+  );
+};
 
 export default Analytics;

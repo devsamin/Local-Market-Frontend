@@ -3,14 +3,14 @@ import { FiX, FiUser, FiArrowLeft, FiCheckCircle } from "react-icons/fi";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import  { useContext } from "react";
+import { useContext } from "react";
 import { CartContext } from "../../contexts/CartContext/CartContext";
 import { Helmet } from "react-helmet-async";
 const OrderConfirmModal = ({ isOpen, onClose }) => {
   const [step, setStep] = useState(1);
   const [deliveryType, setDeliveryType] = useState("home");
-   const navigate = useNavigate(); // ✅ Navigate hook
-   const { clearCart } = useContext(CartContext);
+  const navigate = useNavigate(); // ✅ Navigate hook
+  const { clearCart } = useContext(CartContext);
 
   if (!isOpen) return null;
 
@@ -25,31 +25,30 @@ const OrderConfirmModal = ({ isOpen, onClose }) => {
   //   }, 2500);
   // };
   const handleConfirm = async () => {
-  const token = localStorage.getItem("access");
+    const token = localStorage.getItem("access");
 
-  try {
-    const res = await axios.post(
-      "https://local-market-backend.onrender.com/api/orders/orders/checkout/",
-      {},
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
-    );
-    toast.success("Order placed successfully! 🎉");
-    console.log("Order Created:", res.data);
-    clearCart(); // ✅ Clear cart after order
+    try {
+      const res = await axios.post(
+        "https://local-mart-11yd.onrender.com/api/orders/orders/checkout/",
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
+      toast.success("Order placed successfully! 🎉");
+      console.log("Order Created:", res.data);
+      clearCart(); // ✅ Clear cart after order
 
-    setStep(4);
-    setTimeout(() => {
-      onClose();
-      setStep(1);
-      navigate("/profile?tab=orders"); // ✅ Redirect to orders tab
-    }, 2000);
-  } catch (e) {
-    toast.error("Order failed. Try again! ",e);
-  }
-};
-
+      setStep(4);
+      setTimeout(() => {
+        onClose();
+        setStep(1);
+        navigate("/profile?tab=orders"); // ✅ Redirect to orders tab
+      }, 2000);
+    } catch (e) {
+      toast.error("Order failed. Try again! ", e);
+    }
+  };
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 overflow-auto">
@@ -81,10 +80,10 @@ const OrderConfirmModal = ({ isOpen, onClose }) => {
                   step === 1
                     ? "0%"
                     : step === 2
-                    ? "50%"
-                    : step === 3
-                    ? "100%"
-                    : "100%",
+                      ? "50%"
+                      : step === 3
+                        ? "100%"
+                        : "100%",
               }}
             ></div>
           </div>
@@ -101,8 +100,8 @@ const OrderConfirmModal = ({ isOpen, onClose }) => {
                     isCompleted
                       ? "text-green-600"
                       : isActive
-                      ? "text-blue-600"
-                      : "text-gray-400"
+                        ? "text-blue-600"
+                        : "text-gray-400"
                   }`}
                 >
                   <div
@@ -110,8 +109,8 @@ const OrderConfirmModal = ({ isOpen, onClose }) => {
                       isCompleted
                         ? "border-green-500 bg-green-500 text-white"
                         : isActive
-                        ? "border-blue-600 bg-blue-100"
-                        : "border-gray-300 bg-white"
+                          ? "border-blue-600 bg-blue-100"
+                          : "border-gray-300 bg-white"
                     }`}
                   >
                     {isCompleted ? <FiCheckCircle /> : index + 1}
@@ -211,7 +210,9 @@ const OrderConfirmModal = ({ isOpen, onClose }) => {
         {/* Step 2 */}
         {step === 2 && (
           <div>
-            <h3 className="font-semibold text-gray-700 mb-3">💳 পেমেন্ট অপশন</h3>
+            <h3 className="font-semibold text-gray-700 mb-3">
+              💳 পেমেন্ট অপশন
+            </h3>
             <div className="space-y-3">
               {["বিকাশ", "নগদ", "ক্যাশ অন ডেলিভারি"].map((method) => (
                 <label
@@ -244,7 +245,9 @@ const OrderConfirmModal = ({ isOpen, onClose }) => {
         {/* Step 3 */}
         {step === 3 && (
           <div>
-            <h3 className="font-semibold text-gray-700 mb-3">✅ অর্ডার নিশ্চিতকরণ</h3>
+            <h3 className="font-semibold text-gray-700 mb-3">
+              ✅ অর্ডার নিশ্চিতকরণ
+            </h3>
             <ul className="text-sm text-gray-600 mb-5 space-y-2">
               <li>📦 পণ্য সংখ্যা: ২ টি</li>
               <li>💰 মোট মূল্য: ৳৪৫,৮৬০</li>
@@ -281,7 +284,8 @@ const OrderConfirmModal = ({ isOpen, onClose }) => {
               অর্ডার সফলভাবে সম্পন্ন হয়েছে 🎉
             </h3>
             <p className="text-gray-500">
-              আপনার অর্ডারটি সফলভাবে সাবমিট হয়েছে। আমাদের টিম শীঘ্রই যোগাযোগ করবে।
+              আপনার অর্ডারটি সফলভাবে সাবমিট হয়েছে। আমাদের টিম শীঘ্রই যোগাযোগ
+              করবে।
             </p>
           </div>
         )}

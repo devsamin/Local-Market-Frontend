@@ -218,7 +218,6 @@
 
 // export default EditProductModal;
 
-
 import React, { useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -279,14 +278,14 @@ const EditProductModal = ({ product, onClose, onUpdate }) => {
       if (newImage3) formData.append("image3", newImage3);
 
       const res = await axios.patch(
-        `https://local-market-backend.onrender.com/api/products/${product.id}/`,
+        `https://local-mart-11yd.onrender.com/api/products/${product.id}/`,
         formData,
         {
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "multipart/form-data",
           },
-        }
+        },
       );
 
       onUpdate(res.data);

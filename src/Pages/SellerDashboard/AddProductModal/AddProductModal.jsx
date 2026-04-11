@@ -1,6 +1,3 @@
-
-
-
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { motion } from "framer-motion";
@@ -8,10 +5,6 @@ import { FiX } from "react-icons/fi";
 import axios from "axios";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
-
-
-
 
 const AddProductModal = ({ onClose, onAdd }) => {
   const {
@@ -27,12 +20,13 @@ const AddProductModal = ({ onClose, onAdd }) => {
 
   const [loading, setLoading] = useState(false);
 
-
   // Fetch categories
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const res = await axios.get("https://local-market-backend.onrender.com/api/category/");
+        const res = await axios.get(
+          "https://local-mart-11yd.onrender.com/api/category/",
+        );
         setCategories(res.data);
       } catch (error) {
         console.error("Error fetching categories:", error);
@@ -62,14 +56,13 @@ const AddProductModal = ({ onClose, onAdd }) => {
   //     formData.append("stock", data.stock || 0);
   //     formData.append("discount", data.discount || 0);
 
-
   //     formData.append("category_ids", data.category);
 
   //     if (data.image && data.image[0]) formData.append("image", data.image[0]);
   //     if (data.image2 && data.image2[0]) formData.append("image2", data.image2[0]);
   //     if (data.image3 && data.image3[0]) formData.append("image3", data.image3[0]);
 
-  //     const res = await axios.post("https://local-market-backend.onrender.com/api/products/", formData, {
+  //     const res = await axios.post("https://local-mart-11yd.onrender.com/api/products/", formData, {
   //       headers: {
   //         Authorization: `Bearer ${token}`,
   //         "Content-Type": "multipart/form-data",
@@ -88,47 +81,45 @@ const AddProductModal = ({ onClose, onAdd }) => {
   // };
 
   const onSubmit = async (data) => {
-    if (loading) return
-  try {
-    setLoading(true); 
-    const token = localStorage.getItem("access");
-    const formData = new FormData();
+    if (loading) return;
+    try {
+      setLoading(true);
+      const token = localStorage.getItem("access");
+      const formData = new FormData();
 
-    formData.append("name", data.name);
-    formData.append("description", data.description);
-    formData.append("price", Number(data.price));
-    formData.append("stock", Number(data.stock));
-    formData.append("discount", Number(data.discount || 0));
+      formData.append("name", data.name);
+      formData.append("description", data.description);
+      formData.append("price", Number(data.price));
+      formData.append("stock", Number(data.stock));
+      formData.append("discount", Number(data.discount || 0));
 
-    formData.append("category_ids", data.category);
+      formData.append("category_ids", data.category);
 
-    if (data.image?.[0]) formData.append("image", data.image[0]);
-    if (data.image2?.[0]) formData.append("image2", data.image2[0]);
-    if (data.image3?.[0]) formData.append("image3", data.image3[0]);
+      if (data.image?.[0]) formData.append("image", data.image[0]);
+      if (data.image2?.[0]) formData.append("image2", data.image2[0]);
+      if (data.image3?.[0]) formData.append("image3", data.image3[0]);
 
-    const res = await axios.post(
-      "https://local-market-backend.onrender.com/api/products/",
-      formData,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
+      const res = await axios.post(
+        "https://local-mart-11yd.onrender.com/api/products/",
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         },
-      }
-    );
+      );
 
-    onAdd(res.data);
-    toast.success("পণ্য সফলভাবে যোগ হয়েছে!");
-    reset();
-    onClose();
-  } catch (error) {
-    console.error("❌ Product Add Error:", error.response?.data || error);
-    toast.error("❌ পণ্য যোগ করতে সমস্যা হয়েছে!");
-  }
-  finally {
-    setLoading(false); 
-  }
-};
-
+      onAdd(res.data);
+      toast.success("পণ্য সফলভাবে যোগ হয়েছে!");
+      reset();
+      onClose();
+    } catch (error) {
+      console.error("❌ Product Add Error:", error.response?.data || error);
+      toast.error("❌ পণ্য যোগ করতে সমস্যা হয়েছে!");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
@@ -150,7 +141,8 @@ const AddProductModal = ({ onClose, onAdd }) => {
         <div className="text-center mb-6">
           <h2 className="text-lg font-semibold">নতুন পণ্য যোগ করুন</h2>
           <p className="text-sm text-gray-500">
-            আপনার পণ্যের বিস্তারিত তথ্য দিন। অ্যাডমিন অনুমোদনের পর পণ্যটি প্রদর্শিত হবে।
+            আপনার পণ্যের বিস্তারিত তথ্য দিন। অ্যাডমিন অনুমোদনের পর পণ্যটি
+            প্রদর্শিত হবে।
           </p>
         </div>
 
@@ -167,7 +159,9 @@ const AddProductModal = ({ onClose, onAdd }) => {
               placeholder="পণ্যের নাম লিখুন"
               className="w-full border rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-gray-800 outline-none"
             />
-            {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name.message}</p>}
+            {errors.name && (
+              <p className="text-red-500 text-xs mt-1">{errors.name.message}</p>
+            )}
           </div>
 
           {/* Description */}
@@ -181,7 +175,9 @@ const AddProductModal = ({ onClose, onAdd }) => {
               className="w-full border rounded-md px-3 py-2 text-sm min-h-[80px] focus:ring-2 focus:ring-gray-800 outline-none"
             />
             {errors.description && (
-              <p className="text-red-500 text-xs mt-1">{errors.description.message}</p>
+              <p className="text-red-500 text-xs mt-1">
+                {errors.description.message}
+              </p>
             )}
           </div>
 
@@ -202,7 +198,9 @@ const AddProductModal = ({ onClose, onAdd }) => {
               ))}
             </select>
             {errors.category && (
-              <p className="text-red-500 text-xs mt-1">{errors.category.message}</p>
+              <p className="text-red-500 text-xs mt-1">
+                {errors.category.message}
+              </p>
             )}
           </div>
 
@@ -220,7 +218,11 @@ const AddProductModal = ({ onClose, onAdd }) => {
                 min="0"
                 className="w-full border rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-gray-800 outline-none relative z-10"
               />
-              {errors.price && <p className="text-red-500 text-xs mt-1">{errors.price.message}</p>}
+              {errors.price && (
+                <p className="text-red-500 text-xs mt-1">
+                  {errors.price.message}
+                </p>
+              )}
             </div>
 
             <div>
@@ -235,11 +237,17 @@ const AddProductModal = ({ onClose, onAdd }) => {
                 min="0"
                 className="w-full border rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-gray-800 outline-none relative z-10"
               />
-              {errors.stock && <p className="text-red-500 text-xs mt-1">{errors.stock.message}</p>}
+              {errors.stock && (
+                <p className="text-red-500 text-xs mt-1">
+                  {errors.stock.message}
+                </p>
+              )}
             </div>
 
             <div>
-              <label className="block text-sm text-gray-600 mb-1">ছাড় (%)</label>
+              <label className="block text-sm text-gray-600 mb-1">
+                ছাড় (%)
+              </label>
               <input
                 {...register("discount")}
                 type="text"
@@ -263,7 +271,11 @@ const AddProductModal = ({ onClose, onAdd }) => {
                 className="absolute inset-0 opacity-0 cursor-pointer"
               />
             </label>
-            {errors.image && <p className="text-red-500 text-xs mt-1">{errors.image.message}</p>}
+            {errors.image && (
+              <p className="text-red-500 text-xs mt-1">
+                {errors.image.message}
+              </p>
+            )}
             {watch("image")?.[0] && (
               <img
                 src={URL.createObjectURL(watch("image")[0])}
@@ -276,9 +288,7 @@ const AddProductModal = ({ onClose, onAdd }) => {
           {/* Extra Images */}
           {[1, 2].map((i) => (
             <div className="text-center mt-4" key={i}>
-              <p className="text-sm text-gray-600 mb-1">
-                অতিরিক্ত ছবি {i}
-              </p>
+              <p className="text-sm text-gray-600 mb-1">অতিরিক্ত ছবি {i}</p>
               <label className="relative inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium transition-all border bg-background hover:bg-gray-100 h-9 px-4 py-2 cursor-pointer">
                 ছবি নির্বাচন করুন
                 <input
@@ -308,17 +318,17 @@ const AddProductModal = ({ onClose, onAdd }) => {
               বাতিল
             </button>
             <button
-  type="submit"
-  disabled={loading}
-  className={`flex-1 py-2 rounded-md transition-all text-sm font-medium
+              type="submit"
+              disabled={loading}
+              className={`flex-1 py-2 rounded-md transition-all text-sm font-medium
     ${
       loading
         ? "bg-gray-400 cursor-not-allowed"
         : "bg-gray-900 text-white hover:bg-gray-800"
     }`}
->
-  {loading ? "যোগ করা হচ্ছে..." : "পণ্য যোগ করুন"}
-</button>
+            >
+              {loading ? "যোগ করা হচ্ছে..." : "পণ্য যোগ করুন"}
+            </button>
           </div>
         </form>
       </motion.div>

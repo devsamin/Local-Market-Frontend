@@ -1,14 +1,5 @@
-
-
-
 import React, { useState, useEffect, useContext } from "react";
-import {
-  Package,
-  ShoppingCart,
-  Star,
-  Box,
-  BarChart2,
-} from "lucide-react";
+import { Package, ShoppingCart, Star, Box, BarChart2 } from "lucide-react";
 import { MdTrendingUp } from "react-icons/md";
 
 import Overview from "./Overview";
@@ -23,7 +14,6 @@ const SellerDashboard = () => {
   const sellerId = user?.id || Number(localStorage.getItem("id"));
   const token = localStorage.getItem("access");
   const [activeTab, setActiveTab] = useState("overview");
-  
 
   // ==== API states ====
   const [totalProducts, setTotalProducts] = useState(0);
@@ -32,72 +22,71 @@ const SellerDashboard = () => {
 
   // ==== Load API Data ====
   useEffect(() => {
-  if (sellerId) {
-    fetchProducts();
-    fetchOrders();
-    fetchRatings();
-  }
-}, [sellerId]);
+    if (sellerId) {
+      fetchProducts();
+      fetchOrders();
+      fetchRatings();
+    }
+  }, [sellerId]);
 
   // === Products API ===
   const fetchProducts = async () => {
-  try {
-    const res = await axios.get(
-      "https://local-market-backend.onrender.com/api/products/",
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
+    try {
+      const res = await axios.get(
+        "https://local-mart-11yd.onrender.com/api/products/",
+        { headers: { Authorization: `Bearer ${token}` } },
+      );
 
-    // Filter seller-wise
-    const sellerProducts = res.data.filter(
-  (item) => item.seller === Number(sellerId)
-);
+      // Filter seller-wise
+      const sellerProducts = res.data.filter(
+        (item) => item.seller === Number(sellerId),
+      );
 
-    setTotalProducts(sellerProducts.length);
+      setTotalProducts(sellerProducts.length);
 
-    console.log("Filtered Products:", sellerProducts);
-  } catch (error) {
-    console.log("Product API Error:", error);
-  }
-};
-
+      console.log("Filtered Products:", sellerProducts);
+    } catch (error) {
+      console.log("Product API Error:", error);
+    }
+  };
 
   // === Orders API ===
   const fetchOrders = async () => {
-  try {
-    const res = await axios.get(
-      "https://local-market-backend.onrender.com/api/orders/seller-orders/",
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
-    console.log("Seller Orders:", res.data);
-    setTotalOrders(res.data.length); // total count
-  } catch (error) {
-    console.log("Order API Error:", error);
-  }
-};
+    try {
+      const res = await axios.get(
+        "https://local-mart-11yd.onrender.com/api/orders/seller-orders/",
+        { headers: { Authorization: `Bearer ${token}` } },
+      );
+      console.log("Seller Orders:", res.data);
+      setTotalOrders(res.data.length); // total count
+    } catch (error) {
+      console.log("Order API Error:", error);
+    }
+  };
 
   // === Rating API ===
- // === Rating API ===
-const fetchRatings = async () => {
-  try {
-    const res = await axios.get(
-      "https://local-market-backend.onrender.com/api/dashboard/seller-dashboard/",
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
+  // === Rating API ===
+  const fetchRatings = async () => {
+    try {
+      const res = await axios.get(
+        "https://local-mart-11yd.onrender.com/api/dashboard/seller-dashboard/",
+        { headers: { Authorization: `Bearer ${token}` } },
+      );
 
-    console.log("Dashboard Ratings Response:", res.data);
+      console.log("Dashboard Ratings Response:", res.data);
 
-    // Extract reviews and average from the API
-    const sellerReviews = res.data.recent_reviews || [];
-    const averageRating = res.data.average_rating || 0;
+      // Extract reviews and average from the API
+      const sellerReviews = res.data.recent_reviews || [];
+      const averageRating = res.data.average_rating || 0;
 
-    // Set state
-    setAvgRating(averageRating.toFixed(1));
+      // Set state
+      setAvgRating(averageRating.toFixed(1));
 
-    console.log("Seller Reviews:", sellerReviews);
-  } catch (error) {
-    console.log("Review API Error:", error);
-  }
-};
+      console.log("Seller Reviews:", sellerReviews);
+    } catch (error) {
+      console.log("Review API Error:", error);
+    }
+  };
 
   const renderContent = () => {
     switch (activeTab) {
@@ -114,25 +103,24 @@ const fetchRatings = async () => {
 
   return (
     <div className="min-h-screen bg-gray-50 py-6 px-4 md:px-8">
-      
       {/* ==== Seller Info Section ==== */}
       <div className="flex items-center gap-4 mb-6 bg-white rounded-xl shadow p-5">
         <div className="relative rounded-full h-20 w-20 overflow-hidden">
           <img
-  src={
-    user?.photo && user.photo.startsWith("http")
-      ? user.photo
-      : "https://i.ibb.co/2ypYw9Y/default-avatar.png"
-  }
-  alt="Seller"
-  className="w-full h-full object-cover"
-/>
-         </div>
+            src={
+              user?.photo && user.photo.startsWith("http")
+                ? user.photo
+                : "https://i.ibb.co/2ypYw9Y/default-avatar.png"
+            }
+            alt="Seller"
+            className="w-full h-full object-cover"
+          />
+        </div>
 
         <div className="flex-1">
-         <h1 className="text-lg font-semibold text-gray-800">
-      { user?.username || "বিক্রেতা"}
-    </h1>
+          <h1 className="text-lg font-semibold text-gray-800">
+            {user?.username || "বিক্রেতা"}
+          </h1>
           <p className="text-sm text-gray-500">বিক্রেতা ড্যাশবোর্ড</p>
 
           <div className="flex items-center gap-6 mt-2">
@@ -211,7 +199,6 @@ const fetchRatings = async () => {
 };
 
 export default SellerDashboard;
-
 
 // import React, { useState, useEffect, useContext } from "react";
 // import {

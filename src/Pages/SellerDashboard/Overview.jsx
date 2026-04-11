@@ -1,7 +1,3 @@
-
-
-
-
 // import React, { useEffect, useState, useContext } from "react";
 // import { Star } from "lucide-react";
 // import axios from "axios";
@@ -185,7 +181,6 @@
 
 // export default Overview;
 
-
 import React, { useEffect, useState, useContext } from "react";
 import { Star } from "lucide-react";
 import axios from "axios";
@@ -215,10 +210,10 @@ const Overview = () => {
   const fetchOverviewData = async () => {
     try {
       const res = await axios.get(
-        "https://local-market-backend.onrender.com/api/dashboard/seller-dashboard/",
+        "https://local-mart-11yd.onrender.com/api/dashboard/seller-dashboard/",
         {
           headers: { Authorization: `Bearer ${token}` },
-        }
+        },
       );
 
       const data = res.data;
@@ -330,8 +325,8 @@ const Overview = () => {
                   order.status === "delivered"
                     ? "bg-green-100 text-green-700"
                     : order.status === "pending"
-                    ? "bg-yellow-100 text-yellow-700"
-                    : "bg-red-100 text-red-700"
+                      ? "bg-yellow-100 text-yellow-700"
+                      : "bg-red-100 text-red-700"
                 }`}
               >
                 {order.status}
