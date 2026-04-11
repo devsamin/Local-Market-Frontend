@@ -1,8 +1,10 @@
-
-
-// update code 
+// update code
 import { ImHome } from "react-icons/im";
-import { IoLocationOutline, IoSettingsOutline, IoStarOutline } from "react-icons/io5";
+import {
+  IoLocationOutline,
+  IoSettingsOutline,
+  IoStarOutline,
+} from "react-icons/io5";
 import { FiShoppingCart, FiLogOut } from "react-icons/fi";
 import { FaRegUser, FaUserCircle } from "react-icons/fa";
 import { MdOutlineHistory } from "react-icons/md";
@@ -25,15 +27,11 @@ const Navbar = ({ searchTerm, setSearchTerm, onOfferAdded }) => {
 
   const storedUser = JSON.parse(localStorage.getItem("user"));
   const role = user?.role || storedUser?.role || "No role";
-const getImageUrl = (photo) => {
-  return photo || "https://i.ibb.co/2ypYw9Y/default-avatar.png";
-};
-console.log("PHOTO:", user?.photo);
-console.log("IMG URL:", getImageUrl(user?.photo));
-
-
-
-
+  const getImageUrl = (photo) => {
+    return photo || "https://i.ibb.co/2ypYw9Y/default-avatar.png";
+  };
+  console.log("PHOTO:", user?.photo);
+  console.log("IMG URL:", getImageUrl(user?.photo));
 
   // 🔹 Close dropdown on outside click
   useEffect(() => {
@@ -47,20 +45,19 @@ console.log("IMG URL:", getImageUrl(user?.photo));
   }, []);
 
   return (
-    <div className="bg-base-100 shadow-md sticky top-0 z-50">
-
+    // <div className="bg-base-100 shadow-md sticky top-0 z-50">
+    <div className="bg-base-100 text-gray-900 shadow-md sticky top-0 z-50">
       {/* ================= NAVBAR ================= */}
       <div className="flex items-center justify-between px-4 md:px-8 py-3">
-
         {/* LEFT – LOGO */}
         <div className="flex items-center gap-4">
           <Link to="/" className="flex items-center gap-2">
             <ImHome className="text-3xl text-[#222]" />
             <div className="hidden sm:block">
-              <h2 className="font-bold text-xl text-[#111] leading-none">
+              <h2 className="font-bold text-xl text-gray-900 leading-none">
                 LocalMarket
               </h2>
-              <p className="text-xs text-gray-500 -mt-1">
+              <p className="text-xs text-gray-600 -mt-1">
                 স্থানীয় বিক্রেতাদের প্ল্যাটফর্ম
               </p>
             </div>
@@ -96,7 +93,7 @@ console.log("IMG URL:", getImageUrl(user?.photo));
             <input
               type="search"
               placeholder="পণ্য খুঁজুন..."
-              className="grow bg-transparent outline-none"
+              className="grow bg-transparent outline-none text-gray-800"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -105,7 +102,6 @@ console.log("IMG URL:", getImageUrl(user?.photo));
 
         {/* RIGHT ACTIONS */}
         <div className="flex items-center gap-3">
-
           {/* Seller / Cart */}
           {user && role === "seller" ? (
             <Link
@@ -130,16 +126,14 @@ console.log("IMG URL:", getImageUrl(user?.photo));
             <div className="relative" ref={dropdownRef}>
               <button onClick={() => setOpen(!open)}>
                 <img
-  src={getImageUrl(user?.photo)}
-  alt="User"
-  className="w-9 h-9 rounded-full border object-cover"
-/>
-
+                  src={getImageUrl(user?.photo)}
+                  alt="User"
+                  className="w-9 h-9 rounded-full border object-cover"
+                />
               </button>
 
               {open && (
                 <div className="absolute right-0 mt-3 w-56 bg-white rounded-lg shadow border">
-
                   {/* 🔹 DROPDOWN HEADER (IMAGE FIXED) */}
                   {/* <div className="px-4 py-3 border-b flex items-center gap-3">
                     {user?.photo ? (
@@ -158,31 +152,41 @@ console.log("IMG URL:", getImageUrl(user?.photo));
                     </div>
                   </div> */}
                   <div className="px-4 py-3 border-b flex items-center gap-3">
-  <img
-    src={getImageUrl(user?.photo)}
-    alt="Profile"
-    className="w-10 h-10 rounded-full object-cover border"
-  />
+                    <img
+                      src={getImageUrl(user?.photo)}
+                      alt="Profile"
+                      className="w-10 h-10 rounded-full object-cover border"
+                    />
 
-  <div>
-    <p className="text-sm font-semibold">আমার অ্যাকাউন্ট</p>
-    <p className="text-xs text-green-600 font-bold">{role}</p>
-  </div>
-</div>
+                    <div>
+                      <p className="text-sm font-semibold">আমার অ্যাকাউন্ট</p>
+                      <p className="text-xs text-green-600 font-bold">{role}</p>
+                    </div>
+                  </div>
 
                   {/* LINKS */}
-                  <Link to="/profile?tab=personal" className="block px-4 py-2 hover:bg-gray-100">
+                  <Link
+                    to="/profile?tab=personal"
+                    className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
+                  >
                     <FaRegUser className="inline mr-2" /> প্রোফাইল
                   </Link>
 
                   {role === "buyer" ? (
-                    <Link to="/profile?tab=orders" className="block px-4 py-2 hover:bg-gray-100">
+                    <Link
+                      to="/profile?tab=orders"
+                      className="block px-4 py-2 hover:bg-gray-100"
+                    >
                       <MdOutlineHistory className="inline mr-2" /> অর্ডার ইতিহাস
                     </Link>
                   ) : (
                     <>
-                      <Link to="/seller-dashboard" className="block px-4 py-2 hover:bg-gray-100">
-                        <MdOutlineHistory className="inline mr-2" /> বিক্রেতা ড্যাশবোর্ড
+                      <Link
+                        to="/seller-dashboard"
+                        className="block px-4 py-2 hover:bg-gray-100"
+                      >
+                        <MdOutlineHistory className="inline mr-2" /> বিক্রেতা
+                        ড্যাশবোর্ড
                       </Link>
 
                       <button
@@ -194,7 +198,10 @@ console.log("IMG URL:", getImageUrl(user?.photo));
                     </>
                   )}
 
-                  <Link to="/profile?tab=settings" className="block px-4 py-2 hover:bg-gray-100">
+                  <Link
+                    to="/profile?tab=settings"
+                    className="block px-4 py-2 hover:bg-gray-100"
+                  >
                     <IoSettingsOutline className="inline mr-2" /> সেটিংস
                   </Link>
 
@@ -211,10 +218,16 @@ console.log("IMG URL:", getImageUrl(user?.photo));
             </div>
           ) : (
             <div className="flex gap-2">
-              <Link to="/login" className="px-4 py-2 bg-black text-white rounded-full text-sm">
+              <Link
+                to="/login"
+                className="px-4 py-2 bg-black text-white rounded-full text-sm"
+              >
                 লগইন
               </Link>
-              <Link to="/register" className="px-4 py-2 border rounded-full text-sm">
+              <Link
+                to="/register"
+                className="px-4 py-2 border rounded-full text-sm"
+              >
                 রেজিস্টার
               </Link>
             </div>
@@ -244,4 +257,3 @@ console.log("IMG URL:", getImageUrl(user?.photo));
 };
 
 export default Navbar;
-
