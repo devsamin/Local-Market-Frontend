@@ -3,7 +3,15 @@ import { useForm } from "react-hook-form";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import { FaStore } from "react-icons/fa";
-import { FiUser, FiPhone, FiMail, FiLock, FiBriefcase, FiFileText, FiCreditCard } from "react-icons/fi";
+import {
+  FiUser,
+  FiPhone,
+  FiMail,
+  FiLock,
+  FiBriefcase,
+  FiFileText,
+  FiCreditCard,
+} from "react-icons/fi";
 import { AuthContext } from "../../contexts/AuthContext/AuthProvider";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -16,7 +24,7 @@ const RegisterPage = () => {
   const [loading, setLoading] = useState(false);
   const [photoPreview, setPhotoPreview] = useState(null);
   const navigate = useNavigate();
-  const {login} = useContext(AuthContext)
+  const { login } = useContext(AuthContext);
 
   const {
     register,
@@ -84,55 +92,56 @@ const RegisterPage = () => {
   // };
 
   const onSubmit = async (data) => {
-  setErrorMsg("");
-  setLoading(true);
+    setErrorMsg("");
+    setLoading(true);
 
-  try {
-    const formData = new FormData();
+    try {
+      const formData = new FormData();
 
-    formData.append("username", data.fullName);
-    formData.append("email", data.email);
-    formData.append("password", data.password);
-    formData.append("role", role);
-    formData.append("phone", data.phone);
-    formData.append("location", `${data.city}, ${data.area}`);
-    formData.append("address", data.address);
+      formData.append("username", data.fullName);
+      formData.append("email", data.email);
+      formData.append("password", data.password);
+      formData.append("role", role);
+      formData.append("phone", data.phone);
+      formData.append("location", `${data.city}, ${data.area}`);
+      formData.append("address", data.address);
 
-    if (role === "seller") {
-      formData.append("businessName", data.businessName || "");
-      formData.append("nidNumber", data.nidNumber || "");
-      formData.append("bankAccount", data.bankAccount || "");
+      if (role === "seller") {
+        formData.append("businessName", data.businessName || "");
+        formData.append("nidNumber", data.nidNumber || "");
+        formData.append("bankAccount", data.bankAccount || "");
+      }
+
+      if (data.photo && data.photo[0]) {
+        formData.append("photo", data.photo[0]);
+      }
+
+      const res = await axios.post(
+        "https://local-mart-11yd.onrender.com/api/users/register/",
+        formData,
+        // ❌ NO headers here
+      );
+
+      toast.success("অ্যাকাউন্ট সফলভাবে তৈরি হয়েছে!");
+      navigate("/login");
+    } catch (error) {
+      if (error.response?.data) {
+        const backendErrors = error.response.data;
+        const firstError = Object.keys(backendErrors)[0];
+        setErrorMsg(`${firstError}: ${backendErrors[firstError][0]}`);
+      } else {
+        setErrorMsg("Registration failed");
+      }
+    } finally {
+      setLoading(false);
     }
-
-    if (data.photo && data.photo[0]) {
-      formData.append("photo", data.photo[0]);
-    }
-
-    const res = await axios.post(
-      "https://local-market-backend.onrender.com/api/users/register/",
-      formData
-      // ❌ NO headers here
-    );
-
-    toast.success("অ্যাকাউন্ট সফলভাবে তৈরি হয়েছে!");
-    navigate("/login");
-
-  } catch (error) {
-    if (error.response?.data) {
-      const backendErrors = error.response.data;
-      const firstError = Object.keys(backendErrors)[0];
-      setErrorMsg(`${firstError}: ${backendErrors[firstError][0]}`);
-    } else {
-      setErrorMsg("Registration failed");
-    }
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   const roleDescription = {
-    buyer: "ক্রেতা হিসেবে রেজিস্ট্রেশন করে স্থানীয় বিক্রেতাদের কাছ থেকে পণ্য কিনুন।",
-    seller: "বিক্রেতা হিসেবে রেজিস্ট্রেশন করে আপনার দোকানের পণ্য LocalMarket-এ বিক্রি করুন।",
+    buyer:
+      "ক্রেতা হিসেবে রেজিস্ট্রেশন করে স্থানীয় বিক্রেতাদের কাছ থেকে পণ্য কিনুন।",
+    seller:
+      "বিক্রেতা হিসেবে রেজিস্ট্রেশন করে আপনার দোকানের পণ্য LocalMarket-এ বিক্রি করুন।",
     admin: "অ্যাডমিন রেজিস্ট্রেশন শুধুমাত্র অনুমোদিত ব্যক্তিদের জন্য।",
   };
 
@@ -177,13 +186,20 @@ const RegisterPage = () => {
         </div>
 
         {/* Role Info */}
-        <div className="text-center text-gray-600 text-sm mb-6">{roleDescription[role]}</div>
+        <div className="text-center text-gray-600 text-sm mb-6">
+          {roleDescription[role]}
+        </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-2 gap-4">
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="grid grid-cols-2 gap-4"
+        >
           {/* Full Name */}
           <div>
-            <label className="block text-sm font-medium mb-1">পূর্ণ নাম *</label>
+            <label className="block text-sm font-medium mb-1">
+              পূর্ণ নাম *
+            </label>
             <div className="relative">
               <FiUser className="absolute left-3 top-3 text-gray-400" />
               <input
@@ -193,25 +209,34 @@ const RegisterPage = () => {
                 className="input input-bordered w-full pl-10 h-10"
               />
             </div>
-            {errors.fullName && <p className="text-red-600 text-sm">{errors.fullName.message}</p>}
+            {errors.fullName && (
+              <p className="text-red-600 text-sm">{errors.fullName.message}</p>
+            )}
           </div>
 
           {/* Phone */}
           <div>
-            <label className="block text-sm font-medium mb-1">মোবাইল নাম্বার *</label>
+            <label className="block text-sm font-medium mb-1">
+              মোবাইল নাম্বার *
+            </label>
             <div className="relative">
               <FiPhone className="absolute left-3 top-3 text-gray-400" />
               <input
                 {...register("phone", {
                   required: "মোবাইল নাম্বার প্রয়োজন",
-                  pattern: { value: /^01[0-9]{9}$/, message: "সঠিক মোবাইল নাম্বার দিন (01XXXXXXXXX)" },
+                  pattern: {
+                    value: /^01[0-9]{9}$/,
+                    message: "সঠিক মোবাইল নাম্বার দিন (01XXXXXXXXX)",
+                  },
                 })}
                 type="text"
                 placeholder="01XXXXXXXXX"
                 className="input input-bordered w-full pl-10 h-10"
               />
             </div>
-            {errors.phone && <p className="text-red-600 text-sm">{errors.phone.message}</p>}
+            {errors.phone && (
+              <p className="text-red-600 text-sm">{errors.phone.message}</p>
+            )}
           </div>
 
           {/* Email */}
@@ -229,12 +254,16 @@ const RegisterPage = () => {
                 className="input input-bordered w-full pl-10 h-10"
               />
             </div>
-            {errors.email && <p className="text-red-600 text-sm">{errors.email.message}</p>}
+            {errors.email && (
+              <p className="text-red-600 text-sm">{errors.email.message}</p>
+            )}
           </div>
 
           {/* Password */}
           <div>
-            <label className="block text-sm font-medium mb-1">পাসওয়ার্ড *</label>
+            <label className="block text-sm font-medium mb-1">
+              পাসওয়ার্ড *
+            </label>
             <div className="relative">
               <FiLock className="absolute left-3 top-3 text-gray-400" />
               <input
@@ -247,30 +276,41 @@ const RegisterPage = () => {
                 className="input input-bordered w-full pl-10 h-10"
               />
             </div>
-            {errors.password && <p className="text-red-600 text-sm">{errors.password.message}</p>}
+            {errors.password && (
+              <p className="text-red-600 text-sm">{errors.password.message}</p>
+            )}
           </div>
 
           {/* Confirm Password */}
           <div>
-            <label className="block text-sm font-medium mb-1">পাসওয়ার্ড নিশ্চিত করুন *</label>
+            <label className="block text-sm font-medium mb-1">
+              পাসওয়ার্ড নিশ্চিত করুন *
+            </label>
             <div className="relative">
               <FiLock className="absolute left-3 top-3 text-gray-400" />
               <input
                 {...register("confirmPassword", {
                   required: "পাসওয়ার্ড নিশ্চিত করুন",
-                  validate: (value) => value === password || "পাসওয়ার্ড মেলেনি",
+                  validate: (value) =>
+                    value === password || "পাসওয়ার্ড মেলেনি",
                 })}
                 type="password"
                 placeholder="পুনরায় লিখুন"
                 className="input input-bordered w-full pl-10 h-10"
               />
             </div>
-            {errors.confirmPassword && <p className="text-red-600 text-sm">{errors.confirmPassword.message}</p>}
+            {errors.confirmPassword && (
+              <p className="text-red-600 text-sm">
+                {errors.confirmPassword.message}
+              </p>
+            )}
           </div>
 
           {/* Photo Upload */}
           <div className="col-span-2">
-            <label className="block text-sm font-medium mb-1">প্রোফাইল ছবি</label>
+            <label className="block text-sm font-medium mb-1">
+              প্রোফাইল ছবি
+            </label>
             <input
               type="file"
               {...register("photo")}
@@ -278,31 +318,47 @@ const RegisterPage = () => {
               onChange={handlePhotoChange}
               className="file-input file-input-bordered w-full"
             />
-            {photoPreview && <img src={photoPreview} alt="Preview" className="mt-2 h-20 w-20 object-cover rounded-full" />}
+            {photoPreview && (
+              <img
+                src={photoPreview}
+                alt="Preview"
+                className="mt-2 h-20 w-20 object-cover rounded-full"
+              />
+            )}
           </div>
 
           {/* City & Area */}
           <div>
             <label className="block text-sm font-medium mb-1">শহর/জেলা *</label>
-            <select {...register("city", { required: "শহর নির্বাচন করুন" })} className="select select-bordered w-full h-10">
+            <select
+              {...register("city", { required: "শহর নির্বাচন করুন" })}
+              className="select select-bordered w-full h-10"
+            >
               <option value="">নির্বাচন করুন</option>
               <option>ঢাকা</option>
               <option>চট্টগ্রাম</option>
               <option>রাজশাহী</option>
               <option>সিলেট</option>
             </select>
-            {errors.city && <p className="text-red-600 text-sm">{errors.city.message}</p>}
+            {errors.city && (
+              <p className="text-red-600 text-sm">{errors.city.message}</p>
+            )}
           </div>
 
           <div>
             <label className="block text-sm font-medium mb-1">এরিয়া *</label>
-            <select {...register("area", { required: "এরিয়া নির্বাচন করুন" })} className="select select-bordered w-full h-10">
+            <select
+              {...register("area", { required: "এরিয়া নির্বাচন করুন" })}
+              className="select select-bordered w-full h-10"
+            >
               <option value="">নির্বাচন করুন</option>
               <option>ধানমন্ডি</option>
               <option>গুলশান</option>
               <option>মিরপুর</option>
             </select>
-            {errors.area && <p className="text-red-600 text-sm">{errors.area.message}</p>}
+            {errors.area && (
+              <p className="text-red-600 text-sm">{errors.area.message}</p>
+            )}
           </div>
 
           {/* Address */}
@@ -313,22 +369,30 @@ const RegisterPage = () => {
               placeholder="বিস্তারিত ঠিকানা লিখুন"
               className="textarea textarea-bordered w-full h-20"
             ></textarea>
-            {errors.address && <p className="text-red-600 text-sm">{errors.address.message}</p>}
+            {errors.address && (
+              <p className="text-red-600 text-sm">{errors.address.message}</p>
+            )}
           </div>
 
           {/* Seller Fields */}
           {role === "seller" && (
             <>
               <div className="col-span-2 mt-4 mb-1 border-t pt-3">
-                <h3 className="text-lg font-semibold text-gray-800 mb-2">ব্যবসায়িক তথ্য</h3>
+                <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                  ব্যবসায়িক তথ্য
+                </h3>
               </div>
 
               <div className="col-span-2">
-                <label className="block text-sm font-medium mb-1">দোকান/ব্যবসার নাম *</label>
+                <label className="block text-sm font-medium mb-1">
+                  দোকান/ব্যবসার নাম *
+                </label>
                 <div className="relative">
                   <FiBriefcase className="absolute left-3 top-3 text-gray-400" />
                   <input
-                    {...register("businessName", { required: "ব্যবসার নাম লিখুন" })}
+                    {...register("businessName", {
+                      required: "ব্যবসার নাম লিখুন",
+                    })}
                     type="text"
                     placeholder="দোকান বা ব্যবসার নাম লিখুন"
                     className="input input-bordered w-full pl-10 h-10"
@@ -337,35 +401,51 @@ const RegisterPage = () => {
               </div>
 
               <div>
-  <label className="block text-sm font-medium mb-1">১৭ সংখ্যার NID নম্বর *</label>
-  <div className="relative">
-    <FiFileText className="absolute left-3 top-3 text-gray-400" />
-    <input
-      {...register("nidNumber", {
-        required: "NID নম্বর দিন",
-        pattern: { value: /^[0-9]{17}$/, message: "১৭ সংখ্যার NID দিন" },
-        minLength: { value: 17, message: "NID অবশ্যই ১৭ সংখ্যার হতে হবে" },
-        maxLength: { value: 17, message: "NID অবশ্যই ১৭ সংখ্যার হতে হবে" },
-      })}
-      type="text"
-      inputMode="numeric"
-      maxLength={17}
-      placeholder="NID নম্বর লিখুন"
-      className="input input-bordered w-full pl-10 h-10"
-    />
-  </div>
-  {errors.nidNumber && (
-    <p className="text-red-600 text-sm mt-1">{errors.nidNumber.message}</p>
-  )}
-</div>
-
+                <label className="block text-sm font-medium mb-1">
+                  ১৭ সংখ্যার NID নম্বর *
+                </label>
+                <div className="relative">
+                  <FiFileText className="absolute left-3 top-3 text-gray-400" />
+                  <input
+                    {...register("nidNumber", {
+                      required: "NID নম্বর দিন",
+                      pattern: {
+                        value: /^[0-9]{17}$/,
+                        message: "১৭ সংখ্যার NID দিন",
+                      },
+                      minLength: {
+                        value: 17,
+                        message: "NID অবশ্যই ১৭ সংখ্যার হতে হবে",
+                      },
+                      maxLength: {
+                        value: 17,
+                        message: "NID অবশ্যই ১৭ সংখ্যার হতে হবে",
+                      },
+                    })}
+                    type="text"
+                    inputMode="numeric"
+                    maxLength={17}
+                    placeholder="NID নম্বর লিখুন"
+                    className="input input-bordered w-full pl-10 h-10"
+                  />
+                </div>
+                {errors.nidNumber && (
+                  <p className="text-red-600 text-sm mt-1">
+                    {errors.nidNumber.message}
+                  </p>
+                )}
+              </div>
 
               <div>
-                <label className="block text-sm font-medium mb-1">ব্যাংক অ্যাকাউন্ট নম্বর *</label>
+                <label className="block text-sm font-medium mb-1">
+                  ব্যাংক অ্যাকাউন্ট নম্বর *
+                </label>
                 <div className="relative">
                   <FiCreditCard className="absolute left-3 top-3 text-gray-400" />
                   <input
-                    {...register("bankAccount", { required: "ব্যাংক অ্যাকাউন্ট দিন" })}
+                    {...register("bankAccount", {
+                      required: "ব্যাংক অ্যাকাউন্ট দিন",
+                    })}
                     type="text"
                     placeholder="ব্যাংক অ্যাকাউন্ট লিখুন"
                     className="input input-bordered w-full pl-10 h-10"

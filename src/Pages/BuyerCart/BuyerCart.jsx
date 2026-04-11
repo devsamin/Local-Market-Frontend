@@ -1,11 +1,3 @@
-
-
-
-
-
-
-
-
 import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { FaMinus, FaPlus, FaTrashAlt } from "react-icons/fa";
@@ -36,9 +28,12 @@ const BuyerCart = () => {
   /* ================= LOAD CART ================= */
   const loadCart = async () => {
     try {
-      const res = await axios.get("https://local-market-backend.onrender.com/api/cart/", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await axios.get(
+        "https://local-mart-11yd.onrender.com/api/cart/",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
       setCartItems(res.data.items || []);
     } catch (err) {
       console.error(err);
@@ -60,9 +55,9 @@ const BuyerCart = () => {
     setItemLoading(id);
     try {
       await axios.post(
-        "https://local-market-backend.onrender.com/api/cart/add_item/",
+        "https://local-mart-11yd.onrender.com/api/cart/add_item/",
         { product_id: item.product.id, quantity: 1 },
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { Authorization: `Bearer ${token}` } },
       );
       await loadCart();
     } catch (err) {
@@ -73,27 +68,26 @@ const BuyerCart = () => {
   };
 
   const decreaseQty = async (id) => {
-  const item = cartItems.find((i) => i.id === id);
-  if (!item) return;
+    const item = cartItems.find((i) => i.id === id);
+    if (!item) return;
 
-  setItemLoading(id);
+    setItemLoading(id);
 
-  try {
-    await axios.post(
-      "https://local-market-backend.onrender.com/api/cart/decrease_item/",
-      { product_id: item.product.id },
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
+    try {
+      await axios.post(
+        "https://local-mart-11yd.onrender.com/api/cart/decrease_item/",
+        { product_id: item.product.id },
+        { headers: { Authorization: `Bearer ${token}` } },
+      );
 
-    // ✅ single source of truth
-    await loadCart();
-
-  } catch (err) {
-    toast.error("পরিমাণ কমানো যায়নি");
-  } finally {
-    setItemLoading(null);
-  }
-};
+      // ✅ single source of truth
+      await loadCart();
+    } catch (err) {
+      toast.error("পরিমাণ কমানো যায়নি");
+    } finally {
+      setItemLoading(null);
+    }
+  };
 
   /* ================= DELETE ================= */
   const deleteItem = async (id) => {
@@ -103,9 +97,9 @@ const BuyerCart = () => {
     setItemLoading(id);
     try {
       await axios.post(
-        "https://local-market-backend.onrender.com/api/cart/remove_item/",
+        "https://local-mart-11yd.onrender.com/api/cart/remove_item/",
         { product_id: item.product.id },
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { Authorization: `Bearer ${token}` } },
       );
       setCartItems((prev) => prev.filter((i) => i.id !== id));
       removeFromCart(item.product.id);
@@ -118,41 +112,39 @@ const BuyerCart = () => {
   };
 
   /* ================= PAYMENT ================= */
- const handleCheckout = async () => {
-  setPaymentLoading(true); // 🔹 START loading
-  try {
-    // 1️⃣ Create Order
-    const orderRes = await axios.post(
-      "https://local-market-backend.onrender.com/api/orders/orders/checkout/",
-      {},
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
+  const handleCheckout = async () => {
+    setPaymentLoading(true); // 🔹 START loading
+    try {
+      // 1️⃣ Create Order
+      const orderRes = await axios.post(
+        "https://local-mart-11yd.onrender.com/api/orders/orders/checkout/",
+        {},
+        { headers: { Authorization: `Bearer ${token}` } },
+      );
 
-    const { order_id } = orderRes.data;
+      const { order_id } = orderRes.data;
 
-    // 2️⃣ Create Stripe Session
-    const stripeRes = await axios.post(
-      "https://local-market-backend.onrender.com/api/payment/stripe/checkout/",
-      { order_id },
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
+      // 2️⃣ Create Stripe Session
+      const stripeRes = await axios.post(
+        "https://local-mart-11yd.onrender.com/api/payment/stripe/checkout/",
+        { order_id },
+        { headers: { Authorization: `Bearer ${token}` } },
+      );
 
-    // 3️⃣ Redirect to Stripe
-    window.location.href = stripeRes.data.checkout_url;
-
-  } catch (err) {
-    toast.error("পেমেন্ট শুরু করা যায়নি");
-    console.error(err);
-  } finally {
-    setPaymentLoading(false); // 🔹 STOP loading
-  }
-};
-
+      // 3️⃣ Redirect to Stripe
+      window.location.href = stripeRes.data.checkout_url;
+    } catch (err) {
+      toast.error("পেমেন্ট শুরু করা যায়নি");
+      console.error(err);
+    } finally {
+      setPaymentLoading(false); // 🔹 STOP loading
+    }
+  };
 
   /* ================= TOTALS ================= */
   const subtotal = cartItems.reduce(
     (acc, item) => acc + item.product.discounted_price * item.quantity,
-    0
+    0,
   );
   const delivery = 60;
   const total = subtotal + delivery;
@@ -191,10 +183,13 @@ const BuyerCart = () => {
                 {/* INFO */}
                 <div className="flex gap-4">
                   <img
-  src={item.product.image || "https://i.ibb.co/2ypYw9Y/default-avatar.png"}
-  alt={item.product.name}
-  className="w-24 h-24 object-cover rounded-lg"
-/>
+                    src={
+                      item.product.image ||
+                      "https://i.ibb.co/2ypYw9Y/default-avatar.png"
+                    }
+                    alt={item.product.name}
+                    className="w-24 h-24 object-cover rounded-lg"
+                  />
                   <div>
                     <h3 className="font-semibold">{item.product.name}</h3>
                     <p className="text-sm text-gray-500">
@@ -211,15 +206,15 @@ const BuyerCart = () => {
                       onClick={() => decreaseQty(item.id)}
                       className="px-3 py-1 border rounded cursor-pointer"
                     >
-                      <FaMinus size={12}/>
+                      <FaMinus size={12} />
                     </button>
 
                     <span
-      className="min-w-[40px] text-center text-sm font-medium 
+                      className="min-w-[40px] text-center text-sm font-medium 
                  bg-gray-50 border rounded-md py-1 "
-    >
-      {item.quantity}
-    </span>
+                    >
+                      {item.quantity}
+                    </span>
 
                     <button
                       disabled={itemLoading === item.id}
@@ -234,7 +229,9 @@ const BuyerCart = () => {
                     সাবটোটাল :{" "}
                     <b>
                       ৳
-                      {(item.product.discounted_price * item.quantity).toLocaleString()}
+                      {(
+                        item.product.discounted_price * item.quantity
+                      ).toLocaleString()}
                     </b>
                   </p>
 

@@ -17,7 +17,11 @@ const LoginPage = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false); // ✅ loading state
 
-  const { register, handleSubmit, formState: { errors } } = useForm();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
   const { login } = useContext(AuthContext);
 
   // ✅ Bangla → English mapping for backend
@@ -38,25 +42,34 @@ const LoginPage = () => {
     setLoading(true); // ✅ Start loading
     try {
       // ✅ Send English role to backend
-      const res = await axios.post("https://local-market-backend.onrender.com/api/users/login/", {
-        username: data.username,
-        password: data.password,
-        role: roleMap[role],
-      });
+      const res = await axios.post(
+        "https://local-mart-11yd.onrender.com/api/users/login/",
+        {
+          username: data.username,
+          password: data.password,
+          role: roleMap[role],
+        },
+      );
 
       localStorage.setItem("access", res.data.access);
       localStorage.setItem("refresh", res.data.refresh);
 
-      const profileRes = await axios.get("https://local-market-backend.onrender.com/api/users/profile/", {
-        headers: { Authorization: `Bearer ${res.data.access}` },
-      });
+      const profileRes = await axios.get(
+        "https://local-mart-11yd.onrender.com/api/users/profile/",
+        {
+          headers: { Authorization: `Bearer ${res.data.access}` },
+        },
+      );
 
       login(profileRes.data);
 
-      toast.success(`স্বাগতম, ${profileRes.data.username}! আপনি সফলভাবে লগইন করেছেন।`, {
-        position: "top-center",
-        autoClose: 3000,
-      });
+      toast.success(
+        `স্বাগতম, ${profileRes.data.username}! আপনি সফলভাবে লগইন করেছেন।`,
+        {
+          position: "top-center",
+          autoClose: 3000,
+        },
+      );
 
       navigate("/");
     } catch (error) {
@@ -106,7 +119,6 @@ const LoginPage = () => {
               {r === "ক্রেতা" && <FiUser />}
               {r === "বিক্রেতা" && <FaStore />}
               {r === "অ্যাডমিন" && <FiLock />}
-              
             </button>
           ))}
         </div>
@@ -186,7 +198,10 @@ const LoginPage = () => {
 
         <p className="text-center text-gray-500 text-sm mt-6">
           নতুন অ্যাকাউন্ট তৈরি করুন{" "}
-          <Link to="/register" className="text-black font-medium hover:underline">
+          <Link
+            to="/register"
+            className="text-black font-medium hover:underline"
+          >
             এখানে
           </Link>
         </p>
