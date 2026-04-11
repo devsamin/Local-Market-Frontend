@@ -46,7 +46,7 @@ const Navbar = ({ searchTerm, setSearchTerm, onOfferAdded }) => {
 
   return (
     // <div className="bg-base-100 shadow-md sticky top-0 z-50">
-    <div className="bg-base-100 text-gray-900 shadow-md sticky top-0 z-50">
+    <div className="bg-white text-gray-900 shadow-md sticky top-0 z-50">
       {/* ================= NAVBAR ================= */}
       <div className="flex items-center justify-between px-4 md:px-8 py-3">
         {/* LEFT – LOGO */}
