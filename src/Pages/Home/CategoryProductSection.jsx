@@ -8,8 +8,6 @@ import {
 import { Link } from "react-router-dom";
 import { CartContext } from "../../contexts/CartContext/CartContext";
 import ProductDetailsModal from "../ProductDetailsModal/ProductDetailsModal";
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import Fuse from "fuse.js";
 
 const CategoryProductSection = ({
@@ -81,33 +79,35 @@ const CategoryProductSection = ({
     ));
 
   return (
-    <div className="bg-gray-50 min-h-screen p-3 sm:p-4 text-gray-800">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:justify-between gap-4 mb-6">
+    <div className="bg-gray-100 min-h-screen p-3 sm:p-6 text-gray-800">
+      {/* 🔹 Header */}
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+        {/* Left */}
         <div>
           <h2 className="text-2xl font-bold text-gray-900">{category}</h2>
-          <p className="text-gray-600">
+          <p className="text-gray-600 text-sm mt-1">
             {finalProducts.length} টি পণ্য পাওয়া গেছে
           </p>
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-2">
+        {/* Right */}
+        <div className="flex items-center gap-3 w-full md:w-auto">
           {/* Location */}
-          <div className="relative w-full sm:w-64">
+          <div className="relative w-full md:w-64">
             <FiMapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
             <input
               type="text"
               placeholder="লোকেশন অনুযায়ী খুঁজুন..."
               value={locationTerm}
               onChange={(e) => setLocationTerm(e.target.value)}
-              className="w-full border border-gray-300 rounded-md pl-10 pr-3 py-2 text-sm focus:ring-2 focus:ring-black outline-none"
+              className="w-full border border-gray-300 bg-white rounded-md pl-10 pr-3 py-2 text-sm focus:ring-2 focus:ring-black outline-none"
             />
           </div>
 
           {/* Cart */}
           <Link
             to="/cart"
-            className="relative flex items-center justify-center gap-2 bg-black text-white px-4 py-2 rounded-md hover:bg-gray-900"
+            className="relative flex items-center gap-2 bg-black text-white px-4 py-2 rounded-md hover:bg-gray-900 transition"
           >
             <FiShoppingCart /> কার্ট
             {cartItems.length > 0 && (
@@ -119,7 +119,7 @@ const CategoryProductSection = ({
         </div>
       </div>
 
-      {/* Products */}
+      {/* 🔹 Products */}
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
         {paginatedProducts.length ? (
           paginatedProducts.map((product) => (
@@ -167,6 +167,7 @@ const CategoryProductSection = ({
                       </span>
                     )}
                   </div>
+
                   <div className="flex">
                     {renderStars(product.average_rating || 0)}
                   </div>
@@ -185,7 +186,7 @@ const CategoryProductSection = ({
                 <button
                   disabled={loadingProductId === product.id}
                   onClick={() => addToCart(product)}
-                  className={`w-full mt-2 flex items-center justify-center gap-2 text-sm px-3 py-2 rounded-md
+                  className={`w-full mt-2 flex items-center justify-center gap-2 text-sm px-3 py-2 rounded-md transition
                     ${
                       loadingProductId === product.id
                         ? "bg-gray-400 cursor-not-allowed"
@@ -207,19 +208,20 @@ const CategoryProductSection = ({
         )}
       </div>
 
-      {/* Pagination */}
+      {/* 🔹 Pagination */}
       {totalPages > 1 && (
         <div className="flex justify-center mt-10">
-          <div className="flex gap-2">
+          <div className="flex gap-2 flex-wrap justify-center">
             {[...Array(totalPages)].map((_, i) => (
               <button
                 key={i}
                 onClick={() => setCurrentPage(i + 1)}
-                className={`px-3 py-1 border rounded ${
-                  currentPage === i + 1
-                    ? "bg-black text-white"
-                    : "bg-white text-gray-700"
-                }`}
+                className={`px-3 py-1 border rounded-md text-sm transition
+                  ${
+                    currentPage === i + 1
+                      ? "bg-black text-white border-black"
+                      : "bg-white text-gray-700 hover:bg-gray-100"
+                  }`}
               >
                 {i + 1}
               </button>
@@ -228,7 +230,7 @@ const CategoryProductSection = ({
         </div>
       )}
 
-      {/* Modal */}
+      {/* 🔹 Modal */}
       {selectedProduct && (
         <ProductDetailsModal
           product={selectedProduct}
