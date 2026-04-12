@@ -1,5 +1,3 @@
-
-
 // import React, { useState, useContext, useMemo } from "react";
 // import {
 //   FiShoppingCart,
@@ -171,7 +169,6 @@
 // //   }
 // // };
 
-
 //   // ⭐ Rating stars
 //   const renderStars = (rating) => {
 //     return [...Array(5)].map((_, i) => (
@@ -325,7 +322,6 @@
 //     : "কার্টে যোগ করুন"}
 // </button>
 
-
 //                   ) : (
 //                     // <button
 //                     //   onClick={() =>
@@ -430,7 +426,6 @@
 
 // export default CategoryProductSection;
 
-
 // updated code for responsive
 import React, { useState, useContext, useMemo } from "react";
 import {
@@ -466,7 +461,7 @@ const CategoryProductSection = ({
       : products.filter((p) =>
           Array.isArray(p.categories)
             ? p.categories.some((cat) => cat && cat.name === category)
-            : false
+            : false,
         );
   }, [products, category]);
 
@@ -523,7 +518,7 @@ const CategoryProductSection = ({
   };
 
   return (
-    <div className="relative p-3 sm:p-4">
+    <div className="relative p-3 sm:p-4 bg-white">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
@@ -679,9 +674,7 @@ const CategoryProductSection = ({
         <div className="flex justify-center mt-10 overflow-x-auto no-scrollbar">
           <div className="flex items-center space-x-2 bg-white shadow-md px-2 py-2 rounded-full">
             <button
-              onClick={() =>
-                currentPage > 1 && setCurrentPage(currentPage - 1)
-              }
+              onClick={() => currentPage > 1 && setCurrentPage(currentPage - 1)}
               className={`px-3 py-1 rounded-full text-sm font-medium border ${
                 currentPage === 1
                   ? "text-gray-400 border-gray-300 cursor-not-allowed"

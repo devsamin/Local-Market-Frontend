@@ -78,7 +78,6 @@
 
 // export default SpecialOffers;
 
-
 // import React, { useEffect, useState } from "react";
 // import { FaTag } from "react-icons/fa";
 // import axios from "axios";
@@ -193,11 +192,11 @@
 //               key={offer.id}
 //               className="
 //                 min-w-[33.33%]
-//                 relative 
-//                 rounded-xl 
-//                 overflow-hidden 
-//                 shadow-md 
-//                 hover:shadow-xl 
+//                 relative
+//                 rounded-xl
+//                 overflow-hidden
+//                 shadow-md
+//                 hover:shadow-xl
 //                 transition-all
 //                 duration-300
 //                 group
@@ -236,7 +235,6 @@
 
 // export default SpecialOffers;
 
-
 import { FaTag, FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { useRef, useEffect } from "react";
 
@@ -268,7 +266,6 @@ const SpecialOffers = ({ offers = [] }) => {
 
   return (
     <section className="relative py-10 bg-gradient-to-b from-white to-gray-50">
-
       {/* Header */}
       <div className="flex items-center justify-between px-6 mb-6">
         <div className="flex items-center gap-2">
@@ -280,13 +277,13 @@ const SpecialOffers = ({ offers = [] }) => {
         <div className="flex gap-2">
           <button
             onClick={() => scroll("left")}
-            className="p-2 rounded-full border bg-white shadow hover:bg-gray-100"
+            className="p-2 rounded-full border bg-black shadow hover:bg-gray-700"
           >
             <FaChevronLeft />
           </button>
           <button
             onClick={() => scroll("right")}
-            className="p-2 rounded-full border bg-white shadow hover:bg-gray-100"
+            className="p-2 rounded-full border bg-black shadow hover:bg-gray-700"
           >
             <FaChevronRight />
           </button>
