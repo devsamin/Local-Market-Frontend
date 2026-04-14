@@ -524,6 +524,9 @@ const RegisterPage = () => {
     if (file) setPhotoPreview(URL.createObjectURL(file));
   };
 
+  const inputClass =
+    "w-full h-10 pl-10 pr-3 bg-white border border-gray-300 text-black rounded-md focus:outline-none focus:border-black";
+
   const onSubmit = async (data) => {
     setErrorMsg("");
     setLoading(true);
@@ -540,9 +543,9 @@ const RegisterPage = () => {
       formData.append("address", data.address);
 
       if (role === "seller") {
-        formData.append("businessName", data.businessName);
-        formData.append("nidNumber", data.nidNumber);
-        formData.append("bankAccount", data.bankAccount);
+        formData.append("businessName", data.businessName || "");
+        formData.append("nidNumber", data.nidNumber || "");
+        formData.append("bankAccount", data.bankAccount || "");
       }
 
       if (data.photo && data.photo[0]) {
@@ -569,17 +572,10 @@ const RegisterPage = () => {
     }
   };
 
-  const roleDescription = {
-    buyer:
-      "ক্রেতা হিসেবে রেজিস্ট্রেশন করে স্থানীয় বিক্রেতাদের কাছ থেকে পণ্য কিনুন।",
-    seller: "বিক্রেতা হিসেবে রেজিস্ট্রেশন করে আপনার দোকানের পণ্য বিক্রি করুন।",
-    admin: "অ্যাডমিন রেজিস্ট্রেশন শুধুমাত্র অনুমোদিত ব্যক্তিদের জন্য।",
-  };
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-3 py-6">
       <Helmet>
-        <title>রেজিস্টার | LocalMarket</title>
+        <title>Register | LocalMarket</title>
       </Helmet>
 
       <div className="bg-white shadow-xl rounded-2xl w-full max-w-3xl p-8">
@@ -588,25 +584,24 @@ const RegisterPage = () => {
           <div className="p-4 bg-black text-white rounded-2xl">
             <ImHome size={28} />
           </div>
-          <h2 className="text-xl font-bold text-black">
-            LocalMarket এ যোগ দিন
-          </h2>
-          <p className="text-sm text-gray-600">নতুন অ্যাকাউন্ট তৈরি করুন</p>
+          <h2 className="text-xl font-bold text-black">Create Account</h2>
         </div>
 
-        {/* Role Selector */}
+        {/* ROLE */}
         <div className="flex bg-gray-100 rounded-full mb-3 text-sm font-medium">
           {[
-            { key: "buyer", label: "ক্রেতা", icon: <FiUser /> },
-            { key: "seller", label: "বিক্রেতা", icon: <FaStore /> },
-            { key: "admin", label: "অ্যাডমিন", icon: <FiLock /> },
+            { key: "buyer", label: "Buyer", icon: <FiUser /> },
+            { key: "seller", label: "Seller", icon: <FaStore /> },
+            { key: "admin", label: "Admin", icon: <FiLock /> },
           ].map((tab) => (
             <button
               key={tab.key}
               type="button"
               onClick={() => setRole(tab.key)}
-              className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-full ${
-                role === tab.key ? "bg-black text-white" : "text-gray-700"
+              className={`flex-1 py-2 rounded-full flex items-center justify-center gap-1 ${
+                role === tab.key
+                  ? "bg-black text-white"
+                  : "text-gray-700 hover:bg-gray-200"
               }`}
             >
               {tab.icon}
@@ -615,108 +610,149 @@ const RegisterPage = () => {
           ))}
         </div>
 
-        <div className="text-center text-gray-600 text-sm mb-6">
-          {roleDescription[role]}
-        </div>
-
         {/* FORM */}
         <form
           onSubmit={handleSubmit(onSubmit)}
           className="grid grid-cols-2 gap-4"
         >
-          {/* Full Name */}
+          {/* Name */}
           <div>
-            <input
-              {...register("fullName", { required: "পূর্ণ নাম লিখুন" })}
-              placeholder="পূর্ণ নাম"
-              className="input input-bordered w-full h-10 bg-white text-black border border-gray-300"
-            />
-            {errors.fullName && (
-              <p className="text-red-600 text-sm">{errors.fullName.message}</p>
-            )}
+            <label className="text-sm text-black">Full Name</label>
+            <div className="relative mt-1">
+              <FiUser className="absolute left-3 top-3 text-gray-500" />
+              <input
+                {...register("fullName", { required: true })}
+                className={inputClass}
+              />
+            </div>
           </div>
 
           {/* Phone */}
           <div>
-            <input
-              {...register("phone", {
-                required: "মোবাইল নাম্বার দিন",
-              })}
-              placeholder="01XXXXXXXXX"
-              className="input input-bordered w-full h-10 bg-white text-black border border-gray-300"
-            />
+            <label className="text-sm text-black">Phone</label>
+            <div className="relative mt-1">
+              <FiPhone className="absolute left-3 top-3 text-gray-500" />
+              <input
+                {...register("phone", { required: true })}
+                className={inputClass}
+              />
+            </div>
           </div>
 
           {/* Email */}
           <div className="col-span-2">
-            <input
-              {...register("email", { required: "ইমেইল দিন" })}
-              placeholder="ইমেইল"
-              className="input input-bordered w-full h-10 bg-white text-black border border-gray-300"
-            />
+            <label className="text-sm text-black">Email</label>
+            <div className="relative mt-1">
+              <FiMail className="absolute left-3 top-3 text-gray-500" />
+              <input
+                type="email"
+                {...register("email", { required: true })}
+                className={inputClass}
+              />
+            </div>
           </div>
 
           {/* Password */}
           <div>
-            <input
-              {...register("password", {
-                required: "পাসওয়ার্ড দিন",
-                minLength: {
-                  value: 6,
-                  message: "কমপক্ষে ৬ অক্ষর",
-                },
-              })}
-              type="password"
-              placeholder="পাসওয়ার্ড"
-              className="input input-bordered w-full h-10 bg-white text-black border border-gray-300"
-            />
+            <label className="text-sm text-black">Password</label>
+            <div className="relative mt-1">
+              <FiLock className="absolute left-3 top-3 text-gray-500" />
+              <input
+                type="password"
+                {...register("password", {
+                  required: true,
+                  minLength: 6,
+                })}
+                className={inputClass}
+              />
+            </div>
           </div>
 
-          {/* Confirm Password */}
+          {/* Confirm */}
           <div>
+            <label className="text-sm text-black">Confirm Password</label>
+            <div className="relative mt-1">
+              <FiLock className="absolute left-3 top-3 text-gray-500" />
+              <input
+                type="password"
+                {...register("confirmPassword", {
+                  validate: (value) => value === password,
+                })}
+                className={inputClass}
+              />
+            </div>
+          </div>
+
+          {/* Photo */}
+          <div className="col-span-2">
             <input
-              {...register("confirmPassword", {
-                validate: (value) => value === password || "পাসওয়ার্ড মিলেনি",
-              })}
-              type="password"
-              placeholder="Confirm Password"
-              className="input input-bordered w-full h-10 bg-white text-black border border-gray-300"
+              type="file"
+              {...register("photo")}
+              onChange={handlePhotoChange}
+              className="w-full border border-gray-300 p-2 rounded-md bg-white text-black"
             />
+            {photoPreview && (
+              <img src={photoPreview} className="w-16 h-16 mt-2 rounded-full" />
+            )}
           </div>
 
           {/* Address */}
           <div className="col-span-2">
+            <label className="text-sm text-black">Address</label>
             <textarea
               {...register("address")}
-              placeholder="ঠিকানা"
-              className="textarea textarea-bordered w-full bg-white text-black border border-gray-300"
-            ></textarea>
+              className="w-full border border-gray-300 bg-white text-black p-2 rounded-md mt-1"
+            />
           </div>
 
-          {/* SELLER INFO */}
+          {/* ================= SELLER FIELDS ================= */}
           {role === "seller" && (
             <>
-              <div className="col-span-2 border-t pt-3">
-                <h3 className="font-semibold text-black">ব্যবসায়িক তথ্য</h3>
+              <div className="col-span-2 border-t pt-4">
+                <h3 className="text-black font-semibold">
+                  Business Information
+                </h3>
               </div>
 
-              <input
-                {...register("businessName")}
-                placeholder="Business Name"
-                className="input input-bordered col-span-2 bg-white text-black border border-gray-300"
-              />
+              {/* Business Name */}
+              <div className="col-span-2">
+                <label className="text-sm text-black">Business Name</label>
+                <div className="relative mt-1">
+                  <FiBriefcase className="absolute left-3 top-3 text-gray-500" />
+                  <input
+                    {...register("businessName", { required: true })}
+                    className={inputClass}
+                  />
+                </div>
+              </div>
 
-              <input
-                {...register("nidNumber")}
-                placeholder="NID (17 digits)"
-                className="input input-bordered bg-white text-black border border-gray-300"
-              />
+              {/* NID */}
+              <div>
+                <label className="text-sm text-black">NID</label>
+                <div className="relative mt-1">
+                  <FiFileText className="absolute left-3 top-3 text-gray-500" />
+                  <input
+                    {...register("nidNumber", {
+                      required: true,
+                      pattern: /^[0-9]{17}$/,
+                    })}
+                    maxLength={17}
+                    className={inputClass}
+                  />
+                </div>
+              </div>
 
-              <input
-                {...register("bankAccount")}
-                placeholder="Bank Account"
-                className="input input-bordered bg-white text-black border border-gray-300"
-              />
+              {/* Bank */}
+              <div>
+                <label className="text-sm text-black">Bank Account</label>
+                <div className="relative mt-1">
+                  <FiCreditCard className="absolute left-3 top-3 text-gray-500" />
+                  <input
+                    {...register("bankAccount", { required: true })}
+                    className={inputClass}
+                  />
+                </div>
+              </div>
             </>
           )}
 
@@ -724,13 +760,16 @@ const RegisterPage = () => {
           {errorMsg && <p className="col-span-2 text-red-600">{errorMsg}</p>}
 
           {/* SUBMIT */}
-          <button className="btn col-span-2 bg-black text-white">
+          <button
+            type="submit"
+            disabled={loading}
+            className="col-span-2 bg-black text-white h-11 rounded-md hover:bg-gray-800"
+          >
             {loading ? "Loading..." : "Register"}
           </button>
         </form>
 
-        {/* FOOTER */}
-        <p className="text-center mt-4 text-gray-600">
+        <p className="text-center text-sm mt-4 text-black">
           Already have account?{" "}
           <Link to="/login" className="text-blue-600">
             Login
