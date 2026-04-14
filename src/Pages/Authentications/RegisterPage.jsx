@@ -481,7 +481,6 @@
 // };
 
 // export default RegisterPage;
-
 import React, { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import axios from "axios";
@@ -573,15 +572,14 @@ const RegisterPage = () => {
   const roleDescription = {
     buyer:
       "ক্রেতা হিসেবে রেজিস্ট্রেশন করে স্থানীয় বিক্রেতাদের কাছ থেকে পণ্য কিনুন।",
-    seller:
-      "বিক্রেতা হিসেবে রেজিস্ট্রেশন করে আপনার দোকানের পণ্য LocalMarket-এ বিক্রি করুন।",
+    seller: "বিক্রেতা হিসেবে রেজিস্ট্রেশন করে আপনার দোকানের পণ্য বিক্রি করুন।",
     admin: "অ্যাডমিন রেজিস্ট্রেশন শুধুমাত্র অনুমোদিত ব্যক্তিদের জন্য।",
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-3 py-6">
       <Helmet>
-        <title>রেজিস্টার পৃষ্ঠা | LocalMarket</title>
+        <title>রেজিস্টার | LocalMarket</title>
       </Helmet>
 
       <div className="bg-white shadow-xl rounded-2xl w-full max-w-3xl p-8">
@@ -599,21 +597,19 @@ const RegisterPage = () => {
         {/* Role Selector */}
         <div className="flex bg-gray-100 rounded-full mb-3 text-sm font-medium">
           {[
-            { key: "buyer", label: "ক্রেতা" },
-            { key: "seller", label: "বিক্রেতা" },
-            { key: "admin", label: "অ্যাডমিন" },
+            { key: "buyer", label: "ক্রেতা", icon: <FiUser /> },
+            { key: "seller", label: "বিক্রেতা", icon: <FaStore /> },
+            { key: "admin", label: "অ্যাডমিন", icon: <FiLock /> },
           ].map((tab) => (
             <button
               key={tab.key}
               type="button"
-              className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-full transition ${
+              onClick={() => setRole(tab.key)}
+              className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-full ${
                 role === tab.key ? "bg-black text-white" : "text-gray-700"
               }`}
-              onClick={() => setRole(tab.key)}
             >
-              {tab.key === "buyer" && <FiUser />}
-              {tab.key === "seller" && <FaStore />}
-              {tab.key === "admin" && <FiLock />}
+              {tab.icon}
               {tab.label}
             </button>
           ))}
@@ -623,105 +619,118 @@ const RegisterPage = () => {
           {roleDescription[role]}
         </div>
 
-        {/* Form */}
+        {/* FORM */}
         <form
           onSubmit={handleSubmit(onSubmit)}
           className="grid grid-cols-2 gap-4"
         >
           {/* Full Name */}
-          <input
-            {...register("fullName", { required: "পূর্ণ নাম লিখুন" })}
-            placeholder="পূর্ণ নাম"
-            className="input input-bordered col-span-2 bg-white text-black"
-          />
+          <div>
+            <input
+              {...register("fullName", { required: "পূর্ণ নাম লিখুন" })}
+              placeholder="পূর্ণ নাম"
+              className="input input-bordered w-full h-10 bg-white text-black border border-gray-300"
+            />
+            {errors.fullName && (
+              <p className="text-red-600 text-sm">{errors.fullName.message}</p>
+            )}
+          </div>
 
           {/* Phone */}
-          <input
-            {...register("phone", { required: "মোবাইল নাম্বার দিন" })}
-            placeholder="01XXXXXXXXX"
-            className="input input-bordered bg-white text-black"
-          />
+          <div>
+            <input
+              {...register("phone", {
+                required: "মোবাইল নাম্বার দিন",
+              })}
+              placeholder="01XXXXXXXXX"
+              className="input input-bordered w-full h-10 bg-white text-black border border-gray-300"
+            />
+          </div>
 
           {/* Email */}
-          <input
-            {...register("email", { required: "ইমেইল দিন" })}
-            placeholder="ইমেইল"
-            className="input input-bordered bg-white text-black"
-          />
+          <div className="col-span-2">
+            <input
+              {...register("email", { required: "ইমেইল দিন" })}
+              placeholder="ইমেইল"
+              className="input input-bordered w-full h-10 bg-white text-black border border-gray-300"
+            />
+          </div>
 
           {/* Password */}
-          <input
-            {...register("password", {
-              required: "পাসওয়ার্ড দিন",
-              minLength: { value: 6, message: "কমপক্ষে ৬ অক্ষর" },
-            })}
-            type="password"
-            placeholder="পাসওয়ার্ড"
-            className="input input-bordered bg-white text-black"
-          />
+          <div>
+            <input
+              {...register("password", {
+                required: "পাসওয়ার্ড দিন",
+                minLength: {
+                  value: 6,
+                  message: "কমপক্ষে ৬ অক্ষর",
+                },
+              })}
+              type="password"
+              placeholder="পাসওয়ার্ড"
+              className="input input-bordered w-full h-10 bg-white text-black border border-gray-300"
+            />
+          </div>
 
           {/* Confirm Password */}
-          <input
-            {...register("confirmPassword", {
-              validate: (value) => value === password || "পাসওয়ার্ড মেলেনি",
-            })}
-            type="password"
-            placeholder="Confirm Password"
-            className="input input-bordered bg-white text-black"
-          />
+          <div>
+            <input
+              {...register("confirmPassword", {
+                validate: (value) => value === password || "পাসওয়ার্ড মিলেনি",
+              })}
+              type="password"
+              placeholder="Confirm Password"
+              className="input input-bordered w-full h-10 bg-white text-black border border-gray-300"
+            />
+          </div>
 
           {/* Address */}
-          <textarea
-            {...register("address")}
-            placeholder="ঠিকানা"
-            className="textarea textarea-bordered col-span-2 bg-white text-black"
-          ></textarea>
+          <div className="col-span-2">
+            <textarea
+              {...register("address")}
+              placeholder="ঠিকানা"
+              className="textarea textarea-bordered w-full bg-white text-black border border-gray-300"
+            ></textarea>
+          </div>
 
-          {/* Seller Section */}
+          {/* SELLER INFO */}
           {role === "seller" && (
             <>
-              <div className="col-span-2 mt-4 border-t pt-3">
-                <h3 className="font-semibold text-gray-800">ব্যবসায়িক তথ্য</h3>
+              <div className="col-span-2 border-t pt-3">
+                <h3 className="font-semibold text-black">ব্যবসায়িক তথ্য</h3>
               </div>
 
               <input
-                {...register("businessName", {
-                  required: "ব্যবসার নাম লিখুন",
-                })}
+                {...register("businessName")}
                 placeholder="Business Name"
-                className="input input-bordered col-span-2 bg-white text-black"
+                className="input input-bordered col-span-2 bg-white text-black border border-gray-300"
               />
 
               <input
-                {...register("nidNumber", {
-                  required: "NID দিন",
-                  pattern: {
-                    value: /^[0-9]{17}$/,
-                    message: "১৭ সংখ্যার NID দিন",
-                  },
-                })}
-                placeholder="NID"
-                className="input input-bordered bg-white text-black"
+                {...register("nidNumber")}
+                placeholder="NID (17 digits)"
+                className="input input-bordered bg-white text-black border border-gray-300"
               />
 
               <input
-                {...register("bankAccount", {
-                  required: "Bank account দিন",
-                })}
+                {...register("bankAccount")}
                 placeholder="Bank Account"
-                className="input input-bordered bg-white text-black"
+                className="input input-bordered bg-white text-black border border-gray-300"
               />
             </>
           )}
 
+          {/* ERROR */}
           {errorMsg && <p className="col-span-2 text-red-600">{errorMsg}</p>}
 
+          {/* SUBMIT */}
           <button className="btn col-span-2 bg-black text-white">
             {loading ? "Loading..." : "Register"}
           </button>
         </form>
 
-        <p className="text-center mt-4">
+        {/* FOOTER */}
+        <p className="text-center mt-4 text-gray-600">
           Already have account?{" "}
           <Link to="/login" className="text-blue-600">
             Login
