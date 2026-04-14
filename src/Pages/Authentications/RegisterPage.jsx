@@ -197,7 +197,7 @@ const RegisterPage = () => {
         >
           {/* Full Name */}
           <div>
-            <label className="block text-sm font-medium mb-1">
+            <label className="block text-sm font-medium mb-1 text-black">
               পূর্ণ নাম *
             </label>
             <div className="relative">
@@ -206,7 +206,7 @@ const RegisterPage = () => {
                 {...register("fullName", { required: "পূর্ণ নাম লিখুন" })}
                 type="text"
                 placeholder="আপনার পূর্ণ নাম"
-                className="input input-bordered w-full pl-10 h-10 bg-white text-black placeholder-gray-500"
+                className="w-full h-10 pl-10 bg-white text-black placeholder-gray-500 border border-gray-300 rounded-md focus:outline-none focus:border-black"
               />
             </div>
             {errors.fullName && (
