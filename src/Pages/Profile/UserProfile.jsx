@@ -386,9 +386,9 @@ const UserProfile = () => {
                     <div key={field}>
                       <label className="block text-sm  mb-1 text-black">
                         {field === "username"
-                          ? "পূর্ণ নাম"
+                          ? "NAME"
                           : field === "phone"
-                            ? "মোবাইল নাম্বার"
+                            ? "NUMBER"
                             : field.toUpperCase()}
                       </label>
                       <input
@@ -409,8 +409,8 @@ const UserProfile = () => {
 
                 {/* Address */}
                 <div className="sm:col-span-2">
-                  <label className="block text-sm text-gray-500 mb-1 text-black">
-                    ঠিকানা
+                  <label className="block text-sm  mb-1 text-black">
+                    ADDRESS
                   </label>
                   <textarea
                     name="address"
@@ -496,7 +496,9 @@ const UserProfile = () => {
           {/* ORDERS TAB */}
           {activeTab === "orders" && (
             <div>
-              <h3 className="text-2xl font-bold mb-6">অর্ডার ইতিহাস</h3>
+              <h3 className="text-2xl font-bold mb-6 text-black">
+                অর্ডার ইতিহাস
+              </h3>
 
               {orderLoading ? (
                 <p className="text-gray-500">অর্ডার লোড হচ্ছে...</p>
@@ -629,7 +631,9 @@ const UserProfile = () => {
           {/* REVIEWS TAB */}
           {activeTab === "reviews" && (
             <div>
-              <h3 className="text-2xl font-bold mb-6">আপনার রিভিউসমূহ</h3>
+              <h3 className="text-2xl font-bold mb-6 text-black">
+                আপনার রিভিউসমূহ
+              </h3>
 
               {orderLoading ? (
                 <p className="text-gray-500">রিভিউ লোড হচ্ছে...</p>
@@ -641,7 +645,7 @@ const UserProfile = () => {
                     .map((item) => (
                       <div
                         key={item.id}
-                        className="flex gap-4 p-4 border rounded-xl bg-white shadow-md hover:shadow-lg transition-shadow duration-300 text-black"
+                        className="flex gap-4 p-4 border rounded-xl bg-white shadow-md hover:shadow-lg transition-shadow duration-300 text-black mt-2"
                       >
                         {/* Product Image */}
                         <img
@@ -705,7 +709,7 @@ const UserProfile = () => {
           {/* SETTINGS */}
           {activeTab === "settings" && (
             <div className="max-w-md space-y-4">
-              <h3 className="text-lg font-semibold mb-2">
+              <h3 className="text-lg font-semibold mb-2 text-black">
                 পাসওয়ার্ড পরিবর্তন
               </h3>
 
@@ -714,7 +718,7 @@ const UserProfile = () => {
                 name="current_password"
                 placeholder="বর্তমান পাসওয়ার্ড"
                 onChange={handlePasswordChange}
-                className="w-full border rounded-lg px-3 py-2"
+                className="w-full border border-gray-300 bg-white text-black placeholder-gray-500 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-black"
               />
 
               <input
@@ -722,7 +726,7 @@ const UserProfile = () => {
                 name="new_password"
                 placeholder="নতুন পাসওয়ার্ড"
                 onChange={handlePasswordChange}
-                className="w-full border rounded-lg px-3 py-2"
+                className="w-full border border-gray-300 bg-white text-black placeholder-gray-500 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-black"
               />
 
               <input
@@ -730,7 +734,7 @@ const UserProfile = () => {
                 name="confirm_password"
                 placeholder="নতুন পাসওয়ার্ড নিশ্চিত করুন"
                 onChange={handlePasswordChange}
-                className="w-full border rounded-lg px-3 py-2"
+                className="w-full border border-gray-300 bg-white text-black placeholder-gray-500 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-black"
               />
 
               <button
