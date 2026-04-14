@@ -156,7 +156,9 @@ const RegisterPage = () => {
           <div className="p-4 bg-black text-white rounded-2xl">
             <ImHome size={28} />
           </div>
-          <h2 className="text-xl font-bold">LocalMarket এ যোগ দিন</h2>
+          <h2 className="text-xl font-bold text-black">
+            LocalMarket এ যোগ দিন
+          </h2>
           <p className="text-sm text-gray-500">নতুন অ্যাকাউন্ট তৈরি করুন</p>
         </div>
 
@@ -216,7 +218,7 @@ const RegisterPage = () => {
 
           {/* Phone */}
           <div>
-            <label className="block text-sm font-medium mb-1">
+            <label className="block text-sm font-medium mb-1 text-black">
               মোবাইল নাম্বার *
             </label>
             <div className="relative">
@@ -231,7 +233,7 @@ const RegisterPage = () => {
                 })}
                 type="text"
                 placeholder="01XXXXXXXXX"
-                className="input input-bordered w-full pl-10 h-10"
+                className="w-full h-10 pl-10 bg-white text-black placeholder-gray-500 border border-gray-300 rounded-md focus:outline-none focus:border-black"
               />
             </div>
             {errors.phone && (
@@ -241,7 +243,9 @@ const RegisterPage = () => {
 
           {/* Email */}
           <div className="col-span-2">
-            <label className="block text-sm font-medium mb-1">ইমেইল *</label>
+            <label className="block text-sm font-medium mb-1 text-black">
+              ইমেইল *
+            </label>
             <div className="relative">
               <FiMail className="absolute left-3 top-3 text-gray-400" />
               <input
@@ -251,7 +255,7 @@ const RegisterPage = () => {
                 })}
                 type="email"
                 placeholder="আপনার ইমেইল ঠিকানা"
-                className="input input-bordered w-full pl-10 h-10"
+                className="w-full h-10 pl-10 bg-white text-black placeholder-gray-500 border border-gray-300 rounded-md focus:outline-none focus:border-black"
               />
             </div>
             {errors.email && (
@@ -261,7 +265,7 @@ const RegisterPage = () => {
 
           {/* Password */}
           <div>
-            <label className="block text-sm font-medium mb-1">
+            <label className="block text-sm font-medium mb-1 text-black">
               পাসওয়ার্ড *
             </label>
             <div className="relative">
@@ -273,7 +277,7 @@ const RegisterPage = () => {
                 })}
                 type="password"
                 placeholder="কমপক্ষে ৬ অক্ষর"
-                className="input input-bordered w-full pl-10 h-10"
+                className="w-full h-10 pl-10 bg-white text-black placeholder-gray-500 border border-gray-300 rounded-md focus:outline-none focus:border-black"
               />
             </div>
             {errors.password && (
@@ -283,7 +287,7 @@ const RegisterPage = () => {
 
           {/* Confirm Password */}
           <div>
-            <label className="block text-sm font-medium mb-1">
+            <label className="block text-sm font-medium mb-1 text-black">
               পাসওয়ার্ড নিশ্চিত করুন *
             </label>
             <div className="relative">
@@ -296,7 +300,7 @@ const RegisterPage = () => {
                 })}
                 type="password"
                 placeholder="পুনরায় লিখুন"
-                className="input input-bordered w-full pl-10 h-10"
+                className="w-full h-10 pl-10 bg-white text-black placeholder-gray-500 border border-gray-300 rounded-md focus:outline-none focus:border-black"
               />
             </div>
             {errors.confirmPassword && (
@@ -308,7 +312,7 @@ const RegisterPage = () => {
 
           {/* Photo Upload */}
           <div className="col-span-2">
-            <label className="block text-sm font-medium mb-1">
+            <label className="block text-sm font-medium mb-1 text-black">
               প্রোফাইল ছবি
             </label>
             <input
@@ -316,7 +320,7 @@ const RegisterPage = () => {
               {...register("photo")}
               accept="image/*"
               onChange={handlePhotoChange}
-              className="file-input file-input-bordered w-full"
+              className="file-input file-input-bordered w-full h-10 pl-10 bg-white text-black placeholder-gray-500 border border-gray-300 rounded-md focus:outline-none focus:border-black"
             />
             {photoPreview && (
               <img
@@ -329,7 +333,9 @@ const RegisterPage = () => {
 
           {/* City & Area */}
           <div>
-            <label className="block text-sm font-medium mb-1">শহর/জেলা *</label>
+            <label className="block text-sm font-medium mb-1 text-black">
+              শহর/জেলা *
+            </label>
             <select
               {...register("city", { required: "শহর নির্বাচন করুন" })}
               className="select select-bordered w-full h-10"
@@ -346,7 +352,9 @@ const RegisterPage = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">এরিয়া *</label>
+            <label className="block text-sm font-medium mb-1 text-black">
+              এরিয়া *
+            </label>
             <select
               {...register("area", { required: "এরিয়া নির্বাচন করুন" })}
               className="select select-bordered w-full h-10"
@@ -363,11 +371,13 @@ const RegisterPage = () => {
 
           {/* Address */}
           <div className="col-span-2">
-            <label className="block text-sm font-medium mb-1">ঠিকানা *</label>
+            <label className="block text-sm font-medium mb-1 text-black">
+              ঠিকানা *
+            </label>
             <textarea
               {...register("address", { required: "ঠিকানা লিখুন" })}
               placeholder="বিস্তারিত ঠিকানা লিখুন"
-              className="textarea textarea-bordered w-full h-20"
+              className="textarea textarea-bordered w-full h-20  bg-white text-black placeholder-gray-500 border border-gray-300 rounded-md focus:outline-none focus:border-black"
             ></textarea>
             {errors.address && (
               <p className="text-red-600 text-sm">{errors.address.message}</p>
@@ -384,7 +394,7 @@ const RegisterPage = () => {
               </div>
 
               <div className="col-span-2">
-                <label className="block text-sm font-medium mb-1">
+                <label className="block text-sm font-medium mb-1 text-black">
                   দোকান/ব্যবসার নাম *
                 </label>
                 <div className="relative">
@@ -395,13 +405,13 @@ const RegisterPage = () => {
                     })}
                     type="text"
                     placeholder="দোকান বা ব্যবসার নাম লিখুন"
-                    className="input input-bordered w-full pl-10 h-10"
+                    className="w-full h-10 pl-10 bg-white text-black placeholder-gray-500 border border-gray-300 rounded-md focus:outline-none focus:border-black"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-1">
+                <label className="block text-sm font-medium mb-1 text-black">
                   ১৭ সংখ্যার NID নম্বর *
                 </label>
                 <div className="relative">
@@ -437,7 +447,7 @@ const RegisterPage = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-1">
+                <label className="block text-sm font-medium mb-1 text-black">
                   ব্যাংক অ্যাকাউন্ট নম্বর *
                 </label>
                 <div className="relative">
@@ -448,7 +458,7 @@ const RegisterPage = () => {
                     })}
                     type="text"
                     placeholder="ব্যাংক অ্যাকাউন্ট লিখুন"
-                    className="input input-bordered w-full pl-10 h-10"
+                    className="w-full h-10 pl-10 bg-white text-black placeholder-gray-500 border bordezr-gray-300 rounded-md focus:outline-none focus:border-black"
                   />
                 </div>
               </div>
