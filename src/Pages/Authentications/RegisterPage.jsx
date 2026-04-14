@@ -206,7 +206,7 @@ const RegisterPage = () => {
                 {...register("fullName", { required: "পূর্ণ নাম লিখুন" })}
                 type="text"
                 placeholder="আপনার পূর্ণ নাম"
-                className="input input-bordered w-full pl-10 h-10"
+                className="input input-bordered w-full pl-10 h-10 bg-white text-black placeholder-gray-500"
               />
             </div>
             {errors.fullName && (
