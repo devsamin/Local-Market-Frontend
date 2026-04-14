@@ -507,7 +507,9 @@ const RegisterPage = () => {
   const [errorMsg, setErrorMsg] = useState("");
   const [loading, setLoading] = useState(false);
   const [photoPreview, setPhotoPreview] = useState(null);
+
   const navigate = useNavigate();
+  const { login } = useContext(AuthContext);
 
   const {
     register,
@@ -519,7 +521,10 @@ const RegisterPage = () => {
   const password = watch("password");
 
   const inputStyle =
-    "w-full border border-gray-300 bg-white text-gray-900 placeholder-gray-400 rounded-xl px-4 py-2 focus:ring-2 focus:ring-black focus:outline-none";
+    "input input-bordered w-full pl-10 h-10 bg-white text-black placeholder-gray-400";
+  const selectStyle = "select select-bordered w-full h-10 bg-white text-black";
+  const textareaStyle =
+    "textarea textarea-bordered w-full h-20 bg-white text-black placeholder-gray-400";
 
   const handlePhotoChange = (e) => {
     const file = e.target.files[0];
@@ -542,9 +547,9 @@ const RegisterPage = () => {
       formData.append("address", data.address);
 
       if (role === "seller") {
-        formData.append("businessName", data.businessName || "");
-        formData.append("nidNumber", data.nidNumber || "");
-        formData.append("bankAccount", data.bankAccount || "");
+        formData.append("businessName", data.businessName);
+        formData.append("nidNumber", data.nidNumber);
+        formData.append("bankAccount", data.bankAccount);
       }
 
       if (data.photo && data.photo[0]) {
@@ -571,14 +576,6 @@ const RegisterPage = () => {
     }
   };
 
-  const roleDescription = {
-    buyer:
-      "ক্রেতা হিসেবে রেজিস্ট্রেশন করে স্থানীয় বিক্রেতাদের কাছ থেকে পণ্য কিনুন।",
-    seller:
-      "বিক্রেতা হিসেবে রেজিস্ট্রেশন করে আপনার দোকানের পণ্য LocalMarket-এ বিক্রি করুন।",
-    admin: "অ্যাডমিন রেজিস্ট্রেশন শুধুমাত্র অনুমোদিত ব্যক্তিদের জন্য।",
-  };
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-3 py-6">
       <Helmet>
@@ -592,125 +589,121 @@ const RegisterPage = () => {
             <ImHome size={28} />
           </div>
           <h2 className="text-xl font-bold">LocalMarket এ যোগ দিন</h2>
-          <p className="text-sm text-gray-500">নতুন অ্যাকাউন্ট তৈরি করুন</p>
         </div>
 
-        {/* Role Selector */}
-        <div className="flex bg-gray-100 rounded-full mb-3 text-sm font-medium">
-          {[
-            { key: "buyer", label: "ক্রেতা" },
-            { key: "seller", label: "বিক্রেতা" },
-            { key: "admin", label: "অ্যাডমিন" },
-          ].map((tab) => (
+        {/* Role */}
+        <div className="flex bg-gray-100 rounded-full mb-4">
+          {["buyer", "seller", "admin"].map((r) => (
             <button
-              key={tab.key}
-              type="button"
-              className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-full ${
-                role === tab.key
-                  ? "bg-black text-white"
-                  : "text-gray-700 hover:bg-gray-200"
+              key={r}
+              onClick={() => setRole(r)}
+              className={`flex-1 py-2 rounded-full ${
+                role === r ? "bg-black text-white" : ""
               }`}
-              onClick={() => setRole(tab.key)}
             >
-              {tab.key === "buyer" && <FiUser />}
-              {tab.key === "seller" && <FaStore />}
-              {tab.key === "admin" && <FiLock />}
-              {tab.label}
+              {r}
             </button>
           ))}
         </div>
 
-        <div className="text-center text-gray-600 text-sm mb-6">
-          {roleDescription[role]}
-        </div>
-
-        {/* Form */}
         <form
           onSubmit={handleSubmit(onSubmit)}
           className="grid grid-cols-2 gap-4"
         >
-          {/* Full Name */}
+          {/* Name */}
           <div>
-            <label className="text-sm text-gray-700">পূর্ণ নাম *</label>
             <input
-              {...register("fullName", { required: "পূর্ণ নাম লিখুন" })}
+              {...register("fullName", { required: true })}
+              placeholder="নাম"
               className={inputStyle}
             />
-            {errors.fullName && (
-              <p className="text-red-600 text-sm">{errors.fullName.message}</p>
-            )}
           </div>
 
           {/* Phone */}
           <div>
-            <label className="text-sm text-gray-700">মোবাইল *</label>
             <input
-              {...register("phone", { required: "মোবাইল দিন" })}
+              {...register("phone", { required: true })}
+              placeholder="ফোন"
               className={inputStyle}
             />
           </div>
 
           {/* Email */}
           <div className="col-span-2">
-            <label className="text-sm text-gray-700">ইমেইল *</label>
             <input
-              {...register("email", { required: "ইমেইল দিন" })}
+              {...register("email", { required: true })}
+              placeholder="ইমেইল"
               className={inputStyle}
             />
           </div>
 
           {/* Password */}
           <div>
-            <label className="text-sm text-gray-700">পাসওয়ার্ড *</label>
             <input
               type="password"
-              {...register("password", {
-                required: "পাসওয়ার্ড প্রয়োজন",
-                minLength: { value: 6, message: "কমপক্ষে ৬ অক্ষর" },
-              })}
+              {...register("password", { required: true })}
+              placeholder="পাসওয়ার্ড"
               className={inputStyle}
             />
           </div>
 
           {/* Confirm */}
           <div>
-            <label className="text-sm text-gray-700">কনফার্ম *</label>
             <input
               type="password"
               {...register("confirmPassword", {
-                validate: (value) => value === password || "পাসওয়ার্ড মেলেনি",
+                validate: (v) => v === password || "Not match",
               })}
+              placeholder="confirm"
               className={inputStyle}
             />
           </div>
 
           {/* Address */}
           <div className="col-span-2">
-            <label className="text-sm text-gray-700">ঠিকানা *</label>
             <textarea
-              {...register("address", { required: "ঠিকানা লিখুন" })}
-              className={`${inputStyle} h-20`}
-            ></textarea>
+              {...register("address")}
+              placeholder="ঠিকানা"
+              className={textareaStyle}
+            />
           </div>
 
-          {/* Submit */}
+          {/* Seller */}
+          {role === "seller" && (
+            <>
+              <div className="col-span-2 font-bold">Seller Info</div>
+
+              <input
+                {...register("businessName", { required: true })}
+                placeholder="Business Name"
+                className="input input-bordered col-span-2 bg-white text-black"
+              />
+
+              <input
+                {...register("nidNumber", { required: true })}
+                placeholder="NID"
+                className="input input-bordered bg-white text-black"
+              />
+
+              <input
+                {...register("bankAccount", { required: true })}
+                placeholder="Bank"
+                className="input input-bordered bg-white text-black"
+              />
+            </>
+          )}
+
           <div className="col-span-2">
-            <button
-              disabled={loading}
-              className="w-full py-3 bg-black text-white rounded-xl"
-            >
-              {loading ? "রেজিস্ট্রেশন হচ্ছে..." : "রেজিস্ট্রেশন করুন"}
+            <button className="btn w-full bg-black text-white">
+              {loading ? "Loading..." : "Register"}
             </button>
           </div>
 
-          {errorMsg && <p className="col-span-2 text-red-500">{errorMsg}</p>}
+          {errorMsg && <p className="col-span-2 text-red-600">{errorMsg}</p>}
         </form>
 
-        <p className="text-center text-gray-600 mt-4">
-          আগেই অ্যাকাউন্ট আছে?{" "}
-          <Link to="/login" className="text-blue-600">
-            লগইন করুন
-          </Link>
+        <p className="text-center mt-4">
+          <Link to="/login">Login</Link>
         </p>
       </div>
     </div>
