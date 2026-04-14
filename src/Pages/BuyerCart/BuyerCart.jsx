@@ -446,7 +446,7 @@ const BuyerCart = () => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto p-6 text-black">
+    <div className="max-w-7xl mx-auto p-6 text-black bg-white">
       <Helmet>
         <title>কার্ট | LocalMarket</title>
       </Helmet>
