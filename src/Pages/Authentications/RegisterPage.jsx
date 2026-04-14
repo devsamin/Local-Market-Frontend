@@ -151,6 +151,15 @@ const RegisterPage = () => {
         <title>রেজিস্টার পৃষ্ঠা | LocalMarket</title>
       </Helmet>
       <div className="bg-white shadow-xl rounded-2xl w-full max-w-3xl p-8">
+        {/* 🔙 Back to Home */}
+        <div className="mb-4">
+          <Link
+            to="/"
+            className="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-black transition"
+          >
+            <FiArrowLeft /> হোমে ফিরে যান
+          </Link>
+        </div>
         {/* Header */}
         <div className="flex flex-col items-center mb-6">
           <div className="p-4 bg-black text-white rounded-2xl">
@@ -345,6 +354,22 @@ const RegisterPage = () => {
               <option>চট্টগ্রাম</option>
               <option>রাজশাহী</option>
               <option>সিলেট</option>
+              <option>খুলনা</option>
+              <option>বরিশাল</option>
+              <option>রংপুর</option>
+              <option>ময়মনসিংহ</option>
+              <option>কক্সবাজার</option>
+              <option>কুমিল্লা</option>
+              <option>ফেনী</option>
+              <option>নোয়াখালী</option>
+              <option>চাঁদপুর</option>
+              <option>লক্ষ্মীপুর</option>
+              <option>ব্রাহ্মণবাড়িয়া</option>
+              <option>যশোর</option>
+              <option>বগুড়া</option>
+              <option>দিনাজপুর</option>
+              <option>পাবনা</option>
+              <option>টাঙ্গাইল</option>
             </select>
             {errors.city && (
               <p className="text-red-600 text-sm">{errors.city.message}</p>
@@ -363,6 +388,23 @@ const RegisterPage = () => {
               <option>ধানমন্ডি</option>
               <option>গুলশান</option>
               <option>মিরপুর</option>
+              <option>উত্তরা</option>
+              <option>বনানী</option>
+              <option>মতিঝিল</option>
+              <option>ওয়ারী</option>
+              <option>চকবাজার</option>
+              <option>পাহাড়তলী</option>
+              <option>হালিশহর</option>
+              <option>আগ্রাবাদ</option>
+              <option>নাসিরাবাদ</option>
+              <option>পটিয়া</option>
+              <option>সাতকানিয়া</option> {/* Satkania */}
+              <option>লোহাগাড়া</option>
+              <option>রাউজান</option>
+              <option>হাটহাজারী</option>
+              <option>বাঁশখালী</option>
+              <option>সীতাকুণ্ড</option>
+              <option>আনোয়ারা</option>
             </select>
             {errors.area && (
               <p className="text-red-600 text-sm">{errors.area.message}</p>
@@ -436,7 +478,7 @@ const RegisterPage = () => {
                     inputMode="numeric"
                     maxLength={17}
                     placeholder="NID নম্বর লিখুন"
-                    className="input input-bordered w-full pl-10 h-10"
+                    className="w-full h-10 pl-10 bg-white text-black placeholder-gray-500 border border-gray-300 rounded-md focus:outline-none focus:border-black"
                   />
                 </div>
                 {errors.nidNumber && (
