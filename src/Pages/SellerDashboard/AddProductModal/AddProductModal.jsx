@@ -485,7 +485,7 @@ const AddProductModal = ({ onClose, onAdd }) => {
             >
               <option value="">ক্যাটেগরি নির্বাচন করুন</option>
               {categories.map((cat) => (
-                <option key={cat.id} value={cat.id} className="text-black">
+                <option key={cat.id} value={cat.id}>
                   {cat.name}
                 </option>
               ))}
@@ -511,29 +511,65 @@ const AddProductModal = ({ onClose, onAdd }) => {
             />
           </div>
 
-          {/* Image */}
-          <div className="text-center">
-            <label className="text-sm text-gray-600 block mb-1">
-              মেইন ছবি *
+          {/* Main Image */}
+          <div>
+            <label className="text-sm text-gray-700">মেইন ছবি *</label>
+
+            <label className="w-full mt-1 flex items-center justify-center border-2 border-dashed rounded-md px-4 py-6 cursor-pointer bg-white hover:bg-gray-50 transition-all">
+              <span className="text-gray-500 text-sm">
+                ছবি আপলোড করতে ক্লিক করুন
+              </span>
+
+              <input
+                {...register("image", { required: "ছবি আবশ্যক" })}
+                type="file"
+                accept="image/*"
+                className="hidden"
+              />
             </label>
-            <input
-              {...register("image", { required: "ছবি আবশ্যক" })}
-              type="file"
-              className="text-black"
-            />
+
+            {watch("image")?.[0] && (
+              <img
+                src={URL.createObjectURL(watch("image")[0])}
+                alt="Preview"
+                className="mt-3 w-24 h-24 object-cover rounded-md border"
+              />
+            )}
+
+            {errors.image && (
+              <p className="text-red-500 text-xs mt-1">
+                {errors.image.message}
+              </p>
+            )}
           </div>
 
-          {/* Extra images */}
+          {/* Extra Images */}
           {[2, 3].map((num) => (
-            <div key={num} className="text-center">
-              <label className="text-sm text-gray-600 block mb-1">
+            <div key={num}>
+              <label className="text-sm text-gray-700">
                 অতিরিক্ত ছবি {num - 1}
               </label>
-              <input
-                {...register(`image${num}`)}
-                type="file"
-                className="text-black"
-              />
+
+              <label className="w-full mt-1 flex items-center justify-center border-2 border-dashed rounded-md px-4 py-6 cursor-pointer bg-white hover:bg-gray-50 transition-all">
+                <span className="text-gray-500 text-sm">
+                  ছবি আপলোড করতে ক্লিক করুন
+                </span>
+
+                <input
+                  {...register(`image${num}`)}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                />
+              </label>
+
+              {watch(`image${num}`)?.[0] && (
+                <img
+                  src={URL.createObjectURL(watch(`image${num}`)[0])}
+                  alt="Preview"
+                  className="mt-3 w-24 h-24 object-cover rounded-md border"
+                />
+              )}
             </div>
           ))}
 
