@@ -281,9 +281,11 @@ const Overview = () => {
       {/* Order & Product Stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="bg-white rounded-xl border shadow p-5">
-          <h3 className="text-lg font-semibold mb-4">অর্ডার বিশ্লেষণ</h3>
+          <h3 className="text-lg font-semibold mb-4 text-black">
+            অর্ডার বিশ্লেষণ
+          </h3>
           {orderStats.map((stat, i) => (
-            <div key={i} className="flex justify-between mb-2">
+            <div key={i} className="flex justify-between mb-2 text-black">
               <span>{stat.label}</span>
               <span className="bg-gray-200 px-3 py-1 rounded-full">
                 {stat.count}
@@ -293,9 +295,11 @@ const Overview = () => {
         </div>
 
         <div className="bg-white rounded-xl border shadow p-5">
-          <h3 className="text-lg font-semibold mb-4">পণ্য বিশ্লেষণ</h3>
+          <h3 className="text-lg font-semibold mb-4 text-black">
+            পণ্য বিশ্লেষণ
+          </h3>
           {productStats.map((stat, i) => (
-            <div key={i} className="flex justify-between mb-2">
+            <div key={i} className="flex justify-between mb-2 text-black">
               <span>{stat.label}</span>
               <span className="bg-gray-200 px-3 py-1 rounded-full">
                 {stat.count}
@@ -309,7 +313,9 @@ const Overview = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Recent Orders */}
         <div className="bg-white rounded-xl border shadow p-5">
-          <h3 className="text-lg font-semibold mb-4">সাম্প্রতিক অর্ডার</h3>
+          <h3 className="text-lg font-semibold mb-4 text-black">
+            সাম্প্রতিক অর্ডার
+          </h3>
 
           {recentOrders.map((order, i) => (
             <div key={i} className="flex justify-between border-b py-2">
@@ -337,7 +343,9 @@ const Overview = () => {
 
         {/* Reviews */}
         <div className="bg-white rounded-xl border shadow p-5">
-          <h3 className="text-lg font-semibold mb-4">কাস্টমার রিভিউ</h3>
+          <h3 className="text-lg font-semibold mb-4 text-black">
+            কাস্টমার রিভিউ
+          </h3>
 
           {reviews.map((r, i) => (
             <div
