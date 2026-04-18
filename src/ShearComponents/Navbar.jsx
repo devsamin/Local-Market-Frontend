@@ -27,12 +27,25 @@ const Navbar = ({ searchTerm, setSearchTerm, onOfferAdded }) => {
 
   const storedUser = JSON.parse(localStorage.getItem("user"));
   const role = user?.role || storedUser?.role || "No role";
+  // const getImageUrl = (photo) => {
+  //   return photo || "https://i.ibb.co/2ypYw9Y/default-avatar.png";
+  // };
+  // console.log("PHOTO:", user?.photo);
+  // console.log("IMG URL:", getImageUrl(user?.photo));
   const getImageUrl = (photo) => {
-    return photo || "https://i.ibb.co/2ypYw9Y/default-avatar.png";
+    if (!photo) {
+      return "https://i.ibb.co/2ypYw9Y/default-avatar.png";
+    }
+
+    // যদি already full URL (Cloudinary)
+    if (photo.startsWith("http")) {
+      return photo;
+    }
+
+    // fallback (local বা future case)
+    return `${BASE_URL}${photo}`;
   };
   console.log("PHOTO:", user?.photo);
-  console.log("IMG URL:", getImageUrl(user?.photo));
-
   // 🔹 Close dropdown on outside click
   useEffect(() => {
     const handleClickOutside = (e) => {
