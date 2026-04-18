@@ -338,7 +338,7 @@ const Orders = () => {
 
   return (
     <div className="p-5 space-y-6">
-      <h2 className="text-xl font-semibold">অর্ডার ব্যবস্থাপনা</h2>
+      <h2 className="text-xl font-semibold text-black">অর্ডার ব্যবস্থাপনা</h2>
       <p className="text-sm text-gray-500">
         আপনার সকল অর্ডার দেখুন এবং পরিচালনা করুন
       </p>
@@ -346,13 +346,13 @@ const Orders = () => {
       {Object.values(ordersGrouped).map(({ order, items }) => (
         <div
           key={order?.id || Math.random()}
-          className="border rounded-lg p-5 bg-white shadow-sm mb-4"
+          className="border rounded-lg p-5 bg-white shadow-sm mb-4 "
         >
           {/* Order Header */}
           <div className="flex justify-between items-center mb-4">
             <div>
-              <p className="font-semibold">Order #{items[0]?.id}</p>
-              <p className="text-xs text-gray-500">
+              <p className="font-semibold text-black">Order #{items[0]?.id}</p>
+              <p className="text-xs text-black">
                 Buyer: {items[0]?.buyer_name || "Unknown"}
               </p>
               <p className="text-xs text-gray-400">
@@ -391,7 +391,7 @@ const Orders = () => {
                     className="w-14 h-14 rounded border"
                   />
                   <div>
-                    <p className="text-sm font-medium">
+                    <p className="text-sm font-medium text-black">
                       {item.product?.name || "Deleted Product"}
                     </p>
                     <p className="text-xs text-gray-500">

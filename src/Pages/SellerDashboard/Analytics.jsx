@@ -131,7 +131,7 @@ const Analytics = () => {
   return (
     <div className="p-6 space-y-6">
       <div className="bg-white rounded-xl border shadow-sm p-5">
-        <h3 className="text-lg font-semibold mb-4">জনপ্রিয় পণ্য</h3>
+        <h3 className="text-lg font-semibold mb-4 text-black">জনপ্রিয় পণ্য</h3>
         {products.map((p, i) => (
           <div
             key={i}
@@ -144,7 +144,7 @@ const Analytics = () => {
                 className="w-12 h-12 rounded-lg"
               />
               <div>
-                <h4 className="text-sm font-medium">{p.name}</h4>
+                <h4 className="text-sm font-medium text-black">{p.name}</h4>
                 <p className="text-xs text-gray-500">৳{p.price}</p>
               </div>
             </div>
