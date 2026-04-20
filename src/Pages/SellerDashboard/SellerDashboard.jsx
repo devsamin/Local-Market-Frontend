@@ -20,6 +20,18 @@ const SellerDashboard = () => {
   const [totalOrders, setTotalOrders] = useState(0);
   const [avgRating, setAvgRating] = useState(0);
 
+  const getImageUrl = (photo) => {
+    if (!photo) {
+      return "https://i.ibb.co/2ypYw9Y/default-avatar.png";
+    }
+
+    if (photo.startsWith("http")) {
+      return photo;
+    }
+
+    return `https://local-mart-11yd.onrender.com${photo}`;
+  };
+
   // ==== Load API Data ====
   useEffect(() => {
     if (sellerId) {
@@ -107,11 +119,7 @@ const SellerDashboard = () => {
       <div className="flex items-center gap-4 mb-6 bg-white rounded-xl shadow p-5">
         <div className="relative rounded-full h-20 w-20 overflow-hidden">
           <img
-            src={
-              user?.photo && user.photo.startsWith("http")
-                ? user.photo
-                : "https://i.ibb.co/2ypYw9Y/default-avatar.png"
-            }
+            src={getImageUrl(user?.photo)}
             alt="Seller"
             className="w-full h-full object-cover"
           />
