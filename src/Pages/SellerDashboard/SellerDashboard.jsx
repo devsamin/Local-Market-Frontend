@@ -25,10 +25,12 @@ const SellerDashboard = () => {
       return "https://i.ibb.co/2ypYw9Y/default-avatar.png";
     }
 
+    // already full URL
     if (photo.startsWith("http")) {
       return photo;
     }
 
+    // 🔥 force backend domain (NOT vercel)
     return `https://local-mart-11yd.onrender.com${photo}`;
   };
 
