@@ -1,427 +1,48 @@
-import React, { useState, useEffect, useContext } from "react";
-import { Package, ShoppingCart, Star, Box, BarChart2 } from "lucide-react";
-import { MdTrendingUp } from "react-icons/md";
+import { useCallback, useContext, useEffect, useState } from "react";
+import { BarChart3, Boxes, LayoutDashboard, ShoppingBag } from "lucide-react";
+import { Helmet } from "react-helmet-async";
 
+import { AuthContext } from "../../contexts/AuthContext/AuthContext";
+import { api, getErrorMessage, imageUrl } from "../../services/api";
+import Analytics from "./Analytics";
+import Orders from "./Orders";
 import Overview from "./Overview";
 import Products from "./Products";
-import Orders from "./Orders";
-import Analytics from "./Analytics";
-import { AuthContext } from "../../contexts/AuthContext/AuthProvider";
-import axios from "axios";
+
+
+const tabs = [
+  ["overview", "Overview", LayoutDashboard], ["products", "Products", Boxes],
+  ["orders", "Orders", ShoppingBag], ["analytics", "Analytics", BarChart3],
+];
 
 const SellerDashboard = () => {
   const { user } = useContext(AuthContext);
-  const sellerId = user?.id || Number(localStorage.getItem("id"));
-  const token = localStorage.getItem("access");
   const [activeTab, setActiveTab] = useState("overview");
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  // ==== API states ====
-  const [totalProducts, setTotalProducts] = useState(0);
-  const [totalOrders, setTotalOrders] = useState(0);
-  const [avgRating, setAvgRating] = useState(0);
+  const refresh = useCallback(async () => {
+    setLoading(true); setError("");
+    try { const response = await api.get("/dashboard/seller-dashboard/"); setData(response.data); }
+    catch (requestError) { setError(getErrorMessage(requestError, "Dashboard data could not be loaded.")); }
+    finally { setLoading(false); }
+  }, []);
 
-  const getImageUrl = (photo) => {
-    if (!photo) {
-      return "https://i.ibb.co/2ypYw9Y/default-avatar.png";
-    }
-
-    // already full URL
-    if (photo.startsWith("http")) {
-      return photo;
-    }
-
-    // 🔥 force backend domain (NOT vercel)
-    return `https://local-mart-11yd.onrender.com${photo}`;
-  };
-
-  // ==== Load API Data ====
-  useEffect(() => {
-    if (sellerId) {
-      fetchProducts();
-      fetchOrders();
-      fetchRatings();
-    }
-  }, [sellerId]);
-
-  // === Products API ===
-  const fetchProducts = async () => {
-    try {
-      const res = await axios.get(
-        "https://local-mart-11yd.onrender.com/api/products/",
-        { headers: { Authorization: `Bearer ${token}` } },
-      );
-
-      // Filter seller-wise
-      const sellerProducts = res.data.filter(
-        (item) => item.seller === Number(sellerId),
-      );
-
-      setTotalProducts(sellerProducts.length);
-
-      console.log("Filtered Products:", sellerProducts);
-    } catch (error) {
-      console.log("Product API Error:", error);
-    }
-  };
-
-  // === Orders API ===
-  const fetchOrders = async () => {
-    try {
-      const res = await axios.get(
-        "https://local-mart-11yd.onrender.com/api/orders/seller-orders/",
-        { headers: { Authorization: `Bearer ${token}` } },
-      );
-      console.log("Seller Orders:", res.data);
-      setTotalOrders(res.data.length); // total count
-    } catch (error) {
-      console.log("Order API Error:", error);
-    }
-  };
-
-  // === Rating API ===
-  // === Rating API ===
-  const fetchRatings = async () => {
-    try {
-      const res = await axios.get(
-        "https://local-mart-11yd.onrender.com/api/dashboard/seller-dashboard/",
-        { headers: { Authorization: `Bearer ${token}` } },
-      );
-
-      console.log("Dashboard Ratings Response:", res.data);
-
-      // Extract reviews and average from the API
-      const sellerReviews = res.data.recent_reviews || [];
-      const averageRating = res.data.average_rating || 0;
-
-      // Set state
-      setAvgRating(averageRating.toFixed(1));
-
-      console.log("Seller Reviews:", sellerReviews);
-    } catch (error) {
-      console.log("Review API Error:", error);
-    }
-  };
-
-  const renderContent = () => {
-    switch (activeTab) {
-      case "products":
-        return <Products />;
-      case "orders":
-        return <Orders />;
-      case "analytics":
-        return <Analytics />;
-      default:
-        return <Overview />;
-    }
-  };
+  useEffect(() => { refresh(); }, [refresh]);
 
   return (
-    <div className="min-h-screen bg-gray-50 py-6 px-4 md:px-8">
-      {/* ==== Seller Info Section ==== */}
-      <div className="flex items-center gap-4 mb-6 bg-white rounded-xl shadow p-5">
-        <div className="relative rounded-full h-20 w-20 overflow-hidden">
-          <img
-            src={getImageUrl(user?.photo)}
-            alt="Seller"
-            className="w-full h-full object-cover"
-          />
-        </div>
-
-        <div className="flex-1">
-          <h1 className="text-lg font-semibold text-gray-800">
-            {user?.username || "বিক্রেতা"}
-          </h1>
-          <p className="text-sm text-gray-500">বিক্রেতা ড্যাশবোর্ড</p>
-
-          <div className="flex items-center gap-6 mt-2">
-            {/* ==== Total Products ==== */}
-            <div className="flex items-center gap-1 text-sm text-gray-700">
-              <Package className="w-4 h-4 text-gray-500" />
-              <span>{totalProducts} পণ্য</span>
-            </div>
-
-            {/* ==== Total Orders ==== */}
-            <div className="flex items-center gap-1 text-sm text-gray-700">
-              <ShoppingCart className="w-4 h-4 text-gray-500" />
-              <span>{totalOrders} অর্ডার</span>
-            </div>
-
-            {/* ==== Avg Rating ==== */}
-            <div className="flex items-center gap-1 text-sm text-gray-700">
-              <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-              <span>{avgRating} রেটিং</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* ==== Navigation Tabs ==== */}
-      <div className="flex justify-between gap-9 bg-white shadow-sm rounded-xl mx-4 py-3 mb-6">
-        <button
-          onClick={() => setActiveTab("overview")}
-          className={`flex items-center gap-2 ${
-            activeTab === "overview"
-              ? "text-indigo-600 border-b-2 border-indigo-600"
-              : "text-gray-700 hover:text-indigo-600"
-          }`}
-        >
-          <MdTrendingUp className="text-lg" /> ওভারভিউ
-        </button>
-
-        <button
-          onClick={() => setActiveTab("products")}
-          className={`flex items-center gap-2 ${
-            activeTab === "products"
-              ? "text-indigo-600 border-b-2 border-indigo-600"
-              : "text-gray-700 hover:text-indigo-600"
-          }`}
-        >
-          <Box className="text-lg" /> পণ্য
-        </button>
-
-        <button
-          onClick={() => setActiveTab("orders")}
-          className={`flex items-center gap-2 ${
-            activeTab === "orders"
-              ? "text-indigo-600 border-b-2 border-indigo-600"
-              : "text-gray-700 hover:text-indigo-600"
-          }`}
-        >
-          <ShoppingCart className="text-lg" /> অর্ডার
-        </button>
-
-        <button
-          onClick={() => setActiveTab("analytics")}
-          className={`flex items-center gap-2 ${
-            activeTab === "analytics"
-              ? "text-indigo-600 border-b-2 border-indigo-600"
-              : "text-gray-700 hover:text-indigo-600"
-          }`}
-        >
-          <BarChart2 className="text-lg" /> অ্যানালিটিক্স
-        </button>
-      </div>
-
-      {/* ==== Dynamic Content ==== */}
-      {renderContent()}
-    </div>
+    <main className="page-shell py-8 sm:py-12">
+      <Helmet><title>Seller dashboard | Local Mart</title></Helmet>
+      <section className="surface flex flex-col gap-5 p-5 sm:flex-row sm:items-center sm:p-7">
+        {user.photo ? <img src={imageUrl(user.photo)} alt="" className="h-20 w-20 rounded-2xl object-cover" /> : <span className="grid h-20 w-20 place-items-center rounded-2xl bg-slate-950 text-2xl font-black text-white">{user.username?.[0]?.toUpperCase()}</span>}
+        <div className="min-w-0 flex-1"><p className="eyebrow">Seller workspace</p><h1 className="mt-1 truncate text-3xl font-bold tracking-tight">{user.businessName || user.username}</h1><p className="mt-1 text-sm text-slate-500">Manage products, fulfil orders, and understand performance.</p></div>
+        {data && <div className="grid grid-cols-3 gap-5 text-center"><div><strong className="block text-xl">{data.product_count}</strong><span className="text-xs text-slate-500">Products</span></div><div><strong className="block text-xl">{data.products_sold}</strong><span className="text-xs text-slate-500">Sold</span></div><div><strong className="block text-xl">{Number(data.average_rating).toFixed(1)}</strong><span className="text-xs text-slate-500">Rating</span></div></div>}
+      </section>
+      <nav className="mt-6 flex gap-2 overflow-x-auto rounded-2xl border border-slate-200 bg-white p-2" aria-label="Seller dashboard sections">{tabs.map(([id, label, Icon]) => <button key={id} onClick={() => setActiveTab(id)} className={`flex min-w-max flex-1 items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-bold transition ${activeTab === id ? "bg-slate-950 text-white" : "text-slate-600 hover:bg-slate-100"}`}><Icon size={18} />{label}</button>)}</nav>
+      <div className="mt-6">{activeTab === "overview" && <Overview data={data} loading={loading} error={error} retry={refresh} />}{activeTab === "products" && <Products onChanged={refresh} />}{activeTab === "orders" && <Orders onChanged={refresh} />}{activeTab === "analytics" && <Analytics data={data} loading={loading} />}</div>
+    </main>
   );
 };
 
 export default SellerDashboard;
-
-// import React, { useState, useEffect, useContext } from "react";
-// import {
-//   Package,
-//   ShoppingCart,
-//   Star,
-//   Box,
-//   BarChart2,
-// } from "lucide-react";
-// import { MdTrendingUp } from "react-icons/md";
-
-// import Overview from "./Overview";
-// import Products from "./Products";
-// import Orders from "./Orders";
-// import Analytics from "./Analytics";
-// import { AuthContext } from "../../contexts/AuthContext/AuthProvider";
-// import axios from "axios";
-
-// const SellerDashboard = () => {
-//   const { user } = useContext(AuthContext);
-//   const sellerId = user?.id || Number(localStorage.getItem("id"));
-//   const token = localStorage.getItem("access");
-//   const [activeTab, setActiveTab] = useState("overview");
-
-//   // ==== API states ====
-//   const [totalProducts, setTotalProducts] = useState(0);
-//   const [totalOrders, setTotalOrders] = useState(0);
-//   const [avgRating, setAvgRating] = useState(0);
-//   const [loading, setLoading] = useState(false);
-
-//   // ==== Load API Data ====
-//   useEffect(() => {
-//     if (sellerId) {
-//       setLoading(true);
-//       Promise.all([fetchProducts(), fetchOrders(), fetchRatings()]).finally(
-//         () => setLoading(false)
-//       );
-//     }
-//   }, [sellerId]);
-
-//   // === Products API ===
-//   const fetchProducts = async () => {
-//     try {
-//       const res = await axios.get("http://127.0.0.1:8000/api/products/", {
-//         headers: { Authorization: `Bearer ${token}` },
-//       });
-
-//       const sellerProducts = res.data.filter(
-//         (item) => item.seller === Number(sellerId)
-//       );
-
-//       setTotalProducts(sellerProducts.length);
-//       console.log("Filtered Products:", sellerProducts);
-//     } catch (error) {
-//       console.log("Product API Error:", error);
-//     }
-//   };
-
-//   // === Orders API ===
-//   const fetchOrders = async () => {
-//     try {
-//       const res = await axios.get(
-//         "http://127.0.0.1:8000/api/orders/seller-orders/",
-//         { headers: { Authorization: `Bearer ${token}` } }
-//       );
-//       const sellerOrders = res.data.filter(
-//         (order) => order.seller === Number(sellerId)
-//       );
-//       setTotalOrders(sellerOrders.length);
-//       console.log("Seller Orders:", sellerOrders);
-//     } catch (error) {
-//       console.log("Order API Error:", error);
-//     }
-//   };
-
-//   // === Rating API ===
-//   const fetchRatings = async () => {
-//     try {
-//       const res = await axios.get("http://127.0.0.1:8000/api/reviews/", {
-//         headers: { Authorization: `Bearer ${token}` },
-//       });
-
-//       const sellerReviews = res.data.filter(
-//         (rev) => rev.product.seller === Number(sellerId)
-//       );
-
-//       if (sellerReviews.length > 0) {
-//         const avg =
-//           sellerReviews.reduce((sum, item) => sum + item.rating, 0) /
-//           sellerReviews.length;
-//         setAvgRating(avg.toFixed(1));
-//       } else {
-//         setAvgRating(0);
-//       }
-//       console.log("Filtered Reviews:", sellerReviews);
-//     } catch (error) {
-//       console.log("Review API Error:", error);
-//     }
-//   };
-
-//   const renderContent = () => {
-//     switch (activeTab) {
-//       case "products":
-//         return <Products />;
-//       case "orders":
-//         return <Orders />;
-//       case "analytics":
-//         return <Analytics />;
-//       default:
-//         return <Overview />;
-//     }
-//   };
-
-//   if (loading) {
-//     return (
-//       <div className="min-h-screen flex items-center justify-center">
-//         <p>লোড হচ্ছে...</p>
-//       </div>
-//     );
-//   }
-
-//   return (
-//     <div className="min-h-screen bg-gray-50 py-6 px-4 md:px-8">
-//       {/* ==== Seller Info Section ==== */}
-//       <div className="flex items-center gap-4 mb-6 bg-white rounded-xl shadow p-5">
-//         <div className="relative rounded-full h-20 w-20 overflow-hidden">
-//           <img
-//             src={
-//               user?.photo
-//                 ? `http://127.0.0.1:8000${user.photo}`
-//                 : "https://i.ibb.co/2ypYw9Y/default-avatar.png"
-//             }
-//             alt="Seller"
-//             className="w-full h-full object-cover"
-//           />
-//         </div>
-
-//         <div className="flex-1">
-//           <h1 className="text-lg font-semibold text-gray-800">
-//             {user?.username || "বিক্রেতা"}
-//           </h1>
-//           <p className="text-sm text-gray-500">বিক্রেতা ড্যাশবোর্ড</p>
-
-//           <div className="flex items-center gap-6 mt-2">
-//             <div className="flex items-center gap-1 text-sm text-gray-700">
-//               <Package className="w-4 h-4 text-gray-500" />
-//               <span>{totalProducts} পণ্য</span>
-//             </div>
-
-//             <div className="flex items-center gap-1 text-sm text-gray-700">
-//               <ShoppingCart className="w-4 h-4 text-gray-500" />
-//               <span>{totalOrders} অর্ডার</span>
-//             </div>
-
-//             <div className="flex items-center gap-1 text-sm text-gray-700">
-//               <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-//               <span>{avgRating} রেটিং</span>
-//             </div>
-//           </div>
-//         </div>
-//       </div>
-
-//       {/* ==== Navigation Tabs ==== */}
-//       <div className="flex justify-between gap-9 bg-white shadow-sm rounded-xl mx-4 py-3 mb-6">
-//         <button
-//           onClick={() => setActiveTab("overview")}
-//           className={`flex items-center gap-2 ${
-//             activeTab === "overview"
-//               ? "text-indigo-600 border-b-2 border-indigo-600"
-//               : "text-gray-700 hover:text-indigo-600"
-//           }`}
-//         >
-//           <MdTrendingUp className="text-lg" /> ওভারভিউ
-//         </button>
-
-//         <button
-//           onClick={() => setActiveTab("products")}
-//           className={`flex items-center gap-2 ${
-//             activeTab === "products"
-//               ? "text-indigo-600 border-b-2 border-indigo-600"
-//               : "text-gray-700 hover:text-indigo-600"
-//           }`}
-//         >
-//           <Box className="text-lg" /> পণ্য
-//         </button>
-
-//         <button
-//           onClick={() => setActiveTab("orders")}
-//           className={`flex items-center gap-2 ${
-//             activeTab === "orders"
-//               ? "text-indigo-600 border-b-2 border-indigo-600"
-//               : "text-gray-700 hover:text-indigo-600"
-//           }`}
-//         >
-//           <ShoppingCart className="text-lg" /> অর্ডার
-//         </button>
-
-//         <button
-//           onClick={() => setActiveTab("analytics")}
-//           className={`flex items-center gap-2 ${
-//             activeTab === "analytics"
-//               ? "text-indigo-600 border-b-2 border-indigo-600"
-//               : "text-gray-700 hover:text-indigo-600"
-//           }`}
-//         >
-//           <BarChart2 className="text-lg" /> অ্যানালিটিক্স
-//         </button>
-//       </div>
-
-//       {/* ==== Dynamic Content ==== */}
-//       {renderContent()}
-//     </div>
-//   );
-// };
-
-// export default SellerDashboard;

@@ -1,271 +1,173 @@
-// update code
-import { ImHome } from "react-icons/im";
+import { useContext, useEffect, useRef, useState } from "react";
 import {
-  IoLocationOutline,
-  IoSettingsOutline,
-  IoStarOutline,
-} from "react-icons/io5";
-import { FiShoppingCart, FiLogOut } from "react-icons/fi";
-import { FaRegUser, FaUserCircle } from "react-icons/fa";
-import { MdOutlineHistory } from "react-icons/md";
-import { Link } from "react-router-dom";
-import { useState, useEffect, useContext, useRef } from "react";
+  BadgeCheck,
+  ChevronRight,
+  CirclePlus,
+  LayoutDashboard,
+  LogIn,
+  LogOut,
+  Menu,
+  PackageCheck,
+  Search,
+  ShoppingBag,
+  UserRound,
+  X,
+} from "lucide-react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
+import localMartLogo from "../assets/local-mart-logo-web.png";
+import { AuthContext } from "../contexts/AuthContext/AuthContext";
 import { CartContext } from "../contexts/CartContext/CartContext";
-import { AuthContext } from "../contexts/AuthContext/AuthProvider";
-import { BASE_URL } from "../config.js/config";
 import SellerAddSpecialOfferModal from "../Pages/SellerAddSpecialOfferModal/SellerAddSpecialOfferModal";
+import { api, imageUrl } from "../services/api";
+
 
 const Navbar = ({ searchTerm, setSearchTerm, onOfferAdded }) => {
-  const [open, setOpen] = useState(false);
-  const [openOfferModal, setOpenOfferModal] = useState(false);
-
   const { user, logout } = useContext(AuthContext);
-  const { cartItems } = useContext(CartContext);
+  const { cartCount } = useContext(CartContext);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
+  const [offerOpen, setOfferOpen] = useState(false);
+  const profileRef = useRef(null);
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  const dropdownRef = useRef(null);
-
-  const storedUser = JSON.parse(localStorage.getItem("user"));
-  const role = user?.role || storedUser?.role || "No role";
-  // const getImageUrl = (photo) => {
-  //   return photo || "https://i.ibb.co/2ypYw9Y/default-avatar.png";
-  // };
-  // console.log("PHOTO:", user?.photo);
-  // console.log("IMG URL:", getImageUrl(user?.photo));
-  const getImageUrl = (photo) => {
-    if (!photo) {
-      return "https://i.ibb.co/2ypYw9Y/default-avatar.png";
-    }
-
-    // যদি already full URL (Cloudinary)
-    if (photo.startsWith("http")) {
-      return photo;
-    }
-
-    // fallback (local বা future case)
-    return `${BASE_URL}${photo}`;
-  };
-  console.log("PHOTO:", user?.photo);
-  // 🔹 Close dropdown on outside click
   useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
-        setOpen(false);
-      }
+    const close = (event) => {
+      if (event.type === "keydown" && event.key === "Escape") setProfileOpen(false);
+      if (event.type === "pointerdown" && !profileRef.current?.contains(event.target)) setProfileOpen(false);
     };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener("pointerdown", close);
+    document.addEventListener("keydown", close);
+    return () => {
+      document.removeEventListener("pointerdown", close);
+      document.removeEventListener("keydown", close);
+    };
   }, []);
 
+  const submitSearch = (event) => {
+    event.preventDefault();
+    if (location.pathname !== "/") navigate("/");
+    setMobileOpen(false);
+  };
+
+  const handleLogout = () => {
+    const refresh = localStorage.getItem("refresh");
+    if (refresh) api.post("/users/logout/", { refresh }).catch(() => {});
+    logout();
+    setProfileOpen(false);
+    navigate("/");
+  };
+
+  const userAvatar = (className) => user.photo ? (
+    <img src={imageUrl(user.photo)} alt="" className={`${className} object-cover`} />
+  ) : (
+    <span className={`${className} grid place-items-center bg-gradient-to-br from-[#159447] to-[#075e2a] font-black text-white`}>
+      {user.username?.[0]?.toUpperCase()}
+    </span>
+  );
+
   return (
-    // <div className="bg-base-100 shadow-md sticky top-0 z-50">
-    <div className="bg-white text-gray-900 shadow-md sticky top-0 z-50">
-      {/* ================= NAVBAR ================= */}
-      <div className="flex items-center justify-between px-4 md:px-8 py-3">
-        {/* LEFT – LOGO */}
-        <div className="flex items-center gap-4">
-          <Link to="/" className="flex items-center gap-2">
-            <ImHome className="text-3xl text-[#222]" />
-            <div className="hidden sm:block">
-              <h2 className="font-bold text-xl text-gray-900 leading-none">
-                LocalMarket
-              </h2>
-              <p className="text-xs text-gray-600 -mt-1">
-                স্থানীয় বিক্রেতাদের প্ল্যাটফর্ম
-              </p>
-            </div>
+    <>
+      <header className="sticky top-0 z-40 border-b border-[#e1ecdc] bg-white/92 shadow-[0_8px_35px_rgba(23,74,38,.06)] backdrop-blur-xl">
+        <div className="page-shell flex h-[76px] items-center gap-3">
+          <Link to="/" className="flex shrink-0 items-center gap-2.5" aria-label="Local Mart home">
+            <img src={localMartLogo} alt="" className="h-12 w-12 rounded-2xl border border-[#dcebd4] bg-white object-cover shadow-sm" />
+            <span className="hidden leading-none sm:block">
+              <strong className="block text-lg font-black tracking-[-0.035em] text-slate-950">LOCAL MART</strong>
+              <small className="mt-1 block text-[8px] font-bold uppercase tracking-[.2em] text-[#087c35]">Fresh · Local · Trusted</small>
+            </span>
           </Link>
 
-          {/* Location */}
-          <button className="hidden md:flex items-center gap-2 px-3 py-2 border rounded-md bg-gray-50 text-gray-600">
-            <IoLocationOutline className="w-5 h-5" />
-            <div>
-              <p className="text-xs">আপনার এলাকা</p>
-              <p className="text-sm font-medium">{user?.location || "—"}</p>
-            </div>
-          </button>
-        </div>
+          <form className="relative mx-auto hidden w-full max-w-2xl md:block" role="search" onSubmit={submitSearch}>
+            <label className="sr-only" htmlFor="site-search">Search products</label>
+            <Search className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={19} />
+            <input id="site-search" type="search" value={searchTerm} onChange={(event) => setSearchTerm(event.target.value)} placeholder="Search products, sellers, or locations" className="field w-full pl-11 pr-4" />
+          </form>
 
-        {/* DESKTOP SEARCH */}
-        <div className="flex-1 max-w-lg mx-6 hidden md:flex">
-          <label className="flex items-center gap-2 w-full h-10 px-4 rounded-full bg-gray-50 border">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={2}
-              className="w-5 h-5 text-gray-500"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z"
-              />
-            </svg>
-            <input
-              type="search"
-              placeholder="পণ্য খুঁজুন..."
-              className="grow bg-transparent outline-none text-gray-800"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </label>
-        </div>
-
-        {/* RIGHT ACTIONS */}
-        <div className="flex items-center gap-3">
-          {/* Seller / Cart */}
-          {user && role === "seller" ? (
-            <Link
-              to="/seller-dashboard"
-              className="px-4 py-2 bg-black text-white rounded-full text-sm"
-            >
-              ড্যাশবোর্ড
-            </Link>
-          ) : (
-            <Link to="/cart" className="relative text-2xl">
-              <FiShoppingCart />
-              {cartItems.length > 0 && (
-                <span className="absolute -top-2 -right-2 w-5 h-5 text-[10px] bg-red-500 text-white rounded-full flex items-center justify-center">
-                  {cartItems.length}
-                </span>
-              )}
-            </Link>
-          )}
-
-          {/* PROFILE */}
-          {user ? (
-            <div className="relative" ref={dropdownRef}>
-              <button onClick={() => setOpen(!open)}>
-                <img
-                  src={getImageUrl(user?.photo)}
-                  alt="User"
-                  className="w-9 h-9 rounded-full border object-cover"
-                />
+          <nav className="ml-auto flex items-center gap-1" aria-label="Account navigation">
+            {user?.role === "seller" && (
+              <button className="hidden items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-[#f1f9e9] hover:text-[#087c35] lg:flex" onClick={() => setOfferOpen(true)}>
+                <CirclePlus size={18} /> Add offer
               </button>
+            )}
+            {user?.role !== "seller" && (
+              <Link to="/cart" className="premium-nav-icon relative" aria-label={`Cart with ${cartCount} items`} title="Your cart">
+                <ShoppingBag size={21} strokeWidth={1.8} />
+                {cartCount > 0 && <span className="cart-badge">{cartCount > 99 ? "99+" : cartCount}</span>}
+              </Link>
+            )}
 
-              {open && (
-                <div className="absolute right-0 mt-3 w-56 bg-white rounded-lg shadow border">
-                  {/* 🔹 DROPDOWN HEADER (IMAGE FIXED) */}
-                  {/* <div className="px-4 py-3 border-b flex items-center gap-3">
-                    {user?.photo ? (
-                      <img
-                        src={`${BASE_URL}${user.photo}`}
-                        alt="Profile"
-                        className="w-10 h-10 rounded-full object-cover border"
-                      />
-                    ) : (
-                      <FaUserCircle className="text-3xl text-gray-600" />
-                    )}
+            {user ? (
+              <div ref={profileRef} className="relative">
+                <button className="premium-profile-button relative ml-1" onClick={() => setProfileOpen((open) => !open)} aria-label="Open profile menu" aria-expanded={profileOpen} aria-haspopup="menu" title={user.username}>
+                  {userAvatar("h-9 w-9 rounded-full text-sm")}
+                  <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-white bg-[#9bd41e]" aria-hidden="true" />
+                </button>
 
-                    <div>
-                      <p className="text-sm font-semibold">আমার অ্যাকাউন্ট</p>
-                      <p className="text-xs text-green-600 font-bold">{role}</p>
+                {profileOpen && (
+                  <div className="profile-menu" role="menu">
+                    <div className="relative overflow-hidden bg-gradient-to-br from-[#087c35] to-[#155f2d] px-3.5 pb-3.5 pt-4 text-white">
+                      <div className="absolute -right-8 -top-10 h-28 w-28 rounded-full bg-[#b7e34a]/15" />
+                      <div className="relative flex items-center gap-3">
+                        {userAvatar("h-11 w-11 rounded-xl border-2 border-white/70 text-base shadow-md")}
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-1.5"><p className="truncate text-sm font-black">{user.username}</p><BadgeCheck size={15} className="shrink-0 text-[#c6ef5c]" /></div>
+                          <p className="mt-1 text-[10px] font-bold uppercase tracking-[.14em] text-white/60">{user.role} account</p>
+                        </div>
+                      </div>
                     </div>
-                  </div> */}
-                  <div className="px-4 py-3 border-b flex items-center gap-3">
-                    <img
-                      src={getImageUrl(user?.photo)}
-                      alt="Profile"
-                      className="w-10 h-10 rounded-full object-cover border"
-                    />
 
-                    <div>
-                      <p className="text-sm font-semibold">আমার অ্যাকাউন্ট</p>
-                      <p className="text-xs text-green-600 font-bold">{role}</p>
+                    <div className="p-2">
+                      {user.role === "seller" && (
+                        <Link role="menuitem" className="profile-menu-link" to="/seller-dashboard" onClick={() => setProfileOpen(false)}>
+                          <span className="profile-menu-icon"><LayoutDashboard size={17} /></span>
+                          <span className="min-w-0 flex-1"><strong className="block text-sm">Seller dashboard</strong><small className="text-[11px] text-slate-400">Products, orders and insights</small></span>
+                          <ChevronRight size={15} className="text-slate-300" />
+                        </Link>
+                      )}
+                      <Link role="menuitem" className="profile-menu-link" to="/profile" onClick={() => setProfileOpen(false)}>
+                        <span className="profile-menu-icon"><UserRound size={17} /></span>
+                        <span className="min-w-0 flex-1"><strong className="block text-sm">Profile & account</strong><small className="text-[11px] text-slate-400">Details and preferences</small></span>
+                        <ChevronRight size={15} className="text-slate-300" />
+                      </Link>
+                      {user.role === "buyer" && (
+                        <Link role="menuitem" className="profile-menu-link" to="/profile" onClick={() => setProfileOpen(false)}>
+                          <span className="profile-menu-icon"><PackageCheck size={17} /></span>
+                          <span className="min-w-0 flex-1"><strong className="block text-sm">My orders</strong><small className="text-[11px] text-slate-400">Track recent purchases</small></span>
+                          <ChevronRight size={15} className="text-slate-300" />
+                        </Link>
+                      )}
+                    </div>
+
+                    <div className="border-t border-slate-100 p-2">
+                      <button role="menuitem" className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-bold text-rose-600 transition hover:bg-rose-50" onClick={handleLogout}>
+                        <LogOut size={17} /> Sign out
+                      </button>
                     </div>
                   </div>
-
-                  {/* LINKS */}
-                  <Link
-                    to="/profile?tab=personal"
-                    className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
-                  >
-                    <FaRegUser className="inline mr-2" /> প্রোফাইল
-                  </Link>
-
-                  {role === "buyer" ? (
-                    <Link
-                      to="/profile?tab=orders"
-                      className="block px-4 py-2 hover:bg-gray-100"
-                    >
-                      <MdOutlineHistory className="inline mr-2" /> অর্ডার ইতিহাস
-                    </Link>
-                  ) : (
-                    <>
-                      <Link
-                        to="/seller-dashboard"
-                        className="block px-4 py-2 hover:bg-gray-100"
-                      >
-                        <MdOutlineHistory className="inline mr-2" /> বিক্রেতা
-                        ড্যাশবোর্ড
-                      </Link>
-
-                      <button
-                        onClick={() => setOpenOfferModal(true)}
-                        className="w-full text-left px-4 py-2 hover:bg-gray-100"
-                      >
-                        <IoStarOutline className="inline mr-2" /> বিশেষ অফার
-                      </button>
-                    </>
-                  )}
-
-                  <Link
-                    to="/profile?tab=settings"
-                    className="block px-4 py-2 hover:bg-gray-100"
-                  >
-                    <IoSettingsOutline className="inline mr-2" /> সেটিংস
-                  </Link>
-
-                  <hr />
-
-                  <button
-                    onClick={logout}
-                    className="w-full text-left px-4 py-2 text-red-500 hover:bg-gray-100"
-                  >
-                    <FiLogOut className="inline mr-2" /> লগআউট
-                  </button>
-                </div>
-              )}
-            </div>
-          ) : (
-            <div className="flex gap-2">
-              <Link
-                to="/login"
-                className="px-4 py-2 bg-black text-white rounded-full text-sm"
-              >
-                লগইন
-              </Link>
-              <Link
-                to="/register"
-                className="px-4 py-2 border rounded-full text-sm"
-              >
-                রেজিস্টার
-              </Link>
-            </div>
-          )}
+                )}
+              </div>
+            ) : (
+              <Link to="/login" className="premium-nav-icon ml-1 hidden sm:grid" aria-label="Sign in" title="Sign in"><LogIn size={21} strokeWidth={1.8} /></Link>
+            )}
+            <button className="icon-button md:hidden" onClick={() => setMobileOpen((open) => !open)} aria-expanded={mobileOpen} aria-label="Toggle menu">{mobileOpen ? <X /> : <Menu />}</button>
+          </nav>
         </div>
-      </div>
 
-      {/* MOBILE SEARCH */}
-      <div className="md:hidden px-4 pb-3">
-        <input
-          type="search"
-          placeholder="পণ্য খুঁজুন..."
-          className="w-full px-4 py-2 border rounded-full outline-none"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-      </div>
-
-      {/* OFFER MODAL */}
-      <SellerAddSpecialOfferModal
-        isOpen={openOfferModal}
-        onClose={() => setOpenOfferModal(false)}
-        onSuccess={onOfferAdded}
-      />
-    </div>
+        {mobileOpen && (
+          <div className="page-shell border-t border-[#e6efe2] py-3 md:hidden">
+            <form className="relative" role="search" onSubmit={submitSearch}>
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+              <input type="search" value={searchTerm} onChange={(event) => setSearchTerm(event.target.value)} className="field w-full pl-10" placeholder="Search Local Mart" aria-label="Search products" />
+            </form>
+            {!user && <Link to="/login" className="btn-primary mt-3 w-full" onClick={() => setMobileOpen(false)}>Sign in</Link>}
+            {user?.role === "seller" && <button className="btn-secondary mt-3 w-full" onClick={() => { setOfferOpen(true); setMobileOpen(false); }}><CirclePlus size={18} /> Add special offer</button>}
+          </div>
+        )}
+      </header>
+      <SellerAddSpecialOfferModal isOpen={offerOpen} onClose={() => setOfferOpen(false)} onSuccess={onOfferAdded} />
+    </>
   );
 };
 

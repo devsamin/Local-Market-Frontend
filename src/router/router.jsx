@@ -1,77 +1,42 @@
+import { lazy } from "react";
 import { createBrowserRouter } from "react-router-dom";
-import RootLayout from "../Layouts/RootLayout";
-import HomePage from "../Pages/HomePage/HomePage";
-import BuyerCart from "../Pages/BuyerCart/BuyerCart";
-// import BuyerProfile from "../Pages/BuyerProfile/BuyerPorfile";
-// import BuyerProfile from "../Pages/Profile/UserProfile";
+
+import ErrorPage from "../components/ErrorPage";
+import { GuestRoute, ProtectedRoute } from "../components/RouteGuard";
 import AuthLayouts from "../Layouts/AuthLayouts";
-import RegisterPage from "../Pages/Authentications/RegisterPage";
-import LoginPage from "../Pages/Authentications/LoginPage";
-import SellerDashboard from "../Pages/SellerDashboard/SellerDashboard";
-import UserProfile from "../Pages/Profile/UserProfile";
-import PaymentSuccess from "../Pages/BuyerCart/PaymentSuccess/PaymentSuccess";
-import PaymentFailed from "../Pages/BuyerCart/PaymentFailed/PaymentFailed";
-// import BuyerOrders from "../Pages/Profile/BuyerOrders";
+import RootLayout from "../Layouts/RootLayout";
+
+
+const HomePage = lazy(() => import("../Pages/HomePage/HomePage"));
+const BuyerCart = lazy(() => import("../Pages/BuyerCart/BuyerCart"));
+const RegisterPage = lazy(() => import("../Pages/Authentications/RegisterPage"));
+const LoginPage = lazy(() => import("../Pages/Authentications/LoginPage"));
+const SellerDashboard = lazy(() => import("../Pages/SellerDashboard/SellerDashboard"));
+const UserProfile = lazy(() => import("../Pages/Profile/UserProfile"));
+const PaymentSuccess = lazy(() => import("../Pages/BuyerCart/PaymentSuccess/PaymentSuccess"));
+const PaymentFailed = lazy(() => import("../Pages/BuyerCart/PaymentFailed/PaymentFailed"));
 
 export const router = createBrowserRouter([
   {
     path: "/",
     element: <RootLayout />,
+    errorElement: <ErrorPage />,
     children: [
-      {
-        path: "/",
-        element: <HomePage />,
-        loader: async () => {
-          // Categories fetch
-          const catRes = await fetch("/categoriesData.json");
-          const categories = await catRes.json();
-
-          //   Products fetch
-          const prodRes = await fetch("/productData.json");
-          const products = await prodRes.json();
-
-          //   return categories;
-          return { categories, products };
-        },
-      },
-      {
-        path: "/cart",
-        element: <BuyerCart />,
-      },
-      // {
-      //   path: "/orders",
-      //   element: <BuyerOrders />,
-      // },
-      {
-        path: "/profile",
-        element: <UserProfile />,
-      },
-      {
-        path: "/seller-dashboard",
-        element: <SellerDashboard />,
-      },
-      {
-        path: "/payment-success",
-        element: <PaymentSuccess />,
-      },
-      {
-        path: "/payment-failed",
-        element: <PaymentFailed />,
-      },
+      { index: true, element: <HomePage /> },
+      { path: "cart", element: <ProtectedRoute role="buyer"><BuyerCart /></ProtectedRoute> },
+      { path: "profile", element: <ProtectedRoute><UserProfile /></ProtectedRoute> },
+      { path: "seller-dashboard", element: <ProtectedRoute role="seller"><SellerDashboard /></ProtectedRoute> },
+      { path: "payment-success", element: <ProtectedRoute role="buyer"><PaymentSuccess /></ProtectedRoute> },
+      { path: "payment-failed", element: <ProtectedRoute role="buyer"><PaymentFailed /></ProtectedRoute> },
     ],
   },
   {
     path: "/",
     element: <AuthLayouts />,
+    errorElement: <ErrorPage />,
     children: [
-      {
-        path: "/login",
-        element: <LoginPage />,
-      },
-      {
-        path: "/register",
-        element: <RegisterPage />,
-      },
+      { path: "login", element: <GuestRoute><LoginPage /></GuestRoute> },
+      { path: "register", element: <GuestRoute><RegisterPage /></GuestRoute> },
     ],
   },
 ]);

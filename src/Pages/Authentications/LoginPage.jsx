@@ -1,437 +1,87 @@
-// import React, { useContext, useState } from "react";
-// import { useForm } from "react-hook-form";
-// import { FiUser, FiLock, FiEye, FiEyeOff } from "react-icons/fi";
-// import { FaStore } from "react-icons/fa";
-// import { Link, useNavigate } from "react-router-dom";
-// import axios from "axios";
-// import { AuthContext } from "../../contexts/AuthContext/AuthProvider";
-// import { toast } from "react-toastify";
-// import "react-toastify/dist/ReactToastify.css";
-// import { ImHome } from "react-icons/im";
-// import { Helmet } from "react-helmet-async";
-
-// const LoginPage = () => {
-//   const [showPassword, setShowPassword] = useState(false);
-//   const [role, setRole] = useState("ক্রেতা");
-//   const [errorMsg, setErrorMsg] = useState("");
-//   const navigate = useNavigate();
-//   const [loading, setLoading] = useState(false); // ✅ loading state
-
-//   const {
-//     register,
-//     handleSubmit,
-//     formState: { errors },
-//   } = useForm();
-//   const { login } = useContext(AuthContext);
-
-//   // ✅ Bangla → English mapping for backend
-//   const roleMap = {
-//     ক্রেতা: "buyer",
-//     বিক্রেতা: "seller",
-//     অ্যাডমিন: "admin",
-//   };
-
-//   const roleDescription = {
-//     ক্রেতা: "ক্রেতা হিসেবে লগইন করে আপনার পছন্দের পণ্য কিনুন।",
-//     বিক্রেতা: "বিক্রেতা হিসেবে লগইন করে আপনার দোকান পরিচালনা করুন।",
-//     অ্যাডমিন: "অ্যাডমিন লগইন শুধুমাত্র অনুমোদিত ব্যবহারকারীদের জন্য।",
-//   };
-
-//   const onSubmit = async (data) => {
-//     setErrorMsg(""); // clear previous error
-//     setLoading(true); // ✅ Start loading
-//     try {
-//       // ✅ Send English role to backend
-//       const res = await axios.post(
-//         "https://local-mart-11yd.onrender.com/api/users/login/",
-//         {
-//           username: data.username,
-//           password: data.password,
-//           role: roleMap[role],
-//         },
-//       );
-
-//       localStorage.setItem("access", res.data.access);
-//       localStorage.setItem("refresh", res.data.refresh);
-
-//       const profileRes = await axios.get(
-//         "https://local-mart-11yd.onrender.com/api/users/profile/",
-//         {
-//           headers: { Authorization: `Bearer ${res.data.access}` },
-//         },
-//       );
-
-//       login(profileRes.data);
-
-//       toast.success(
-//         `স্বাগতম, ${profileRes.data.username}! আপনি সফলভাবে লগইন করেছেন।`,
-//         {
-//           position: "top-center",
-//           autoClose: 3000,
-//         },
-//       );
-
-//       navigate("/");
-//     } catch (error) {
-//       console.error("Login error:", error.response?.data || error.message);
-//       const errMsg =
-//         error.response?.data?.non_field_errors?.[0] ||
-//         error.response?.data?.detail ||
-//         "লগইন ব্যর্থ হয়েছে! দয়া করে তথ্যগুলো যাচাই করুন।";
-//       setErrorMsg(errMsg);
-//     } finally {
-//       setLoading(false); // ✅ Stop loading after success or error
-//     }
-//   };
-
-//   return (
-//     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 px-4">
-//       <Helmet>
-//         <title>লগইন পৃষ্ঠা | LocalMarket</title>
-//       </Helmet>
-//       <div className="bg-white rounded-3xl shadow-2xl p-8 w-full max-w-md transition-all duration-300 hover:shadow-gray-300">
-//         {/* Logo */}
-//         <div className="flex flex-col items-center mb-6">
-//           <div className="p-4 bg-black text-white rounded-2xl">
-//             <ImHome size={28} />
-//           </div>
-//           <h2 className="mt-4 text-xl font-semibold text-gray-800">
-//             LocalMarket এ স্বাগতম
-//           </h2>
-//           <p className="text-gray-500 text-sm mt-1">
-//             আপনার অ্যাকাউন্টে প্রবেশ করুন
-//           </p>
-//         </div>
-
-//         {/* Role Selector */}
-//         <div className="flex justify-center gap-3 mb-4">
-//           {["ক্রেতা", "বিক্রেতা", "অ্যাডমিন"].map((r) => (
-//             <button
-//               key={r}
-//               type="button"
-//               onClick={() => setRole(r)}
-//               className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium border transition ${
-//                 role === r
-//                   ? "bg-black text-white border-black"
-//                   : "bg-gray-100 text-gray-700 border-gray-200 hover:bg-gray-200"
-//               }`}
-//             >
-//               {r === "ক্রেতা" && <FiUser />}
-//               {r === "বিক্রেতা" && <FaStore />}
-//               {r === "অ্যাডমিন" && <FiLock />}
-//             </button>
-//           ))}
-//         </div>
-
-//         {/* Role Info */}
-//         <p className="text-center text-gray-600 text-sm mb-5">
-//           {roleDescription[role]}
-//         </p>
-
-//         {/* Form */}
-//         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-//           {/* Username */}
-//           <div>
-//             <label className="block text-sm font-medium text-gray-700 mb-1">
-//               ইউজারনেম
-//             </label>
-//             <input
-//               type="text"
-//               placeholder="আপনার ইউজারনেম"
-//               className="w-full border rounded-xl px-4 py-2 focus:ring-2 focus:outline-none border-gray-300 focus:ring-black"
-//               {...register("username", { required: "ইউজারনেম প্রয়োজন" })}
-//             />
-//             {errors.username && (
-//               <p className="text-red-500 text-sm mt-1">
-//                 {errors.username.message}
-//               </p>
-//             )}
-//           </div>
-
-//           {/* Password */}
-//           <div>
-//             <label className="block text-sm font-medium text-gray-700 mb-1">
-//               পাসওয়ার্ড
-//             </label>
-//             <div className="relative">
-//               <input
-//                 type={showPassword ? "text" : "password"}
-//                 placeholder="আপনার পাসওয়ার্ড"
-//                 className="w-full border rounded-xl px-4 py-2 pr-10 focus:ring-2 focus:outline-none border-gray-300 focus:ring-black"
-//                 {...register("password", { required: "পাসওয়ার্ড প্রয়োজন" })}
-//               />
-//               <button
-//                 type="button"
-//                 onClick={() => setShowPassword(!showPassword)}
-//                 className="absolute right-3 top-2.5 text-gray-500 hover:text-gray-700"
-//               >
-//                 {showPassword ? <FiEyeOff /> : <FiEye />}
-//               </button>
-//             </div>
-//             {errors.password && (
-//               <p className="text-red-500 text-sm mt-1">
-//                 {errors.password.message}
-//               </p>
-//             )}
-//           </div>
-
-//           {/* Error Message */}
-//           {errorMsg && (
-//             <div className="bg-red-50 border border-red-200 text-red-600 text-sm p-3 rounded-xl text-center">
-//               {errorMsg}
-//             </div>
-//           )}
-
-//           {/* ✅ Submit Button with loading */}
-//           <button
-//             type="submit"
-//             disabled={loading}
-//             className={`w-full py-3 rounded-xl font-semibold transition ${
-//               loading
-//                 ? "bg-gray-600 cursor-not-allowed text-white"
-//                 : "bg-black hover:bg-gray-800 text-white"
-//             }`}
-//           >
-//             {loading ? "লগইন হচ্ছে..." : "লগইন করুন"}
-//           </button>
-//         </form>
-
-//         <p className="text-center text-gray-500 text-sm mt-6">
-//           নতুন অ্যাকাউন্ট তৈরি করুন{" "}
-//           <Link
-//             to="/register"
-//             className="text-black font-medium hover:underline"
-//           >
-//             এখানে
-//           </Link>
-//         </p>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default LoginPage;
-
-import React, { useContext, useState } from "react";
-import { useForm } from "react-hook-form";
-import { FiUser, FiLock, FiEye, FiEyeOff, FiArrowLeft } from "react-icons/fi";
-import { FaStore } from "react-icons/fa";
-import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
-import { AuthContext } from "../../contexts/AuthContext/AuthProvider";
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import { ImHome } from "react-icons/im";
+import { useContext, useState } from "react";
 import { Helmet } from "react-helmet-async";
+import { Eye, EyeOff, LockKeyhole, UserRound } from "lucide-react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+
+import { AuthContext } from "../../contexts/AuthContext/AuthContext";
+import { api, getErrorMessage } from "../../services/api";
+
 
 const LoginPage = () => {
-  const [showPassword, setShowPassword] = useState(false);
-  const [role, setRole] = useState("ক্রেতা");
-  const [errorMsg, setErrorMsg] = useState("");
-  const [loading, setLoading] = useState(false);
-
-  const navigate = useNavigate();
   const { login } = useContext(AuthContext);
+  const [form, setForm] = useState({ username: "", password: "", role: "buyer" });
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm();
-
-  const roleMap = {
-    ক্রেতা: "buyer",
-    বিক্রেতা: "seller",
-    অ্যাডমিন: "admin",
-  };
-
-  const roleDescription = {
-    ক্রেতা: "ক্রেতা হিসেবে লগইন করে আপনার পছন্দের পণ্য কিনুন।",
-    বিক্রেতা: "বিক্রেতা হিসেবে লগইন করে আপনার দোকান পরিচালনা করুন।",
-    অ্যাডমিন: "অ্যাডমিন লগইন শুধুমাত্র অনুমোদিত ব্যবহারকারীদের জন্য।",
-  };
-
-  const onSubmit = async (data) => {
-    setErrorMsg("");
+  const submit = async (event) => {
+    event.preventDefault();
     setLoading(true);
-
     try {
-      const res = await axios.post(
-        "https://local-mart-11yd.onrender.com/api/users/login/",
-        {
-          username: data.username,
-          password: data.password,
-          role: roleMap[role],
-        },
-      );
-
-      localStorage.setItem("access", res.data.access);
-      localStorage.setItem("refresh", res.data.refresh);
-
-      const profileRes = await axios.get(
-        "https://local-mart-11yd.onrender.com/api/users/profile/",
-        {
-          headers: { Authorization: `Bearer ${res.data.access}` },
-        },
-      );
-
-      login(profileRes.data);
-
-      toast.success(
-        `স্বাগতম, ${profileRes.data.username}! আপনি সফলভাবে লগইন করেছেন।`,
-      );
-
-      navigate("/");
+      const { data: tokens } = await api.post("/users/login/", form);
+      localStorage.setItem("access", tokens.access);
+      localStorage.setItem("refresh", tokens.refresh);
+      const { data: profile } = await api.get("/users/profile/");
+      login(profile, tokens);
+      toast.success(`Welcome back, ${profile.username}.`);
+      const requestedPath = location.state?.from?.pathname;
+      navigate(requestedPath || (profile.role === "seller" ? "/seller-dashboard" : "/"), { replace: true });
     } catch (error) {
-      const errMsg =
-        error.response?.data?.non_field_errors?.[0] ||
-        error.response?.data?.detail ||
-        "লগইন ব্যর্থ হয়েছে!";
-      setErrorMsg(errMsg);
+      localStorage.removeItem("access");
+      localStorage.removeItem("refresh");
+      toast.error(getErrorMessage(error, "Username, password, or account type is incorrect."));
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 px-4">
-      <Helmet>
-        <title>লগইন পৃষ্ঠা | LocalMarket</title>
-      </Helmet>
+    <div className="page-shell grid min-h-[calc(100dvh-68px)] place-items-center py-4 sm:py-6">
+      <Helmet><title>Sign in | Local Mart</title></Helmet>
+      <section className="w-full max-w-sm rounded-[26px] border border-white/10 bg-white p-5 shadow-[0_30px_90px_rgba(0,0,0,.3)] sm:p-7">
+        <p className="eyebrow">Welcome back</p>
+        <h1 className="mt-1.5 text-2xl font-black tracking-[-.035em] text-slate-950 sm:text-[28px]">Sign in to Local Mart</h1>
+        <p className="mt-1.5 text-sm leading-5 text-slate-500">Manage your marketplace account and orders.</p>
 
-      <div className="bg-white rounded-3xl shadow-xl p-8 w-full max-w-md border border-gray-100">
-        {/* 🔙 Back to Home */}
-        <div className="mb-4">
-          <Link
-            to="/"
-            className="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-black transition"
-          >
-            <FiArrowLeft /> হোমে ফিরে যান
-          </Link>
-        </div>
+        <form className="mt-5 space-y-4" onSubmit={submit}>
+          <fieldset>
+            <legend className="label mb-1.5">Account type</legend>
+            <div className="grid grid-cols-2 gap-2">
+              {["buyer", "seller"].map((role) => (
+                <label key={role} className={`cursor-pointer rounded-xl border px-3 py-2.5 text-center text-sm font-bold capitalize transition ${form.role === role ? "border-[#78b800] bg-[#eff8e9] text-[#087c35] shadow-sm" : "border-slate-200 hover:border-[#b8dca5]"}`}>
+                  <input className="sr-only" type="radio" name="role" value={role} checked={form.role === role} onChange={(event) => setForm({ ...form, role: event.target.value })} />
+                  {role}
+                </label>
+              ))}
+            </div>
+          </fieldset>
 
-        {/* Logo */}
-        <div className="flex flex-col items-center mb-6">
-          <div className="p-4 bg-black text-white rounded-2xl">
-            <ImHome size={28} />
-          </div>
+          <label className="label block">
+            Username
+            <span className="relative mt-1 block">
+              <UserRound className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={17} />
+              <input className="field w-full py-2.5 pl-10" autoComplete="username" required value={form.username} onChange={(event) => setForm({ ...form, username: event.target.value })} />
+            </span>
+          </label>
 
-          <h2 className="mt-4 text-xl font-semibold text-gray-900">
-            LocalMarket এ স্বাগতম
-          </h2>
-
-          <p className="text-gray-500 text-sm mt-1">
-            আপনার অ্যাকাউন্টে প্রবেশ করুন
-          </p>
-        </div>
-
-        {/* Role Selector */}
-        <div className="flex justify-center gap-3 mb-4">
-          {["ক্রেতা", "বিক্রেতা", "অ্যাডমিন"].map((r) => (
-            <button
-              key={r}
-              type="button"
-              onClick={() => setRole(r)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium border transition ${
-                role === r
-                  ? "bg-black text-white border-black"
-                  : "bg-gray-100 text-gray-700 border-gray-200 hover:bg-gray-200"
-              }`}
-            >
-              {r === "ক্রেতা" && <FiUser />}
-              {r === "বিক্রেতা" && <FaStore />}
-              {r === "অ্যাডমিন" && <FiLock />}
-            </button>
-          ))}
-        </div>
-
-        {/* Role Description */}
-        <p className="text-center text-gray-600 text-sm mb-5">
-          {roleDescription[role]}
-        </p>
-
-        {/* Form */}
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-          {/* Username */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              ইউজারনেম
-            </label>
-            <input
-              type="text"
-              placeholder="আপনার ইউজারনেম"
-              className="w-full border border-gray-300 bg-white text-gray-900 placeholder-gray-400 rounded-xl px-4 py-2 focus:ring-2 focus:ring-black focus:outline-none"
-              {...register("username", { required: "ইউজারনেম প্রয়োজন" })}
-            />
-            {errors.username && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.username.message}
-              </p>
-            )}
-          </div>
-
-          {/* Password */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              পাসওয়ার্ড
-            </label>
-
-            <div className="relative">
-              <input
-                type={showPassword ? "text" : "password"}
-                placeholder="আপনার পাসওয়ার্ড"
-                className="w-full border border-gray-300 bg-white text-gray-900 placeholder-gray-400 rounded-xl px-4 py-2 pr-10 focus:ring-2 focus:ring-black focus:outline-none"
-                {...register("password", { required: "পাসওয়ার্ড প্রয়োজন" })}
-              />
-
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-2.5 text-gray-500 hover:text-gray-700"
-              >
-                {showPassword ? <FiEyeOff /> : <FiEye />}
+          <label className="label block">
+            Password
+            <span className="relative mt-1 block">
+              <LockKeyhole className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={17} />
+              <input className="field w-full px-10 py-2.5" type={showPassword ? "text" : "password"} autoComplete="current-password" required value={form.password} onChange={(event) => setForm({ ...form, password: event.target.value })} />
+              <button type="button" className="icon-button absolute right-1 top-1/2 -translate-y-1/2" onClick={() => setShowPassword((value) => !value)} aria-label={showPassword ? "Hide password" : "Show password"}>
+                {showPassword ? <EyeOff size={17} /> : <Eye size={17} />}
               </button>
-            </div>
+            </span>
+          </label>
 
-            {errors.password && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.password.message}
-              </p>
-            )}
-          </div>
-
-          {/* Error */}
-          {errorMsg && (
-            <div className="bg-red-50 border border-red-200 text-red-600 text-sm p-3 rounded-xl text-center">
-              {errorMsg}
-            </div>
-          )}
-
-          {/* Button */}
-          <button
-            type="submit"
-            disabled={loading}
-            className={`w-full py-3 rounded-xl font-semibold transition ${
-              loading
-                ? "bg-gray-500 cursor-not-allowed text-white"
-                : "bg-black hover:bg-gray-800 text-white"
-            }`}
-          >
-            {loading ? "লগইন হচ্ছে..." : "লগইন করুন"}
-          </button>
+          <button className="btn-primary w-full" disabled={loading}>{loading ? "Signing in…" : "Sign in"}</button>
         </form>
 
-        {/* Register */}
-        <p className="text-center text-gray-500 text-sm mt-6">
-          নতুন অ্যাকাউন্ট তৈরি করুন{" "}
-          <Link
-            to="/register"
-            className="text-black font-medium hover:underline"
-          >
-            এখানে
-          </Link>
-        </p>
-      </div>
+        <p className="mt-5 text-center text-sm text-slate-600">New to Local Mart? <Link to="/register" className="font-bold text-[#087c35] hover:text-[#075e2a]">Create an account</Link></p>
+      </section>
     </div>
   );
 };

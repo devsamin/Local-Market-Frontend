@@ -1,339 +1,68 @@
-// import React from "react";
-// import { FaTag } from "react-icons/fa";
+import { ArrowRight, Clock3, Sparkles, Tag } from "lucide-react";
 
-// const SpecialOffers = () => {
-//   const offers = [
-//     {
-//       id: 1,
-//       title: "ঈদ বিশেষ ছাড়",
-//       subtitle: "সব পণ্যে ৩০% পর্যন্ত ছাড়!",
-//       image:
-//         "https://i.ibb.co.com/RkgQS471/sangbad-bangla-1653659591.jpg",
-//       badge: "৩০% ছাড়",
-//       badgeColor: "bg-green-500",
-//     },
-//     {
-//       id: 2,
-//       title: "ইলেকট্রনিক্স মেলা",
-//       subtitle: "স্মার্টফোন, ল্যাপটপ ও গ্যাজেটে দারুণ অফার!",
-//       image:
-//         "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=1200&q=80",
-//       badge: "নতুন",
-//       badgeColor: "bg-blue-600",
-//     },
-//     {
-//       id: 3,
-//       title: "ফ্রি ডেলিভারি অফার",
-//       subtitle: "৳1000+ অর্ডারে ডেলিভারি একদম ফ্রি",
-//       image:
-//         "https://i.ibb.co.com/yBSggV5Z/a69814d824b980fdb895e0bd4c16ebff.jpg",
-//       badge: "ফ্রি ডেলিভারি",
-//       badgeColor: "bg-orange-500",
-//     },
-//   ];
+import { imageUrl } from "../../services/api";
 
-//   return (
-//     <section className="w-full bg-gradient-to-b from-white to-gray-50 py-10">
-//       {/* Header */}
-//       <div className="flex items-center gap-2 px-6 mb-6">
-//         <FaTag className="text-[#16a34a] text-2xl" />
-//         <h2 className="text-3xl font-bold text-gray-800">বিশেষ অফার</h2>
-//       </div>
-
-//       {/* Offers Grid */}
-//       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-6">
-//         {offers.map((offer) => (
-//           <div
-//             key={offer.id}
-//             className="relative rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 group"
-//           >
-//             {/* Background Image */}
-//             <img
-//               src={offer.image}
-//               alt={offer.title}
-//               className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-500"
-//             />
-
-//             {/* Gradient Overlay */}
-//             <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
-
-//             {/* Badge */}
-//             <span
-//               className={`absolute top-4 left-4 text-white text-sm px-4 py-1 rounded-full ${offer.badgeColor}`}
-//             >
-//               {offer.badge}
-//             </span>
-
-//             {/* Text Content */}
-//             <div className="absolute bottom-4 left-4 text-white">
-//               <h3 className="text-xl font-bold mb-1">{offer.title}</h3>
-//               <p className="text-sm opacity-90">{offer.subtitle}</p>
-//             </div>
-//           </div>
-//         ))}
-//       </div>
-//     </section>
-//   );
-// };
-
-// export default SpecialOffers;
-
-// import React, { useEffect, useState } from "react";
-// import { FaTag } from "react-icons/fa";
-// import axios from "axios";
-// import { BASE_URL } from "../../config.js/config";
-
-// const SpecialOffers = () => {
-//   const [offers, setOffers] = useState([]);
-//   const [loading, setLoading] = useState(true);
-
-//   // Fetch Offers from API
-//   useEffect(() => {
-//     const fetchOffers = async () => {
-//       try {
-//         const response = await axios.get(`${BASE_URL}/api/offers/`);
-//         setOffers(response.data);
-//         console.log("Fetched offers:", response.data);
-//       } catch (error) {
-//         console.error("Error loading offers:", error);
-//       } finally {
-//         setLoading(false);
-//       }
-//     };
-
-//     fetchOffers();
-//   }, []);
-
-//   return (
-//     <section className="w-full bg-gradient-to-b from-white to-gray-50 py-10">
-
-//       {/* Header */}
-//       <div className="flex items-center gap-2 px-6 mb-6">
-//         <FaTag className="text-[#16a34a] text-2xl" />
-//         <h2 className="text-3xl font-bold text-gray-800">বিশেষ অফার</h2>
-//       </div>
-
-//       {/* Loading */}
-//       {loading && (
-//         <p className="text-center text-gray-500 text-lg py-10">
-//           অফার লোড হচ্ছে...
-//         </p>
-//       )}
-
-//       {/* No offers */}
-//       {!loading && offers.length === 0 && (
-//         <p className="text-center text-gray-500 text-lg py-10">
-//           বর্তমানে কোনো বিশেষ অফার নেই
-//         </p>
-//       )}
-
-//       {/* Offers Grid */}
-//       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-6">
-//         {offers.map((offer) => (
-//           <div
-//             key={offer.id}
-//             className="relative rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 group"
-//           >
-//             {/* Background Image */}
-//             <img
-//               src={offer.image}
-//               alt={offer.title}
-//               className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-500"
-//             />
-
-//             {/* Overlay */}
-//             <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
-
-//             {/* Badge */}
-//             <span
-//               className={`absolute top-4 left-4 text-white text-sm px-4 py-1 rounded-full ${offer.badgeColor}`}
-//             >
-//               {offer.badge}
-//             </span>
-
-//             {/* Text */}
-//             <div className="absolute bottom-4 left-4 text-white">
-//               <h3 className="text-xl font-bold mb-1">{offer.title}</h3>
-//               <p className="text-sm opacity-90">{offer.subtitle}</p>
-//             </div>
-//           </div>
-//         ))}
-//       </div>
-//     </section>
-//   );
-// };
-
-// export default SpecialOffers;
-
-// import { FaTag } from "react-icons/fa";
-
-// const SpecialOffers = ({ offers = [] }) => {
-//   return (
-//     <section className="w-full bg-gradient-to-b from-white to-gray-50 py-10">
-
-//       {/* Header */}
-//       <div className="flex items-center gap-2 px-6 mb-6">
-//         <FaTag className="text-[#16a34a] text-2xl" />
-//         <h2 className="text-3xl font-bold text-gray-800">বিশেষ অফার</h2>
-//       </div>
-
-//       {offers.length === 0 && (
-//         <p className="text-center text-gray-500 text-lg py-10">
-//           বর্তমানে কোনো বিশেষ অফার নেই
-//         </p>
-//       )}
-
-//       {/* 🔥 Horizontal Scroll */}
-//       <div className="overflow-x-auto px-6">
-//         <div className="flex gap-6 min-w-full">
-
-//           {offers.map((offer) => (
-//             <div
-//               key={offer.id}
-//               className="
-//                 min-w-[33.33%]
-//                 relative
-//                 rounded-xl
-//                 overflow-hidden
-//                 shadow-md
-//                 hover:shadow-xl
-//                 transition-all
-//                 duration-300
-//                 group
-//               "
-//             >
-//               <img
-//                 src={offer.image}
-//                 alt={offer.title}
-//                 className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-500"
-//               />
-
-//               {/* Overlay */}
-//               <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
-
-//               {/* Badge */}
-//               <span
-//                 className={`absolute top-4 left-4 text-white text-sm px-4 py-1 rounded-full ${offer.badgeColor}`}
-//               >
-//                 {offer.badge}
-//               </span>
-
-//               {/* Text */}
-//               <div className="absolute bottom-4 left-4 text-white">
-//                 <h3 className="text-xl font-bold mb-1">{offer.title}</h3>
-//                 <p className="text-sm opacity-90">{offer.subtitle}</p>
-//               </div>
-//             </div>
-//           ))}
-
-//         </div>
-//       </div>
-
-//     </section>
-//   );
-// };
-
-// export default SpecialOffers;
-
-import { FaTag, FaChevronLeft, FaChevronRight } from "react-icons/fa";
-import { useRef, useEffect } from "react";
+const fallbackOffers = [
+  {
+    id: "weekly-fresh",
+    title: "Fresh picks for less",
+    subtitle: "Seasonal produce and everyday essentials selected from nearby sellers.",
+    badge: "Weekly picks",
+    badgeColor: "bg-emerald-600",
+    image: "https://images.unsplash.com/photo-1488459716781-31db52582fe9?auto=format&fit=crop&w=900&q=85",
+  },
+  {
+    id: "maker-edit",
+    title: "The local maker edit",
+    subtitle: "Thoughtful, small-batch finds with a story behind every piece.",
+    badge: "Handpicked",
+    badgeColor: "bg-violet-600",
+    image: "https://images.unsplash.com/photo-1453614512568-c4024d13c247?auto=format&fit=crop&w=900&q=85",
+  },
+  {
+    id: "market-weekend",
+    title: "Weekend market specials",
+    subtitle: "A fresh rotation of community favourites, available for a little while.",
+    badge: "Limited time",
+    badgeColor: "bg-rose-600",
+    image: "https://images.unsplash.com/photo-1534723452862-4c874018d66d?auto=format&fit=crop&w=900&q=85",
+  },
+];
 
 const SpecialOffers = ({ offers = [] }) => {
-  const sliderRef = useRef(null);
-
-  // 👉 Arrow scroll
-  const scroll = (direction) => {
-    const width = sliderRef.current.clientWidth;
-    sliderRef.current.scrollBy({
-      left: direction === "left" ? -width : width,
-      behavior: "smooth",
-    });
-  };
-
-  // 👉 Auto scroll
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (sliderRef.current) {
-        sliderRef.current.scrollBy({
-          left: sliderRef.current.clientWidth,
-          behavior: "smooth",
-        });
-      }
-    }, 4000);
-
-    return () => clearInterval(interval);
-  }, []);
+  const displayOffers = offers.length ? offers : fallbackOffers;
 
   return (
-    <section className="relative py-10 bg-gradient-to-b from-white to-gray-50">
-      {/* Header */}
-      <div className="flex items-center justify-between px-6 mb-6">
-        <div className="flex items-center gap-2">
-          <FaTag className="text-green-600 text-2xl" />
-          <h2 className="text-3xl font-bold text-gray-800">বিশেষ অফার</h2>
+    <section id="special-offers" className="page-shell scroll-mt-24 py-11 sm:py-14" aria-labelledby="offers-heading">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div className="flex items-center gap-3">
+          <span className="grid h-12 w-12 place-items-center rounded-2xl bg-gradient-to-br from-[#087c35] to-[#55aa24] text-white shadow-[0_10px_28px_rgba(8,124,53,.22)]"><Sparkles size={21} /></span>
+          <div>
+            <p className="eyebrow">Curated savings</p>
+            <h2 id="offers-heading" className="mt-1 text-2xl font-black tracking-tight text-slate-950 sm:text-3xl">Special offers</h2>
+          </div>
         </div>
-
-        {/* Arrow Buttons */}
-        <div className="flex gap-2">
-          <button
-            onClick={() => scroll("left")}
-            className="p-2 rounded-full border bg-black shadow hover:bg-gray-700"
-          >
-            <FaChevronLeft />
-          </button>
-          <button
-            onClick={() => scroll("right")}
-            className="p-2 rounded-full border bg-black shadow hover:bg-gray-700"
-          >
-            <FaChevronRight />
-          </button>
-        </div>
+        <p className="flex items-center gap-2 text-sm font-medium text-slate-500"><Clock3 size={16} className="text-[#087c35]" /> Fresh offers from local sellers</p>
       </div>
 
-      {/* Slider */}
-      <div
-        ref={sliderRef}
-        className="
-          flex gap-6 px-6 overflow-x-auto scroll-smooth
-          scrollbar-hide
-          cursor-grab active:cursor-grabbing
-        "
-      >
-        {offers.map((offer) => (
-          <div
-            key={offer.id}
-            className="
-              min-w-[85%]
-              sm:min-w-[45%]
-              lg:min-w-[30%]
-              xl:min-w-[24%]
-              relative rounded-xl overflow-hidden
-              shadow-md hover:shadow-xl transition-all
-              group
-            "
-          >
-            <img
-              src={offer.image}
-              alt={offer.title}
-              className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-500"
-            />
-
-            {/* Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
-
-            {/* Badge */}
-            <span
-              className={`absolute top-4 left-4 px-4 py-1 text-sm text-white rounded-full ${offer.badgeColor}`}
-            >
-              {offer.badge}
-            </span>
-
-            {/* Text */}
-            <div className="absolute bottom-4 left-4 text-white">
-              <h3 className="text-xl font-bold">{offer.title}</h3>
-              <p className="text-sm opacity-90">{offer.subtitle}</p>
+      <div className="mt-7 grid auto-cols-[88%] grid-flow-col gap-5 overflow-x-auto pb-5 [scrollbar-color:#a7cf91_transparent] [scrollbar-width:thin] sm:auto-cols-[56%] lg:auto-cols-[calc((100%-2.5rem)/3)]">
+        {displayOffers.map((offer) => (
+          <article key={offer.id} className="group overflow-hidden rounded-[24px] border border-[#dcebd4] bg-white shadow-[0_14px_45px_rgba(23,74,38,.08)] transition duration-300 hover:-translate-y-1 hover:border-[#a8d38f] hover:shadow-[0_22px_58px_rgba(23,74,38,.14)]">
+            <div className="relative aspect-[1.45/1] overflow-hidden bg-[#eef5ea]">
+              {offer.image && <img src={imageUrl(offer.image)} alt="" className="h-full w-full object-cover transition duration-700 group-hover:scale-105" loading="lazy" />}
+              <div className="absolute inset-0 bg-gradient-to-t from-[#062c16]/45 via-transparent to-transparent" />
+              <span className={`absolute left-4 top-4 flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[10px] font-black uppercase tracking-[.1em] text-white shadow-lg ${offer.badgeColor || "bg-emerald-600"}`}>
+                <Tag size={12} />{offer.badge || "Special offer"}
+              </span>
             </div>
-          </div>
+            <div className="flex min-h-36 flex-col p-5">
+              <h3 className="text-xl font-black leading-tight tracking-tight text-slate-950">{offer.title}</h3>
+              <p className="mt-2 line-clamp-2 text-sm leading-6 text-slate-500">{offer.subtitle}</p>
+              <a href="#products" className="mt-auto flex items-center gap-2 pt-4 text-sm font-black text-[#087c35]">
+                Shop this offer <ArrowRight size={16} className="transition group-hover:translate-x-1" />
+              </a>
+            </div>
+          </article>
         ))}
       </div>
     </section>

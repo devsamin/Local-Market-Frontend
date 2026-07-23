@@ -1,587 +1,119 @@
-// import React, { useState, useEffect, useContext } from "react";
-// import axios from "axios";
-// import { FaMinus, FaPlus, FaTrashAlt } from "react-icons/fa";
-// import { IoArrowBack } from "react-icons/io5";
-// import { Link } from "react-router-dom";
-// import OrderConfirmModal from "../OrderConfirmModal/OrderConfirmModal";
-// import { BASE_URL } from "../../config.js/config";
-// import { toast } from "react-toastify";
-// import "react-toastify/dist/ReactToastify.css";
-// import { CartContext } from "../../contexts/CartContext/CartContext";
-// import { Helmet } from "react-helmet-async";
-
-// const BuyerCart = () => {
-//   const [cartItems, setCartItems] = useState([]);
-//   const [loading, setLoading] = useState(true);
-
-//   // 🔹 Per-item loading
-//   const [itemLoading, setItemLoading] = useState(null);
-
-//   // 🔹 Payment loading
-//   const [paymentLoading, setPaymentLoading] = useState(false);
-
-//   const [showModal, setShowModal] = useState(false);
-
-//   const token = localStorage.getItem("access");
-//   const { removeFromCart } = useContext(CartContext);
-
-//   /* ================= LOAD CART ================= */
-//   const loadCart = async () => {
-//     try {
-//       const res = await axios.get(
-//         "https://local-mart-11yd.onrender.com/api/cart/",
-//         {
-//           headers: { Authorization: `Bearer ${token}` },
-//         },
-//       );
-//       setCartItems(res.data.items || []);
-//     } catch (err) {
-//       console.error(err);
-//       setCartItems([]);
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   useEffect(() => {
-//     loadCart();
-//   }, [token]);
-
-//   /* ================= INCREASE ================= */
-//   const increaseQty = async (id) => {
-//     const item = cartItems.find((i) => i.id === id);
-//     if (!item) return;
-
-//     setItemLoading(id);
-//     try {
-//       await axios.post(
-//         "https://local-mart-11yd.onrender.com/api/cart/add_item/",
-//         { product_id: item.product.id, quantity: 1 },
-//         { headers: { Authorization: `Bearer ${token}` } },
-//       );
-//       await loadCart();
-//     } catch (err) {
-//       toast.error("পরিমাণ বাড়ানো যায়নি");
-//     } finally {
-//       setItemLoading(null);
-//     }
-//   };
-
-//   const decreaseQty = async (id) => {
-//     const item = cartItems.find((i) => i.id === id);
-//     if (!item) return;
-
-//     setItemLoading(id);
-
-//     try {
-//       await axios.post(
-//         "https://local-mart-11yd.onrender.com/api/cart/decrease_item/",
-//         { product_id: item.product.id },
-//         { headers: { Authorization: `Bearer ${token}` } },
-//       );
-
-//       // ✅ single source of truth
-//       await loadCart();
-//     } catch (err) {
-//       toast.error("পরিমাণ কমানো যায়নি");
-//     } finally {
-//       setItemLoading(null);
-//     }
-//   };
-
-//   /* ================= DELETE ================= */
-//   const deleteItem = async (id) => {
-//     const item = cartItems.find((i) => i.id === id);
-//     if (!item) return;
-
-//     setItemLoading(id);
-//     try {
-//       await axios.post(
-//         "https://local-mart-11yd.onrender.com/api/cart/remove_item/",
-//         { product_id: item.product.id },
-//         { headers: { Authorization: `Bearer ${token}` } },
-//       );
-//       setCartItems((prev) => prev.filter((i) => i.id !== id));
-//       removeFromCart(item.product.id);
-//       toast.success("পণ্য মুছে ফেলা হয়েছে");
-//     } catch (err) {
-//       toast.error("পণ্য মুছতে সমস্যা হয়েছে");
-//     } finally {
-//       setItemLoading(null);
-//     }
-//   };
-
-//   /* ================= PAYMENT ================= */
-//   const handleCheckout = async () => {
-//     setPaymentLoading(true); // 🔹 START loading
-//     try {
-//       // 1️⃣ Create Order
-//       const orderRes = await axios.post(
-//         "https://local-mart-11yd.onrender.com/api/orders/orders/checkout/",
-//         {},
-//         { headers: { Authorization: `Bearer ${token}` } },
-//       );
-
-//       const { order_id } = orderRes.data;
-
-//       // 2️⃣ Create Stripe Session
-//       const stripeRes = await axios.post(
-//         "https://local-mart-11yd.onrender.com/api/payment/stripe/checkout/",
-//         { order_id },
-//         { headers: { Authorization: `Bearer ${token}` } },
-//       );
-
-//       // 3️⃣ Redirect to Stripe
-//       window.location.href = stripeRes.data.checkout_url;
-//     } catch (err) {
-//       toast.error("পেমেন্ট শুরু করা যায়নি");
-//       console.error(err);
-//     } finally {
-//       setPaymentLoading(false); // 🔹 STOP loading
-//     }
-//   };
-
-//   /* ================= TOTALS ================= */
-//   const subtotal = cartItems.reduce(
-//     (acc, item) => acc + item.product.discounted_price * item.quantity,
-//     0,
-//   );
-//   const delivery = 60;
-//   const total = subtotal + delivery;
-
-//   if (loading) {
-//     return (
-//       <div className="flex justify-center items-center min-h-screen">
-//         🔄 কার্ট লোড হচ্ছে...
-//       </div>
-//     );
-//   }
-
-//   return (
-//     <div className="max-w-7xl mx-auto p-6">
-//       <Helmet>
-//         <title>কার্ট | LocalMarket</title>
-//       </Helmet>
-//       {/* BACK */}
-//       <Link
-//         to="/"
-//         className="flex items-center gap-2 mb-4 font-bold text-white"
-//       >
-//         <IoArrowBack /> কেনাকাটা চালিয়ে যান
-//       </Link>
-
-//       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-//         {/* ================= LEFT ================= */}
-//         <div className="lg:col-span-2 space-y-5">
-//           {cartItems.length === 0 ? (
-//             <div className="text-center py-12 bg-white rounded-xl shadow">
-//               🛒 আপনার কার্ট খালি
-//             </div>
-//           ) : (
-//             cartItems.map((item) => (
-//               <div
-//                 key={item.id}
-//                 className="flex justify-between items-center bg-white p-5 rounded-xl shadow"
-//               >
-//                 {/* INFO */}
-//                 <div className="flex gap-4">
-//                   <img
-//                     src={
-//                       item.product.image ||
-//                       "https://i.ibb.co/2ypYw9Y/default-avatar.png"
-//                     }
-//                     alt={item.product.name}
-//                     className="w-24 h-24 object-cover rounded-lg"
-//                   />
-//                   <div>
-//                     <h3 className="font-semibold text-black">
-//                       {item.product.name}
-//                     </h3>
-//                     <p className="text-sm text-gray-500">
-//                       ৳{item.product.discounted_price.toLocaleString()}
-//                     </p>
-//                   </div>
-//                 </div>
-
-//                 {/* CONTROLS */}
-//                 <div className="text-right min-w-[200px]">
-//                   <div className="flex justify-end items-center gap-2">
-//                     <button
-//                       disabled={itemLoading === item.id}
-//                       onClick={() => decreaseQty(item.id)}
-//                       className="px-3 py-1 border rounded cursor-pointer"
-//                     >
-//                       <FaMinus size={12} />
-//                     </button>
-
-//                     <span
-//                       className="min-w-[40px] text-center text-sm font-medium
-//                  bg-gray-50 border rounded-md py-1 "
-//                     >
-//                       {item.quantity}
-//                     </span>
-
-//                     <button
-//                       disabled={itemLoading === item.id}
-//                       onClick={() => increaseQty(item.id)}
-//                       className="px-3 py-1 border rounded cursor-pointer"
-//                     >
-//                       <FaPlus size={12} />
-//                     </button>
-//                   </div>
-
-//                   <p className="text-sm mt-2">
-//                     সাবটোটাল :{" "}
-//                     <b>
-//                       ৳
-//                       {(
-//                         item.product.discounted_price * item.quantity
-//                       ).toLocaleString()}
-//                     </b>
-//                   </p>
-
-//                   <button
-//                     disabled={itemLoading === item.id}
-//                     onClick={() => deleteItem(item.id)}
-//                     className="flex items-center gap-1 text-red-600 mt-2 ml-auto text-sm"
-//                   >
-//                     <FaTrashAlt /> মুছুন
-//                   </button>
-//                 </div>
-//               </div>
-//             ))
-//           )}
-//         </div>
-
-//         {/* ================= RIGHT ================= */}
-//         {cartItems.length > 0 && (
-//           <div className="bg-white p-5 rounded-xl shadow space-y-4">
-//             <h3 className="font-semibold text-lg">📦 অর্ডার সারাংশ</h3>
-
-//             <div className="text-sm space-y-1">
-//               <div className="flex justify-between">
-//                 <span>সাবটোটাল</span>
-//                 <span>৳{subtotal.toLocaleString()}</span>
-//               </div>
-//               <div className="flex justify-between">
-//                 <span>ডেলিভারি</span>
-//                 <span>৳{delivery}</span>
-//               </div>
-//             </div>
-
-//             <div className="flex justify-between font-bold text-lg">
-//               <span>সর্বমোট</span>
-//               <span>৳{total.toLocaleString()}</span>
-//             </div>
-
-//             <button
-//               disabled={paymentLoading}
-//               onClick={handleCheckout}
-//               className={`w-full py-2 rounded-lg text-white font-semibold ${
-//                 paymentLoading
-//                   ? "bg-gray-400 cursor-not-allowed"
-//                   : "bg-black hover:bg-gray-900"
-//               }`}
-//             >
-//               {paymentLoading ? "⏳ পেমেন্ট হচ্ছে..." : "💳 পেমেন্ট করুন"}
-//             </button>
-//           </div>
-//         )}
-//       </div>
-
-//       <OrderConfirmModal
-//         isOpen={showModal}
-//         onClose={() => setShowModal(false)}
-//       />
-//     </div>
-//   );
-// };
-
-// export default BuyerCart;
-
-import React, { useState, useEffect, useContext } from "react";
-import axios from "axios";
-import { FaMinus, FaPlus, FaTrashAlt } from "react-icons/fa";
-import { IoArrowBack } from "react-icons/io5";
-import { Link } from "react-router-dom";
-import OrderConfirmModal from "../OrderConfirmModal/OrderConfirmModal";
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import { CartContext } from "../../contexts/CartContext/CartContext";
+import { useContext, useState } from "react";
 import { Helmet } from "react-helmet-async";
+import { Minus, Plus, ShoppingBag, Trash2 } from "lucide-react";
+import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
+
+import { CartContext } from "../../contexts/CartContext/CartContext";
+import { api, getErrorMessage, imageUrl } from "../../services/api";
+
+
+const money = new Intl.NumberFormat("en-BD", { style: "currency", currency: "BDT" });
+
+const CartSkeleton = () => (
+  <div className="space-y-4" aria-label="Loading cart">
+    {[1, 2].map((item) => <div key={item} className="h-32 animate-pulse rounded-2xl bg-slate-200" />)}
+  </div>
+);
 
 const BuyerCart = () => {
-  const [cartItems, setCartItems] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [itemLoading, setItemLoading] = useState(null);
+  const {
+    cartItems, loading, loadingProductId, increaseQty, decreaseQty, removeFromCart, loadCart,
+  } = useContext(CartContext);
   const [paymentLoading, setPaymentLoading] = useState(false);
-  const [showModal, setShowModal] = useState(false);
 
-  const token = localStorage.getItem("access");
-  const { removeFromCart } = useContext(CartContext);
+  const subtotal = cartItems.reduce(
+    (sum, item) => sum + Number(item.product.discounted_price) * item.quantity,
+    0,
+  );
+  const delivery = cartItems.length ? 60 : 0;
 
-  /* ================= LOAD CART ================= */
-  const loadCart = async () => {
+  const updateItem = async (operation, item) => {
     try {
-      const res = await axios.get(
-        "https://local-mart-11yd.onrender.com/api/cart/",
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        },
-      );
-      setCartItems(res.data.items || []);
-    } catch (err) {
-      console.error(err);
-      setCartItems([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    loadCart();
-  }, [token]);
-
-  /* ================= UPDATE ================= */
-  const increaseQty = async (id) => {
-    const item = cartItems.find((i) => i.id === id);
-    if (!item) return;
-
-    setItemLoading(id);
-    try {
-      await axios.post(
-        "https://local-mart-11yd.onrender.com/api/cart/add_item/",
-        { product_id: item.product.id, quantity: 1 },
-        { headers: { Authorization: `Bearer ${token}` } },
-      );
-      await loadCart();
+      await operation(item.product.id);
     } catch {
-      toast.error("পরিমাণ বাড়ানো যায়নি");
-    } finally {
-      setItemLoading(null);
+      // The provider already displays the server's useful error message.
     }
   };
 
-  const decreaseQty = async (id) => {
-    const item = cartItems.find((i) => i.id === id);
-    if (!item) return;
-
-    setItemLoading(id);
-    try {
-      await axios.post(
-        "https://local-mart-11yd.onrender.com/api/cart/decrease_item/",
-        { product_id: item.product.id },
-        { headers: { Authorization: `Bearer ${token}` } },
-      );
-      await loadCart();
-    } catch {
-      toast.error("পরিমাণ কমানো যায়নি");
-    } finally {
-      setItemLoading(null);
-    }
-  };
-
-  const deleteItem = async (id) => {
-    const item = cartItems.find((i) => i.id === id);
-    if (!item) return;
-
-    setItemLoading(id);
-    try {
-      await axios.post(
-        "https://local-mart-11yd.onrender.com/api/cart/remove_item/",
-        { product_id: item.product.id },
-        { headers: { Authorization: `Bearer ${token}` } },
-      );
-
-      setCartItems((prev) => prev.filter((i) => i.id !== id));
-      removeFromCart(item.product.id);
-      toast.success("পণ্য মুছে ফেলা হয়েছে");
-    } catch {
-      toast.error("পণ্য মুছতে সমস্যা হয়েছে");
-    } finally {
-      setItemLoading(null);
-    }
-  };
-
-  /* ================= PAYMENT ================= */
   const handleCheckout = async () => {
     setPaymentLoading(true);
     try {
-      const orderRes = await axios.post(
-        "https://local-mart-11yd.onrender.com/api/orders/orders/checkout/",
-        {},
-        { headers: { Authorization: `Bearer ${token}` } },
-      );
-
-      const { order_id } = orderRes.data;
-
-      const stripeRes = await axios.post(
-        "https://local-mart-11yd.onrender.com/api/payment/stripe/checkout/",
-        { order_id },
-        { headers: { Authorization: `Bearer ${token}` } },
-      );
-
-      window.location.href = stripeRes.data.checkout_url;
-    } catch (err) {
-      toast.error("পেমেন্ট শুরু করা যায়নি");
+      const { data: order } = await api.post("/orders/orders/checkout/");
+      const { data: payment } = await api.post("/payment/stripe/checkout/", { order_id: order.order_id });
+      window.location.assign(payment.checkout_url);
+    } catch (error) {
+      await loadCart();
+      toast.error(getErrorMessage(error, "Checkout could not be started. Your cart is safe."));
     } finally {
       setPaymentLoading(false);
     }
   };
 
-  /* ================= TOTAL ================= */
-  const subtotal = cartItems.reduce(
-    (acc, item) => acc + item.product.discounted_price * item.quantity,
-    0,
-  );
-  const delivery = 60;
-  const total = subtotal + delivery;
-
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center min-h-screen text-black">
-        🔄 কার্ট লোড হচ্ছে...
-      </div>
-    );
-  }
-
   return (
-    <div className="max-w-7xl mx-auto p-6 text-black bg-white">
-      <Helmet>
-        <title>কার্ট | LocalMarket</title>
-      </Helmet>
-
-      {/* BACK */}
-      <Link
-        to="/"
-        className="flex items-center gap-2 mb-4 font-medium text-gray-700 hover:text-black"
-      >
-        <IoArrowBack /> কেনাকাটা চালিয়ে যান
-      </Link>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* LEFT */}
-        <div className="lg:col-span-2 space-y-5">
-          {cartItems.length === 0 ? (
-            <div className="text-center py-12 bg-white rounded-xl shadow text-black">
-              🛒 আপনার কার্ট খালি
-            </div>
-          ) : (
-            cartItems.map((item) => (
-              <div
-                key={item.id}
-                className="flex justify-between items-center bg-white p-5 rounded-xl shadow"
-              >
-                {/* INFO */}
-                <div className="flex gap-4">
-                  <img
-                    src={
-                      item.product.image ||
-                      "https://i.ibb.co/2ypYw9Y/default-avatar.png"
-                    }
-                    alt={item.product.name}
-                    className="w-24 h-24 object-cover rounded-lg"
-                  />
-
-                  <div>
-                    <h3 className="font-semibold text-black">
-                      {item.product.name}
-                    </h3>
-                    <p className="text-sm text-gray-500">
-                      ৳{item.product.discounted_price.toLocaleString()}
-                    </p>
-                  </div>
-                </div>
-
-                {/* CONTROLS */}
-                <div className="text-right min-w-[200px] text-black">
-                  <div className="flex justify-end items-center gap-2">
-                    <button
-                      disabled={itemLoading === item.id}
-                      onClick={() => decreaseQty(item.id)}
-                      className="px-3 py-1 border rounded"
-                    >
-                      <FaMinus size={12} />
-                    </button>
-
-                    <span className="min-w-[40px] text-center text-sm font-medium bg-gray-50 border rounded-md py-1 text-black">
-                      {item.quantity}
-                    </span>
-
-                    <button
-                      disabled={itemLoading === item.id}
-                      onClick={() => increaseQty(item.id)}
-                      className="px-3 py-1 border rounded"
-                    >
-                      <FaPlus size={12} />
-                    </button>
-                  </div>
-
-                  <p className="text-sm mt-2 text-black">
-                    সাবটোটাল :{" "}
-                    <b>
-                      ৳
-                      {(
-                        item.product.discounted_price * item.quantity
-                      ).toLocaleString()}
-                    </b>
-                  </p>
-
-                  <button
-                    disabled={itemLoading === item.id}
-                    onClick={() => deleteItem(item.id)}
-                    className="flex items-center gap-1 text-red-600 mt-2 ml-auto text-sm"
-                  >
-                    <FaTrashAlt /> মুছুন
-                  </button>
-                </div>
-              </div>
-            ))
-          )}
+    <main className="page-shell py-8 sm:py-12">
+      <Helmet><title>Your cart | Local Mart</title></Helmet>
+      <div className="mb-8 flex items-end justify-between gap-4">
+        <div>
+          <p className="eyebrow">Ready when you are</p>
+          <h1 className="mt-2 text-3xl font-bold tracking-tight text-slate-950 sm:text-4xl">Your cart</h1>
         </div>
-
-        {/* RIGHT */}
-        {cartItems.length > 0 && (
-          <div className="bg-white p-5 rounded-xl shadow space-y-4 text-black">
-            <h3 className="font-semibold text-lg">📦 অর্ডার সারাংশ</h3>
-
-            <div className="text-sm space-y-1">
-              <div className="flex justify-between">
-                <span>সাবটোটাল</span>
-                <span>৳{subtotal.toLocaleString()}</span>
-              </div>
-
-              <div className="flex justify-between">
-                <span>ডেলিভারি</span>
-                <span>৳{delivery}</span>
-              </div>
-            </div>
-
-            <div className="flex justify-between font-bold text-lg">
-              <span>সর্বমোট</span>
-              <span>৳{total.toLocaleString()}</span>
-            </div>
-
-            <button
-              disabled={paymentLoading}
-              onClick={handleCheckout}
-              className={`w-full py-2 rounded-lg text-white font-semibold ${
-                paymentLoading
-                  ? "bg-gray-400 cursor-not-allowed"
-                  : "bg-black hover:bg-gray-900"
-              }`}
-            >
-              {paymentLoading ? "⏳ পেমেন্ট হচ্ছে..." : "💳 পেমেন্ট করুন"}
-            </button>
-          </div>
-        )}
+        <Link to="/" className="text-sm font-semibold text-emerald-700 hover:text-emerald-900">Continue shopping</Link>
       </div>
 
-      <OrderConfirmModal
-        isOpen={showModal}
-        onClose={() => setShowModal(false)}
-      />
-    </div>
+      {loading ? <CartSkeleton /> : cartItems.length === 0 ? (
+        <section className="empty-state">
+          <span className="grid h-16 w-16 place-items-center rounded-full bg-emerald-50 text-emerald-700"><ShoppingBag /></span>
+          <h2 className="mt-5 text-xl font-bold">Your cart is waiting</h2>
+          <p className="mt-2 max-w-md text-slate-600">Explore products from local sellers and add something you love.</p>
+          <Link to="/" className="btn-primary mt-6">Browse products</Link>
+        </section>
+      ) : (
+        <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_360px]">
+          <section className="space-y-4" aria-label="Cart items">
+            {cartItems.map((item) => {
+              const busy = loadingProductId === item.product.id;
+              return (
+                <article key={item.id} className="surface flex flex-col gap-4 p-4 sm:flex-row sm:items-center">
+                  <img
+                    src={imageUrl(item.product.image)}
+                    alt={item.product.name}
+                    className="h-28 w-full rounded-xl bg-slate-100 object-cover sm:w-28"
+                    loading="lazy"
+                  />
+                  <div className="min-w-0 flex-1">
+                    <h2 className="truncate font-bold text-slate-950">{item.product.name}</h2>
+                    <p className="mt-1 text-sm text-slate-500">{money.format(item.product.discounted_price)}</p>
+                    <p className="mt-3 font-semibold">{money.format(item.total_price)}</p>
+                  </div>
+                  <div className="flex items-center justify-between gap-3 sm:flex-col sm:items-end">
+                    <div className="inline-flex items-center rounded-xl border border-slate-200 bg-white p-1">
+                      <button className="icon-button" disabled={busy} onClick={() => updateItem(decreaseQty, item)} aria-label={`Decrease ${item.product.name}`}><Minus size={16} /></button>
+                      <span className="w-10 text-center text-sm font-bold" aria-live="polite">{item.quantity}</span>
+                      <button className="icon-button" disabled={busy || item.quantity >= item.product.stock} onClick={() => updateItem(increaseQty, item)} aria-label={`Increase ${item.product.name}`}><Plus size={16} /></button>
+                    </div>
+                    <button className="inline-flex items-center gap-2 text-sm font-semibold text-rose-600 hover:text-rose-800" disabled={busy} onClick={() => updateItem(removeFromCart, item)}><Trash2 size={16} /> Remove</button>
+                  </div>
+                </article>
+              );
+            })}
+          </section>
+
+          <aside className="surface h-fit p-6 lg:sticky lg:top-24">
+            <h2 className="text-lg font-bold">Order summary</h2>
+            <dl className="mt-5 space-y-3 text-sm">
+              <div className="flex justify-between text-slate-600"><dt>Subtotal</dt><dd>{money.format(subtotal)}</dd></div>
+              <div className="flex justify-between text-slate-600"><dt>Delivery</dt><dd>{money.format(delivery)}</dd></div>
+              <div className="flex justify-between border-t border-slate-200 pt-4 text-lg font-bold"><dt>Total</dt><dd>{money.format(subtotal + delivery)}</dd></div>
+            </dl>
+            <button className="btn-primary mt-6 w-full" disabled={paymentLoading} onClick={handleCheckout}>
+              {paymentLoading ? "Preparing secure checkout…" : "Continue to secure payment"}
+            </button>
+            <p className="mt-4 text-center text-xs leading-5 text-slate-500">Inventory is reserved when checkout begins. Payments are processed securely by Stripe.</p>
+          </aside>
+        </div>
+      )}
+    </main>
   );
 };
 

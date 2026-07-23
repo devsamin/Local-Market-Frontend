@@ -1,837 +1,99 @@
-import React, { useContext, useState } from "react";
-import { useForm } from "react-hook-form";
-import axios from "axios";
-import { useNavigate, Link } from "react-router-dom";
-import { FaStore } from "react-icons/fa";
-import {
-  FiUser,
-  FiPhone,
-  FiMail,
-  FiLock,
-  FiBriefcase,
-  FiFileText,
-  FiCreditCard,
-  FiArrowLeft,
-} from "react-icons/fi";
-import { AuthContext } from "../../contexts/AuthContext/AuthProvider";
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import { ImHome } from "react-icons/im";
+import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
+import { ImagePlus } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+
+import { api, getErrorMessage } from "../../services/api";
+
 
 const RegisterPage = () => {
   const [role, setRole] = useState("buyer");
-  const [errorMsg, setErrorMsg] = useState("");
   const [loading, setLoading] = useState(false);
-  const [photoPreview, setPhotoPreview] = useState(null);
+  const [preview, setPreview] = useState("");
   const navigate = useNavigate();
-  const { login } = useContext(AuthContext);
 
-  const {
-    register,
-    handleSubmit,
-    watch,
-    formState: { errors },
-  } = useForm();
-  const password = watch("password");
+  useEffect(() => () => { if (preview) URL.revokeObjectURL(preview); }, [preview]);
 
-  const handlePhotoChange = (e) => {
-    const file = e.target.files[0];
-    if (file) setPhotoPreview(URL.createObjectURL(file));
-  };
-
-  // const onSubmit = async (data) => {
-  //   console.log("Form Data:", data);
-  //   setErrorMsg("");
-  //   setLoading(true);
-  //   try {
-  //     const formData = new FormData();
-  //     formData.append("username", data.fullName);
-  //     formData.append("email", data.email);
-  //     formData.append("password", data.password);
-  //     formData.append("role", role);
-  //     formData.append("phone", data.phone);
-  //     formData.append("location", `${data.city}, ${data.area}`);
-  //     formData.append("address", data.address);
-
-  //     // Seller-only fields
-  //     if (role === "seller") {
-  //       formData.append("businessName", data.businessName || "");
-  //       formData.append("nidNumber", data.nidNumber || "");
-  //       formData.append("bankAccount", data.bankAccount || "");
-  //     }
-
-  //     // Photo upload
-  //     if (data.photo && data.photo[0]) formData.append("photo", data.photo[0]);
-
-  //     const res = await axios.post(
-  //       "https://local-market-backend.onrender.com/api/users/register/",
-  //       formData,
-  //       { headers: { "Content-Type": "multipart/form-data" } }
-  //     );
-
-  //     toast.success("অ্যাকাউন্ট সফলভাবে তৈরি হয়েছে! এখন লগইন করুন 🔐", {
-  //       position: "top-center",
-  //       autoClose: 3000,
-  //     });
-  //     console.log("Registration Success:", res.data);
-  //     navigate("/login");
-  //     // localStorage.setItem("user", JSON.stringify(createdUser));
-  //   } catch (error) {
-  //     console.error("Registration Error:", error.response?.data || error.message);
-  //     // Backend field error display
-  //     if (error.response?.data) {
-  //       const backendErrors = error.response.data;
-  //       const firstError = Object.keys(backendErrors)[0];
-  //       setErrorMsg(`${firstError}: ${backendErrors[firstError][0]}`);
-  //     } else {
-  //       setErrorMsg("Registration failed");
-  //     }
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
-  const onSubmit = async (data) => {
-    setErrorMsg("");
+  const submit = async (event) => {
+    event.preventDefault();
+    const form = new FormData(event.currentTarget);
+    if (form.get("password") !== form.get("confirm_password")) {
+      toast.error("Passwords do not match.");
+      return;
+    }
+    form.delete("confirm_password");
+    form.set("role", role);
+    if (!form.get("photo")?.size) form.delete("photo");
     setLoading(true);
-
     try {
-      const formData = new FormData();
-
-      formData.append("username", data.fullName);
-      formData.append("email", data.email);
-      formData.append("password", data.password);
-      formData.append("role", role);
-      formData.append("phone", data.phone);
-      formData.append("location", `${data.city}, ${data.area}`);
-      formData.append("address", data.address);
-
-      if (role === "seller") {
-        formData.append("businessName", data.businessName || "");
-        formData.append("nidNumber", data.nidNumber || "");
-        formData.append("bankAccount", data.bankAccount || "");
-      }
-
-      if (data.photo && data.photo[0]) {
-        formData.append("photo", data.photo[0]);
-      }
-
-      const res = await axios.post(
-        "https://local-mart-11yd.onrender.com/api/users/register/",
-        formData,
-        // ❌ NO headers here
-      );
-
-      toast.success("অ্যাকাউন্ট সফলভাবে তৈরি হয়েছে!");
-      navigate("/login");
+      await api.post("/users/register/", form);
+      toast.success("Account created. You can now sign in.");
+      navigate("/login", { replace: true });
     } catch (error) {
-      if (error.response?.data) {
-        const backendErrors = error.response.data;
-        const firstError = Object.keys(backendErrors)[0];
-        setErrorMsg(`${firstError}: ${backendErrors[firstError][0]}`);
-      } else {
-        setErrorMsg("Registration failed");
-      }
+      const fields = error.response?.data?.error?.fields;
+      const firstFieldError = fields && Object.values(fields).flat()[0];
+      toast.error(firstFieldError || getErrorMessage(error, "Account could not be created."));
     } finally {
       setLoading(false);
     }
   };
 
-  const roleDescription = {
-    buyer:
-      "ক্রেতা হিসেবে রেজিস্ট্রেশন করে স্থানীয় বিক্রেতাদের কাছ থেকে পণ্য কিনুন।",
-    seller:
-      "বিক্রেতা হিসেবে রেজিস্ট্রেশন করে আপনার দোকানের পণ্য LocalMarket-এ বিক্রি করুন।",
-    admin: "অ্যাডমিন রেজিস্ট্রেশন শুধুমাত্র অনুমোদিত ব্যক্তিদের জন্য।",
-  };
-
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-3 py-6">
-      <Helmet>
-        <title>রেজিস্টার পৃষ্ঠা | LocalMarket</title>
-      </Helmet>
-      <div className="bg-white shadow-xl rounded-2xl w-full max-w-3xl p-8">
-        {/* 🔙 Back to Home */}
-        <div className="mb-4">
-          <Link
-            to="/"
-            className="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-black transition"
-          >
-            <FiArrowLeft /> হোমে ফিরে যান
-          </Link>
-        </div>
-        {/* Header */}
-        <div className="flex flex-col items-center mb-6">
-          <div className="p-4 bg-black text-white rounded-2xl">
-            <ImHome size={28} />
-          </div>
-          <h2 className="text-xl font-bold text-black">
-            LocalMarket এ যোগ দিন
-          </h2>
-          <p className="text-sm text-gray-500">নতুন অ্যাকাউন্ট তৈরি করুন</p>
-        </div>
+    <div className="page-shell grid min-h-[calc(100dvh-68px)] place-items-center py-4 sm:py-6">
+      <Helmet><title>Create account | Local Mart</title></Helmet>
+      <section className="w-full max-w-2xl rounded-[26px] border border-white/10 bg-white p-5 shadow-[0_30px_90px_rgba(0,0,0,.3)] sm:p-7">
+        <p className="eyebrow">Join the marketplace</p>
+        <h1 className="mt-1.5 text-2xl font-black tracking-[-.035em] text-slate-950 sm:text-[28px]">Create your Local Mart account</h1>
+        <p className="mt-1.5 text-sm text-slate-500">A few details and you’re ready to {role === "seller" ? "start selling" : "shop local"}.</p>
 
-        {/* Role Selector */}
-        <div className="flex bg-gray-100 rounded-full mb-3 text-sm font-medium">
-          {[
-            { key: "buyer", label: "ক্রেতা" },
-            { key: "seller", label: "বিক্রেতা" },
-            { key: "admin", label: "অ্যাডমিন" },
-          ].map((tab) => (
-            <button
-              key={tab.key}
-              type="button"
-              className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-full transition ${
-                role === tab.key
-                  ? "bg-black text-white border-black"
-                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-              }`}
-              onClick={() => setRole(tab.key)}
-            >
-              {tab.key === "buyer" && <FiUser />}
-              {tab.key === "seller" && <FaStore />}
-              {tab.key === "admin" && <FiLock />}
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        {/* Role Info */}
-        <div className="text-center text-gray-600 text-sm mb-6">
-          {roleDescription[role]}
-        </div>
-
-        {/* Form */}
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="grid grid-cols-2 gap-4"
-        >
-          {/* Full Name */}
-          <div>
-            <label className="block text-sm font-medium mb-1 text-black">
-              পূর্ণ নাম *
-            </label>
-            <div className="relative">
-              <FiUser className="absolute left-3 top-3 text-gray-400" />
-              <input
-                {...register("fullName", { required: "পূর্ণ নাম লিখুন" })}
-                type="text"
-                placeholder="আপনার পূর্ণ নাম"
-                className="w-full h-10 pl-10 bg-white text-black placeholder-gray-500 border border-gray-300 rounded-md focus:outline-none focus:border-black"
-              />
-            </div>
-            {errors.fullName && (
-              <p className="text-red-600 text-sm">{errors.fullName.message}</p>
-            )}
-          </div>
-
-          {/* Phone */}
-          <div>
-            <label className="block text-sm font-medium mb-1 text-black">
-              মোবাইল নাম্বার *
-            </label>
-            <div className="relative">
-              <FiPhone className="absolute left-3 top-3 text-gray-400" />
-              <input
-                {...register("phone", {
-                  required: "মোবাইল নাম্বার প্রয়োজন",
-                  pattern: {
-                    value: /^01[0-9]{9}$/,
-                    message: "সঠিক মোবাইল নাম্বার দিন (01XXXXXXXXX)",
-                  },
-                })}
-                type="text"
-                placeholder="01XXXXXXXXX"
-                className="w-full h-10 pl-10 bg-white text-black placeholder-gray-500 border border-gray-300 rounded-md focus:outline-none focus:border-black"
-              />
-            </div>
-            {errors.phone && (
-              <p className="text-red-600 text-sm">{errors.phone.message}</p>
-            )}
-          </div>
-
-          {/* Email */}
-          <div className="col-span-2">
-            <label className="block text-sm font-medium mb-1 text-black">
-              ইমেইল *
-            </label>
-            <div className="relative">
-              <FiMail className="absolute left-3 top-3 text-gray-400" />
-              <input
-                {...register("email", {
-                  required: "ইমেইল প্রয়োজন",
-                  pattern: { value: /^\S+@\S+$/i, message: "সঠিক ইমেইল লিখুন" },
-                })}
-                type="email"
-                placeholder="আপনার ইমেইল ঠিকানা"
-                className="w-full h-10 pl-10 bg-white text-black placeholder-gray-500 border border-gray-300 rounded-md focus:outline-none focus:border-black"
-              />
-            </div>
-            {errors.email && (
-              <p className="text-red-600 text-sm">{errors.email.message}</p>
-            )}
-          </div>
-
-          {/* Password */}
-          <div>
-            <label className="block text-sm font-medium mb-1 text-black">
-              পাসওয়ার্ড *
-            </label>
-            <div className="relative">
-              <FiLock className="absolute left-3 top-3 text-gray-400" />
-              <input
-                {...register("password", {
-                  required: "পাসওয়ার্ড প্রয়োজন",
-                  minLength: { value: 6, message: "কমপক্ষে ৬ অক্ষর হতে হবে" },
-                })}
-                type="password"
-                placeholder="কমপক্ষে ৬ অক্ষর"
-                className="w-full h-10 pl-10 bg-white text-black placeholder-gray-500 border border-gray-300 rounded-md focus:outline-none focus:border-black"
-              />
-            </div>
-            {errors.password && (
-              <p className="text-red-600 text-sm">{errors.password.message}</p>
-            )}
-          </div>
-
-          {/* Confirm Password */}
-          <div>
-            <label className="block text-sm font-medium mb-1 text-black">
-              পাসওয়ার্ড নিশ্চিত করুন *
-            </label>
-            <div className="relative">
-              <FiLock className="absolute left-3 top-3 text-gray-400" />
-              <input
-                {...register("confirmPassword", {
-                  required: "পাসওয়ার্ড নিশ্চিত করুন",
-                  validate: (value) =>
-                    value === password || "পাসওয়ার্ড মেলেনি",
-                })}
-                type="password"
-                placeholder="পুনরায় লিখুন"
-                className="w-full h-10 pl-10 bg-white text-black placeholder-gray-500 border border-gray-300 rounded-md focus:outline-none focus:border-black"
-              />
-            </div>
-            {errors.confirmPassword && (
-              <p className="text-red-600 text-sm">
-                {errors.confirmPassword.message}
-              </p>
-            )}
-          </div>
-
-          {/* Photo Upload */}
-          <div className="col-span-2">
-            <label className="block text-sm font-medium mb-1 text-black">
-              প্রোফাইল ছবি
-            </label>
-            <input
-              type="file"
-              {...register("photo")}
-              accept="image/*"
-              onChange={handlePhotoChange}
-              className="file-input file-input-bordered w-full h-10 pl-10 bg-white text-black placeholder-gray-500 border border-gray-300 rounded-md focus:outline-none focus:border-black"
-            />
-            {photoPreview && (
-              <img
-                src={photoPreview}
-                alt="Preview"
-                className="mt-2 h-20 w-20 object-cover rounded-full"
-              />
-            )}
-          </div>
-
-          {/* City & Area */}
-          <div>
-            <label className="block text-sm font-medium mb-1 text-black">
-              শহর/জেলা *
-            </label>
-            <select
-              {...register("city", { required: "শহর নির্বাচন করুন" })}
-              className="select select-bordered w-full h-10"
-            >
-              <option value="">নির্বাচন করুন</option>
-              <option>ঢাকা</option>
-              <option>চট্টগ্রাম</option>
-              <option>রাজশাহী</option>
-              <option>সিলেট</option>
-              <option>খুলনা</option>
-              <option>বরিশাল</option>
-              <option>রংপুর</option>
-              <option>ময়মনসিংহ</option>
-              <option>কক্সবাজার</option>
-              <option>কুমিল্লা</option>
-              <option>ফেনী</option>
-              <option>নোয়াখালী</option>
-              <option>চাঁদপুর</option>
-              <option>লক্ষ্মীপুর</option>
-              <option>ব্রাহ্মণবাড়িয়া</option>
-              <option>যশোর</option>
-              <option>বগুড়া</option>
-              <option>দিনাজপুর</option>
-              <option>পাবনা</option>
-              <option>টাঙ্গাইল</option>
-            </select>
-            {errors.city && (
-              <p className="text-red-600 text-sm">{errors.city.message}</p>
-            )}
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium mb-1 text-black">
-              এরিয়া *
-            </label>
-            <select
-              {...register("area", { required: "এরিয়া নির্বাচন করুন" })}
-              className="select select-bordered w-full h-10"
-            >
-              <option value="">নির্বাচন করুন</option>
-              <option>ধানমন্ডি</option>
-              <option>গুলশান</option>
-              <option>মিরপুর</option>
-              <option>উত্তরা</option>
-              <option>বনানী</option>
-              <option>মতিঝিল</option>
-              <option>ওয়ারী</option>
-              <option>চকবাজার</option>
-              <option>পাহাড়তলী</option>
-              <option>হালিশহর</option>
-              <option>আগ্রাবাদ</option>
-              <option>নাসিরাবাদ</option>
-              <option>পটিয়া</option>
-              <option>সাতকানিয়া</option> {/* Satkania */}
-              <option>লোহাগাড়া</option>
-              <option>রাউজান</option>
-              <option>হাটহাজারী</option>
-              <option>বাঁশখালী</option>
-              <option>সীতাকুণ্ড</option>
-              <option>আনোয়ারা</option>
-            </select>
-            {errors.area && (
-              <p className="text-red-600 text-sm">{errors.area.message}</p>
-            )}
-          </div>
-
-          {/* Address */}
-          <div className="col-span-2">
-            <label className="block text-sm font-medium mb-1 text-black">
-              ঠিকানা *
-            </label>
-            <textarea
-              {...register("address", { required: "ঠিকানা লিখুন" })}
-              placeholder="বিস্তারিত ঠিকানা লিখুন"
-              className="textarea textarea-bordered w-full h-20  bg-white text-black placeholder-gray-500 border border-gray-300 rounded-md focus:outline-none focus:border-black"
-            ></textarea>
-            {errors.address && (
-              <p className="text-red-600 text-sm">{errors.address.message}</p>
-            )}
-          </div>
-
-          {/* Seller Fields */}
-          {role === "seller" && (
-            <>
-              <div className="col-span-2 mt-4 mb-1 border-t pt-3">
-                <h3 className="text-lg font-semibold text-gray-800 mb-2">
-                  ব্যবসায়িক তথ্য
-                </h3>
-              </div>
-
-              <div className="col-span-2">
-                <label className="block text-sm font-medium mb-1 text-black">
-                  দোকান/ব্যবসার নাম *
+        <form className="mt-5 space-y-4" onSubmit={submit}>
+          <fieldset>
+            <legend className="label mb-1.5">I want to</legend>
+            <div className="grid grid-cols-2 gap-2.5">
+              {[["buyer", "Shop products"], ["seller", "Sell products"]].map(([value, label]) => (
+                <label key={value} className={`cursor-pointer rounded-xl border px-3 py-2.5 text-center text-sm font-bold transition ${role === value ? "border-[#78b800] bg-[#eff8e9] text-[#087c35] shadow-sm" : "border-slate-200 hover:border-[#b8dca5]"}`}>
+                  <input className="sr-only" type="radio" checked={role === value} onChange={() => setRole(value)} />
+                  {label}
                 </label>
-                <div className="relative">
-                  <FiBriefcase className="absolute left-3 top-3 text-gray-400" />
-                  <input
-                    {...register("businessName", {
-                      required: "ব্যবসার নাম লিখুন",
-                    })}
-                    type="text"
-                    placeholder="দোকান বা ব্যবসার নাম লিখুন"
-                    className="w-full h-10 pl-10 bg-white text-black placeholder-gray-500 border border-gray-300 rounded-md focus:outline-none focus:border-black"
-                  />
-                </div>
-              </div>
+              ))}
+            </div>
+          </fieldset>
 
-              <div>
-                <label className="block text-sm font-medium mb-1 text-black">
-                  ১৭ সংখ্যার NID নম্বর *
-                </label>
-                <div className="relative">
-                  <FiFileText className="absolute left-3 top-3 text-gray-400" />
-                  <input
-                    {...register("nidNumber", {
-                      required: "NID নম্বর দিন",
-                      pattern: {
-                        value: /^[0-9]{17}$/,
-                        message: "১৭ সংখ্যার NID দিন",
-                      },
-                      minLength: {
-                        value: 17,
-                        message: "NID অবশ্যই ১৭ সংখ্যার হতে হবে",
-                      },
-                      maxLength: {
-                        value: 17,
-                        message: "NID অবশ্যই ১৭ সংখ্যার হতে হবে",
-                      },
-                    })}
-                    type="text"
-                    inputMode="numeric"
-                    maxLength={17}
-                    placeholder="NID নম্বর লিখুন"
-                    className="w-full h-10 pl-10 bg-white text-black placeholder-gray-500 border border-gray-300 rounded-md focus:outline-none focus:border-black"
-                  />
-                </div>
-                {errors.nidNumber && (
-                  <p className="text-red-600 text-sm mt-1">
-                    {errors.nidNumber.message}
-                  </p>
-                )}
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-1 text-black">
-                  ব্যাংক অ্যাকাউন্ট নম্বর *
-                </label>
-                <div className="relative">
-                  <FiCreditCard className="absolute left-3 top-3 text-gray-400" />
-                  <input
-                    {...register("bankAccount", {
-                      required: "ব্যাংক অ্যাকাউন্ট দিন",
-                    })}
-                    type="text"
-                    placeholder="ব্যাংক অ্যাকাউন্ট লিখুন"
-                    className="w-full h-10 pl-10 bg-white text-black placeholder-gray-500 border bordezr-gray-300 rounded-md focus:outline-none focus:border-black"
-                  />
-                </div>
-              </div>
-            </>
-          )}
-
-          {/* Submit & Error */}
-          {errorMsg && <p className="col-span-2 text-red-600">{errorMsg}</p>}
-          <div className="col-span-2 mt-4">
-            <button
-              type="submit"
-              disabled={loading}
-              className="btn w-full bg-black text-white hover:bg-gray-800 transition rounded-md h-11"
-            >
-              {loading ? "রেজিস্ট্রেশন হচ্ছে..." : "রেজিস্ট্রেশন করুন"}
-            </button>
+          <div className="grid gap-x-4 gap-y-3 sm:grid-cols-2">
+            <label className="label">Username<input className="field mt-1 w-full py-2.5" name="username" autoComplete="username" minLength={3} maxLength={150} required /></label>
+            <label className="label">Email<input className="field mt-1 w-full py-2.5" name="email" type="email" autoComplete="email" required /></label>
+            {role === "seller" && <label className="label sm:col-span-2">Business name<input className="field mt-1 w-full py-2.5" name="businessName" maxLength={255} required /></label>}
+            <label className="label">Phone<input className="field mt-1 w-full py-2.5" name="phone" type="tel" autoComplete="tel" pattern="[+0-9][0-9\- ()]{6,19}" /></label>
+            <label className="label">Location<input className="field mt-1 w-full py-2.5" name="location" maxLength={255} placeholder="City or neighbourhood" /></label>
+            <label className="label sm:col-span-2">Address<textarea className="field mt-1 min-h-16 w-full resize-y py-2.5" name="address" autoComplete="street-address" /></label>
+            <label className="label">
+              Password
+              <input className="field mt-1 w-full py-2.5" name="password" type="password" autoComplete="new-password" minLength={8} required />
+              <span className="mt-1 block text-[11px] font-normal text-slate-500">Use at least 8 characters and avoid common passwords.</span>
+            </label>
+            <label className="label">Confirm password<input className="field mt-1 w-full py-2.5" name="confirm_password" type="password" autoComplete="new-password" minLength={8} required /></label>
           </div>
+
+          <label className="label block">
+            Profile photo <span className="font-normal text-slate-400">(optional)</span>
+            <span className="mt-1 flex min-h-16 cursor-pointer items-center justify-center overflow-hidden rounded-xl border-2 border-dashed border-[#cfe4c4] bg-[#f7fbf4] transition hover:border-[#78b800]">
+              {preview ? (
+                <img src={preview} className="h-20 w-full object-cover" alt="Profile preview" />
+              ) : (
+                <span className="flex items-center gap-2 px-3 text-center text-xs font-normal text-slate-500"><ImagePlus size={18} className="text-[#087c35]" /> JPEG, PNG, or WebP · max 5 MB</span>
+              )}
+              <input className="sr-only" name="photo" type="file" accept="image/jpeg,image/png,image/webp" onChange={(event) => { const file = event.target.files?.[0]; if (file) setPreview(URL.createObjectURL(file)); }} />
+            </span>
+          </label>
+
+          <button className="btn-primary w-full" disabled={loading}>{loading ? "Creating account…" : "Create account"}</button>
         </form>
 
-        {/* Footer */}
-        <p className="text-center text-sm text-gray-600 mt-4">
-          আগেই অ্যাকাউন্ট আছে?{" "}
-          <Link to="/login" className="text-blue-600 hover:underline">
-            লগইন করুন
-          </Link>
-        </p>
-      </div>
+        <p className="mt-4 text-center text-sm text-slate-600">Already registered? <Link to="/login" className="font-bold text-[#087c35] hover:text-[#075e2a]">Sign in</Link></p>
+      </section>
     </div>
   );
 };
 
 export default RegisterPage;
-
-// import React, { useContext, useState } from "react";
-// import { useForm } from "react-hook-form";
-// import axios from "axios";
-// import { useNavigate, Link } from "react-router-dom";
-// import { FaStore } from "react-icons/fa";
-// import {
-//   FiUser,
-//   FiPhone,
-//   FiMail,
-//   FiLock,
-//   FiBriefcase,
-//   FiFileText,
-//   FiCreditCard,
-// } from "react-icons/fi";
-// import { AuthContext } from "../../contexts/AuthContext/AuthProvider";
-// import { toast } from "react-toastify";
-// import "react-toastify/dist/ReactToastify.css";
-// import { ImHome } from "react-icons/im";
-// import { Helmet } from "react-helmet-async";
-
-// const RegisterPage = () => {
-//   const [role, setRole] = useState("buyer");
-//   const [errorMsg, setErrorMsg] = useState("");
-//   const [loading, setLoading] = useState(false);
-//   const [photoPreview, setPhotoPreview] = useState(null);
-
-//   const navigate = useNavigate();
-//   const { login } = useContext(AuthContext);
-
-//   const {
-//     register,
-//     handleSubmit,
-//     watch,
-//     formState: { errors },
-//   } = useForm();
-
-//   const password = watch("password");
-
-//   const handlePhotoChange = (e) => {
-//     const file = e.target.files[0];
-//     if (file) setPhotoPreview(URL.createObjectURL(file));
-//   };
-
-//   const inputClass =
-//     "w-full h-10 pl-10 pr-3 bg-white border border-gray-300 text-black rounded-md focus:outline-none focus:border-black";
-
-//   const onSubmit = async (data) => {
-//     setErrorMsg("");
-//     setLoading(true);
-
-//     try {
-//       const formData = new FormData();
-
-//       formData.append("username", data.fullName);
-//       formData.append("email", data.email);
-//       formData.append("password", data.password);
-//       formData.append("role", role);
-//       formData.append("phone", data.phone);
-//       formData.append("location", `${data.city}, ${data.area}`);
-//       formData.append("address", data.address);
-
-//       if (role === "seller") {
-//         formData.append("businessName", data.businessName || "");
-//         formData.append("nidNumber", data.nidNumber || "");
-//         formData.append("bankAccount", data.bankAccount || "");
-//       }
-
-//       if (data.photo && data.photo[0]) {
-//         formData.append("photo", data.photo[0]);
-//       }
-
-//       await axios.post(
-//         "https://local-mart-11yd.onrender.com/api/users/register/",
-//         formData,
-//       );
-
-//       toast.success("অ্যাকাউন্ট সফলভাবে তৈরি হয়েছে!");
-//       navigate("/login");
-//     } catch (error) {
-//       if (error.response?.data) {
-//         const backendErrors = error.response.data;
-//         const firstError = Object.keys(backendErrors)[0];
-//         setErrorMsg(`${firstError}: ${backendErrors[firstError][0]}`);
-//       } else {
-//         setErrorMsg("Registration failed");
-//       }
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   return (
-//     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-3 py-6">
-//       <Helmet>
-//         <title>Register | LocalMarket</title>
-//       </Helmet>
-
-//       <div className="bg-white shadow-xl rounded-2xl w-full max-w-3xl p-8">
-//         {/* Header */}
-//         <div className="flex flex-col items-center mb-6">
-//           <div className="p-4 bg-black text-white rounded-2xl">
-//             <ImHome size={28} />
-//           </div>
-//           <h2 className="text-xl font-bold text-black">Create Account</h2>
-//         </div>
-
-//         {/* ROLE */}
-//         <div className="flex bg-gray-100 rounded-full mb-3 text-sm font-medium">
-//           {[
-//             { key: "buyer", label: "Buyer", icon: <FiUser /> },
-//             { key: "seller", label: "Seller", icon: <FaStore /> },
-//             { key: "admin", label: "Admin", icon: <FiLock /> },
-//           ].map((tab) => (
-//             <button
-//               key={tab.key}
-//               type="button"
-//               onClick={() => setRole(tab.key)}
-//               className={`flex-1 py-2 rounded-full flex items-center justify-center gap-1 ${
-//                 role === tab.key
-//                   ? "bg-black text-white"
-//                   : "text-gray-700 hover:bg-gray-200"
-//               }`}
-//             >
-//               {tab.icon}
-//               {tab.label}
-//             </button>
-//           ))}
-//         </div>
-
-//         {/* FORM */}
-//         <form
-//           onSubmit={handleSubmit(onSubmit)}
-//           className="grid grid-cols-2 gap-4"
-//         >
-//           {/* Name */}
-//           <div>
-//             <label className="text-sm text-black">Full Name</label>
-//             <div className="relative mt-1">
-//               <FiUser className="absolute left-3 top-3 text-gray-500" />
-//               <input
-//                 {...register("fullName", { required: true })}
-//                 className={inputClass}
-//               />
-//             </div>
-//           </div>
-
-//           {/* Phone */}
-//           <div>
-//             <label className="text-sm text-black">Phone</label>
-//             <div className="relative mt-1">
-//               <FiPhone className="absolute left-3 top-3 text-gray-500" />
-//               <input
-//                 {...register("phone", { required: true })}
-//                 className={inputClass}
-//               />
-//             </div>
-//           </div>
-
-//           {/* Email */}
-//           <div className="col-span-2">
-//             <label className="text-sm text-black">Email</label>
-//             <div className="relative mt-1">
-//               <FiMail className="absolute left-3 top-3 text-gray-500" />
-//               <input
-//                 type="email"
-//                 {...register("email", { required: true })}
-//                 className={inputClass}
-//               />
-//             </div>
-//           </div>
-
-//           {/* Password */}
-//           <div>
-//             <label className="text-sm text-black">Password</label>
-//             <div className="relative mt-1">
-//               <FiLock className="absolute left-3 top-3 text-gray-500" />
-//               <input
-//                 type="password"
-//                 {...register("password", {
-//                   required: true,
-//                   minLength: 6,
-//                 })}
-//                 className={inputClass}
-//               />
-//             </div>
-//           </div>
-
-//           {/* Confirm */}
-//           <div>
-//             <label className="text-sm text-black">Confirm Password</label>
-//             <div className="relative mt-1">
-//               <FiLock className="absolute left-3 top-3 text-gray-500" />
-//               <input
-//                 type="password"
-//                 {...register("confirmPassword", {
-//                   validate: (value) => value === password,
-//                 })}
-//                 className={inputClass}
-//               />
-//             </div>
-//           </div>
-
-//           {/* Photo */}
-//           <div className="col-span-2">
-//             <input
-//               type="file"
-//               {...register("photo")}
-//               onChange={handlePhotoChange}
-//               className="w-full border border-gray-300 p-2 rounded-md bg-white text-black"
-//             />
-//             {photoPreview && (
-//               <img src={photoPreview} className="w-16 h-16 mt-2 rounded-full" />
-//             )}
-//           </div>
-
-//           {/* Address */}
-//           <div className="col-span-2">
-//             <label className="text-sm text-black">Address</label>
-//             <textarea
-//               {...register("address")}
-//               className="w-full border border-gray-300 bg-white text-black p-2 rounded-md mt-1"
-//             />
-//           </div>
-
-//           {/* ================= SELLER FIELDS ================= */}
-//           {role === "seller" && (
-//             <>
-//               <div className="col-span-2 border-t pt-4">
-//                 <h3 className="text-black font-semibold">
-//                   Business Information
-//                 </h3>
-//               </div>
-
-//               {/* Business Name */}
-//               <div className="col-span-2">
-//                 <label className="text-sm text-black">Business Name</label>
-//                 <div className="relative mt-1">
-//                   <FiBriefcase className="absolute left-3 top-3 text-gray-500" />
-//                   <input
-//                     {...register("businessName", { required: true })}
-//                     className={inputClass}
-//                   />
-//                 </div>
-//               </div>
-
-//               {/* NID */}
-//               <div>
-//                 <label className="text-sm text-black">NID</label>
-//                 <div className="relative mt-1">
-//                   <FiFileText className="absolute left-3 top-3 text-gray-500" />
-//                   <input
-//                     {...register("nidNumber", {
-//                       required: true,
-//                       pattern: /^[0-9]{17}$/,
-//                     })}
-//                     maxLength={17}
-//                     className={inputClass}
-//                   />
-//                 </div>
-//               </div>
-
-//               {/* Bank */}
-//               <div>
-//                 <label className="text-sm text-black">Bank Account</label>
-//                 <div className="relative mt-1">
-//                   <FiCreditCard className="absolute left-3 top-3 text-gray-500" />
-//                   <input
-//                     {...register("bankAccount", { required: true })}
-//                     className={inputClass}
-//                   />
-//                 </div>
-//               </div>
-//             </>
-//           )}
-
-//           {/* ERROR */}
-//           {errorMsg && <p className="col-span-2 text-red-600">{errorMsg}</p>}
-
-//           {/* SUBMIT */}
-//           <button
-//             type="submit"
-//             disabled={loading}
-//             className="col-span-2 bg-black text-white h-11 rounded-md hover:bg-gray-800"
-//           >
-//             {loading ? "Loading..." : "Register"}
-//           </button>
-//         </form>
-
-//         <p className="text-center text-sm mt-4 text-black">
-//           Already have account?{" "}
-//           <Link to="/login" className="text-blue-600">
-//             Login
-//           </Link>
-//         </p>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default RegisterPage;

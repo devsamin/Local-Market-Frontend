@@ -1,20 +1,32 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import { useEffect } from "react";
+import { Helmet } from "react-helmet-async";
+import { XCircle } from "lucide-react";
+import { Link, useSearchParams } from "react-router-dom";
+
+import { api } from "../../../services/api";
+
 
 const PaymentFailed = () => {
+  const [params] = useSearchParams();
+  const orderId = params.get("order_id");
+
+  useEffect(() => {
+    if (orderId) api.post(`/orders/orders/${orderId}/cancel/`).catch(() => {});
+  }, [orderId]);
+
   return (
-    <div className="flex flex-col justify-center items-center min-h-screen text-center p-6 bg-red-50">
-      <h1 className="text-4xl font-bold text-red-700 mb-4">❌ পেমেন্ট ব্যর্থ হয়েছে!</h1>
-      <p className="text-gray-700 mb-6">
-        আপনার পেমেন্ট সম্পন্ন হয়নি। অনুগ্রহ করে পরে আবার চেষ্টা করুন।  
-      </p>
-      <Link
-        to="/cart"
-        className="px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-900 transition"
-      >
-        কার্টে ফিরে যান
-      </Link>
-    </div>
+    <main className="page-shell grid min-h-[70vh] place-items-center py-12 text-center">
+      <Helmet><title>Checkout cancelled | Local Mart</title></Helmet>
+      <section className="surface max-w-xl p-8 sm:p-12">
+        <XCircle className="mx-auto h-16 w-16 text-rose-600" />
+        <h1 className="mt-6 text-3xl font-bold">Checkout cancelled</h1>
+        <p className="mt-3 leading-7 text-slate-600">You were not charged. Reserved inventory is being returned and your items will remain available in your cart.</p>
+        <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+          <Link className="btn-primary" to="/cart">Return to cart</Link>
+          <Link className="btn-secondary" to="/">Keep browsing</Link>
+        </div>
+      </section>
+    </main>
   );
 };
 

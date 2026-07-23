@@ -1,186 +1,21 @@
-// import React, { useState } from "react";
-// import axios from "axios";
-// import { BASE_URL } from "../../config.js/config";
-// import { toast } from "react-hot-toast";
-
-// const ReviewModal = ({ open, onClose, orderItemId, onSuccess }) => {
-//   const [rating, setRating] = useState(0);
-//   const [comment, setComment] = useState("");
-
-//   if (!open) return null;
-
-//   const handleSubmit = async () => {
-//     try {
-//       const token = localStorage.getItem("access");
-
-//       await axios.post(
-//         `${BASE_URL}/api/reviews/`,
-//         {
-//           order_item: orderItemId,
-//           rating,
-//           comment,
-//         },
-//         {
-//           headers: { Authorization: `Bearer ${token}` },
-//         }
-//       );
-
-//       toast.success("Review added successfully!");
-//       onSuccess(); // refresh orders
-//       onClose();   // close modal
-
-//     } catch (error) {
-//       console.error(error);
-//       toast.error("Failed to submit review!");
-//     }
-//   };
-
-//   return (
-//     <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
-//       <div className="bg-white p-6 rounded-lg w-96 shadow-lg">
-//         <h2 className="text-lg font-semibold mb-4">Add Review</h2>
-
-//         <label className="block text-sm font-medium">Rating</label>
-//         <input
-//           type="number"
-//           min="1"
-//           max="5"
-//           className="w-full border rounded px-3 py-2 mt-1"
-//           value={rating}
-//           onChange={(e) => setRating(e.target.value)}
-//         />
-
-//         <label className="block text-sm font-medium mt-3">Comment</label>
-//         <textarea
-//           className="w-full border rounded px-3 py-2 mt-1"
-//           rows={3}
-//           value={comment}
-//           onChange={(e) => setComment(e.target.value)}
-//         />
-
-//         <div className="flex justify-end gap-2 mt-4">
-//           <button
-//             onClick={onClose}
-//             className="px-4 py-2 bg-gray-300 rounded"
-//           >
-//             Cancel
-//           </button>
-//           <button
-//             onClick={handleSubmit}
-//             className="px-4 py-2 bg-blue-600 text-white rounded"
-//           >
-//             Submit
-//           </button>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default ReviewModal;
-
-
-
-import React, { useState } from "react";
-import axios from "axios";
-import { BASE_URL } from "../../config.js/config";
+import { useState } from "react";
+import { Star, X } from "lucide-react";
 import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import { Star } from "lucide-react";
 
-const ReviewModal = ({ open, onClose, orderItemId, onSuccess }) => {
-  const [rating, setRating] = useState(0);
+import { api, getErrorMessage } from "../../services/api";
+
+
+const ReviewModal = ({ orderItem, onClose, onSuccess }) => {
+  const [rating, setRating] = useState(5);
   const [comment, setComment] = useState("");
-
-  if (!open) return null;
-
-  const handleSubmit = async () => {
-    if (!rating) {
-      toast.error("রেটিং দিন!");
-      return;
-    }
-
-    try {
-      const token = localStorage.getItem("access");
-
-      await axios.post(
-        `${BASE_URL}/api/reviews/`,
-        {
-          order_item: orderItemId,
-          rating,
-          comment,
-        },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-
-      toast.success("রিভিউ সফলভাবে যুক্ত হয়েছে!");
-      onSuccess();
-      onClose();
-
-    } catch (error) {
-      console.error(error);
-      toast.error("রিভিউ যুক্ত করতে ব্যর্থ!");
-    }
+  const [loading, setLoading] = useState(false);
+  const submit = async (event) => {
+    event.preventDefault(); setLoading(true);
+    try { const { data } = await api.post("/reviews/", { order_item: orderItem.id, rating, comment }); toast.success("Thanks for sharing your review."); onSuccess?.(data); onClose(); }
+    catch (error) { toast.error(getErrorMessage(error, "Review could not be submitted.")); }
+    finally { setLoading(false); }
   };
-
-  return (
-    <div className="fixed inset-0 bg-black/10 backdrop-blur-sm flex justify-center items-center z-50">
-      <div className="bg-white w-96 p-6 rounded-xl shadow-xl border">
-
-        <h2 className="text-xl font-semibold mb-4 text-gray-800">
-          রিভিউ দিন
-        </h2>
-
-        {/* Rating Stars */}
-        <label className="block text-sm mb-1 font-medium text-gray-700">
-          রেটিং
-        </label>
-        <div className="flex gap-1 mb-3">
-          {[1, 2, 3, 4, 5].map((num) => (
-            <Star
-              key={num}
-              size={26}
-              onClick={() => setRating(num)}
-              className={`cursor-pointer ${
-                rating >= num ? "text-yellow-400 fill-yellow-400" : "text-gray-300"
-              }`}
-            />
-          ))}
-        </div>
-
-        {/* Comment box */}
-        <label className="block text-sm mb-1 font-medium text-gray-700">
-          আপনার মন্তব্য
-        </label>
-        <textarea
-          className="w-full border rounded-lg px-3 py-2 focus:ring focus:ring-blue-200 focus:border-blue-400 outline-none"
-          rows={3}
-          placeholder="আপনার মতামত লিখুন..."
-          value={comment}
-          onChange={(e) => setComment(e.target.value)}
-        />
-
-        {/* Buttons */}
-        <div className="flex justify-end gap-2 mt-5">
-          <button
-            onClick={onClose}
-            className="px-4 py-2 rounded-lg border text-gray-700 hover:bg-gray-100"
-          >
-            বাতিল
-          </button>
-
-          <button
-            onClick={handleSubmit}
-            className="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-900"
-          >
-            জমা দিন
-          </button>
-        </div>
-      </div>
-    </div>
-  );
+  return <div className="fixed inset-0 z-50 grid place-items-center bg-slate-950/70 p-4 backdrop-blur-sm" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }}><section role="dialog" aria-modal="true" aria-labelledby="review-title" className="relative w-full max-w-md rounded-3xl bg-white p-7 shadow-2xl"><button className="icon-button absolute right-4 top-4" onClick={onClose} aria-label="Close"><X /></button><p className="eyebrow">Verified purchase</p><h2 id="review-title" className="mt-2 pr-8 text-2xl font-bold">Review {orderItem.product_name || orderItem.product?.name}</h2><form className="mt-6 space-y-5" onSubmit={submit}><fieldset><legend className="label mb-2">Your rating</legend><div className="flex gap-2">{[1,2,3,4,5].map((value) => <button key={value} type="button" className="rounded-lg p-1" onClick={() => setRating(value)} aria-label={`${value} star rating`}><Star className={value <= rating ? "fill-amber-400 text-amber-400" : "text-slate-300"} /></button>)}</div></fieldset><label className="label block">Your experience<textarea className="field mt-1 min-h-28 w-full" maxLength={2000} value={comment} onChange={(event) => setComment(event.target.value)} placeholder="What should other buyers know?" /></label><button className="btn-primary w-full" disabled={loading}>{loading ? "Submitting…" : "Submit review"}</button></form></section></div>;
 };
 
 export default ReviewModal;

@@ -1,87 +1,47 @@
-// import React, { useEffect, useState } from 'react';
-// import { AuthContext } from './AuthContext';
-// import { createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signOut, updateProfile } from 'firebase/auth';
-// import { auth } from '../../firebase/firebase.init';
+import { useCallback, useEffect, useMemo, useState } from "react";
 
-// const AuthProvider = ({children}) => {
-//     const [user, setUser] = useState(null);
-//     console.log("AuthProvider rendered, user:", user);
+import { AuthContext } from "./AuthContext";
 
-//     const createUser = (email, password)=>{
-//         return createUserWithEmailAndPassword(auth, email, password);
-//     }
-//     const loginUser = (email, password)=>{
-//         console.log("Login triggered");
-//         return signInWithEmailAndPassword(auth, email, password);
-//     }
-//     const UserUpdateProfile = (updateData)=>{
-//         return updateProfile(auth.currentUser, updateData);
-//     }
-//     const logoutUser = ()=>{
-//         console.log("Logout triggered");
-//         return signOut(auth);
-//     }
-//     useEffect(()=>{
-//         const unsubscribe = onAuthStateChanged(auth, currentUser=>{
-//             setUser(currentUser);
-//         });
-//         return ()=>{
-//             unsubscribe();
-//         }
-//     },[])
 
-//     const authInfo = {
-//         user,
-//         setUser,
-//         createUser,
-//         loginUser,
-//         logoutUser,
-//         UserUpdateProfile
+const readStoredUser = () => {
+  try {
+    return JSON.parse(localStorage.getItem("user")) || null;
+  } catch {
+    localStorage.removeItem("user");
+    return null;
+  }
+};
 
-//     };
-//     return (
-//         <AuthContext.Provider value={authInfo}>
-//             {children}
-//         </AuthContext.Provider>
-//     );
-// };
+export const AuthProvider = ({ children }) => {
+  const [user, setUser] = useState(readStoredUser);
 
-// export default AuthProvider;
-
-import React, { createContext, useState, useEffect } from "react";
-
-export const AuthContext = createContext();
-
-export  const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-
-  useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) setUser(JSON.parse(storedUser));
-  }, []);
-
-  const login = (userData) => {
+  const login = useCallback((userData, tokens = {}) => {
     setUser(userData);
     localStorage.setItem("user", JSON.stringify(userData));
-  };
+    if (tokens.access) localStorage.setItem("access", tokens.access);
+    if (tokens.refresh) localStorage.setItem("refresh", tokens.refresh);
+  }, []);
 
-  const logout = () => {
+  const logout = useCallback(() => {
     setUser(null);
     localStorage.removeItem("user");
     localStorage.removeItem("access");
     localStorage.removeItem("refresh");
-  };
-  // ✅ Update user info in context and localStorage
-  const updateUser = (updatedData) => {
-    const newUser = { ...user, ...updatedData };
-    setUser(newUser);
-    localStorage.setItem("user", JSON.stringify(newUser));
-  };
+  }, []);
 
+  const updateUser = useCallback((updatedData) => {
+    setUser((current) => {
+      const next = { ...current, ...updatedData };
+      localStorage.setItem("user", JSON.stringify(next));
+      return next;
+    });
+  }, []);
 
-  return (
-    <AuthContext.Provider value={{ user, login, logout, updateUser }}>
-      {children}
-    </AuthContext.Provider>
-  );
+  useEffect(() => {
+    window.addEventListener("auth:logout", logout);
+    return () => window.removeEventListener("auth:logout", logout);
+  }, [logout]);
+
+  const value = useMemo(() => ({ user, login, logout, updateUser }), [user, login, logout, updateUser]);
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

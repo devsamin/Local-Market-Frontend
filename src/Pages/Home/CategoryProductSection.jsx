@@ -1,245 +1,248 @@
-import React, { useState, useContext, useMemo } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import {
-  FiShoppingCart,
-  FiMapPin,
-  FiCheckCircle,
-  FiStar,
-} from "react-icons/fi";
+  AlertCircle,
+  ArrowLeft,
+  ArrowRight,
+  Check,
+  ChevronDown,
+  MapPin,
+  MessageCircle,
+  SearchX,
+  ShoppingBag,
+  ShoppingCart,
+  SlidersHorizontal,
+  Star,
+  Truck,
+} from "lucide-react";
 import { Link } from "react-router-dom";
+
 import { CartContext } from "../../contexts/CartContext/CartContext";
+import { imageUrl } from "../../services/api";
 import ProductDetailsModal from "../ProductDetailsModal/ProductDetailsModal";
-import Fuse from "fuse.js";
+
+
+const PAGE_SIZE = 24;
+const money = new Intl.NumberFormat("en-BD", { style: "currency", currency: "BDT" });
+const sortOptions = [
+  { value: "-created_at", label: "Newest first", hint: "Recently added products" },
+  { value: "price", label: "Price: low to high", hint: "Lowest prices first" },
+  { value: "-price", label: "Price: high to low", hint: "Premium prices first" },
+  { value: "-average_rating", label: "Top rated", hint: "Best customer ratings" },
+];
+
+const paginationItems = (current, total) => {
+  if (total <= 7) return Array.from({ length: total }, (_, index) => index + 1);
+  if (current <= 4) return [1, 2, 3, 4, 5, null, total];
+  if (current >= total - 3) return [1, null, total - 4, total - 3, total - 2, total - 1, total];
+  return [1, null, current - 1, current, current + 1, null, total];
+};
+
+const ProductSkeleton = () => (
+  <div className="surface overflow-hidden" aria-hidden="true">
+    <div className="aspect-[1.3/1] animate-pulse bg-slate-200" />
+    <div className="space-y-2.5 p-4">
+      <div className="h-3 w-1/3 animate-pulse rounded bg-slate-200" />
+      <div className="h-5 w-3/4 animate-pulse rounded bg-slate-200" />
+      <div className="h-4 w-1/2 animate-pulse rounded bg-slate-200" />
+      <div className="h-10 animate-pulse rounded-full bg-slate-200" />
+    </div>
+  </div>
+);
 
 const CategoryProductSection = ({
-  products = [],
-  category = "সব",
-  searchTerm = "",
+  products, count, page, hasNext, hasPrevious, onPageChange, ordering, onOrderingChange,
+  loading, error, retry, searchTerm,
 }) => {
-  const [locationTerm, setLocationTerm] = useState("");
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const userData = JSON.parse(localStorage.getItem("user"));
-  const { addToCart, cartItems, loadingProductId } = useContext(CartContext);
+  const [sortOpen, setSortOpen] = useState(false);
+  const sortRef = useRef(null);
+  const { addToCart, cartCount, loadingProductId } = useContext(CartContext);
+  const totalPages = Math.max(1, Math.ceil(count / PAGE_SIZE));
+  const selectedSort = sortOptions.find((option) => option.value === ordering) || sortOptions[0];
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
+  useEffect(() => {
+    const closeSort = (event) => {
+      if (event.type === "keydown" && event.key === "Escape") setSortOpen(false);
+      if (event.type === "pointerdown" && !sortRef.current?.contains(event.target)) setSortOpen(false);
+    };
+    document.addEventListener("pointerdown", closeSort);
+    document.addEventListener("keydown", closeSort);
+    return () => {
+      document.removeEventListener("pointerdown", closeSort);
+      document.removeEventListener("keydown", closeSort);
+    };
+  }, []);
 
-  // 🔹 Category Filter
-  const filteredByCategory = useMemo(() => {
-    return category === "সব"
-      ? products
-      : products.filter((p) =>
-          Array.isArray(p.categories)
-            ? p.categories.some((cat) => cat && cat.name === category)
-            : false,
-        );
-  }, [products, category]);
-
-  // 🔹 Search
-  const filteredBySearch = useMemo(() => {
-    if (!searchTerm) return filteredByCategory;
-    const fuse = new Fuse(filteredByCategory, {
-      keys: ["name", "description"],
-      threshold: 0.3,
-    });
-    return fuse.search(searchTerm).map((res) => res.item);
-  }, [filteredByCategory, searchTerm]);
-
-  // 🔹 Location Filter
-  const finalProducts = useMemo(() => {
-    if (!locationTerm) return filteredBySearch;
-    const fuse = new Fuse(filteredBySearch, {
-      keys: ["seller_location"],
-      threshold: 0.4,
-    });
-    return fuse.search(locationTerm).map((r) => r.item);
-  }, [filteredBySearch, locationTerm]);
-
-  // 🔹 Pagination
-  const totalPages = Math.ceil(finalProducts.length / itemsPerPage);
-  const paginatedProducts = useMemo(() => {
-    const start = (currentPage - 1) * itemsPerPage;
-    return finalProducts.slice(start, start + itemsPerPage);
-  }, [finalProducts, currentPage]);
-
-  React.useEffect(() => {
-    setCurrentPage(1);
-  }, [searchTerm, category, locationTerm]);
-
-  // ⭐ Stars
-  const renderStars = (rating) =>
-    [...Array(5)].map((_, i) => (
-      <FiStar
-        key={i}
-        className={
-          i < Math.round(rating)
-            ? "w-4 h-4 text-yellow-400 fill-yellow-400"
-            : "w-4 h-4 text-gray-300"
-        }
-      />
-    ));
+  const changePage = (nextPage) => {
+    if (nextPage === page || nextPage < 1 || nextPage > totalPages) return;
+    onPageChange(nextPage);
+    window.setTimeout(() => document.getElementById("products")?.scrollIntoView({ behavior: "smooth", block: "start" }), 0);
+  };
 
   return (
-    <div className="bg-gray-100 min-h-screen p-3 sm:p-6 text-gray-800">
-      {/* 🔹 Header */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
-        {/* Left */}
+    <section id="products" className="page-shell scroll-mt-32 py-10 sm:py-14" aria-labelledby="products-heading">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">{category}</h2>
-          <p className="text-gray-600 text-sm mt-1">
-            {finalProducts.length} টি পণ্য পাওয়া গেছে
-          </p>
+          <p className="eyebrow">Curated nearby</p>
+          <h2 id="products-heading" className="mt-2 text-3xl font-bold tracking-tight text-slate-950">
+            {searchTerm ? `Results for “${searchTerm}”` : "Explore the marketplace"}
+          </h2>
+          <p className="mt-2 text-sm text-slate-500">{count} {count === 1 ? "product" : "products"}</p>
         </div>
 
-        {/* Right */}
-        <div className="flex items-center gap-3 w-full md:w-auto">
-          {/* Location */}
-          <div className="relative w-full md:w-64">
-            <FiMapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-            <input
-              type="text"
-              placeholder="লোকেশন অনুযায়ী খুঁজুন..."
-              value={locationTerm}
-              onChange={(e) => setLocationTerm(e.target.value)}
-              className="w-full border border-gray-300 bg-white rounded-md pl-10 pr-3 py-2 text-sm focus:ring-2 focus:ring-black outline-none"
-            />
-          </div>
-
-          {/* Cart */}
-          <Link
-            to="/cart"
-            className="relative flex items-center gap-2 bg-black text-white px-4 py-2 rounded-md hover:bg-gray-900 transition"
-          >
-            <FiShoppingCart /> কার্ট
-            {cartItems.length > 0 && (
-              <span className="absolute -top-1 -right-1 w-5 h-5 text-xs flex items-center justify-center bg-red-500 text-white rounded-full">
-                {cartItems.length}
+        <div className="flex items-center gap-2.5">
+          <div ref={sortRef} className="relative">
+            <button
+              type="button"
+              className={`premium-sort min-w-[190px] justify-start ${sortOpen ? "border-[#78b800] ring-4 ring-[#9bd41e]/10" : ""}`}
+              onClick={() => setSortOpen((open) => !open)}
+              aria-haspopup="listbox"
+              aria-expanded={sortOpen}
+            >
+              <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-[#eff9e9] text-[#087c35]"><SlidersHorizontal size={15} /></span>
+              <span className="min-w-0 flex-1 text-left leading-tight">
+                <span className="block text-[9px] font-black uppercase tracking-[.16em] text-slate-400">Sort by</span>
+                <span className="mt-0.5 block truncate text-sm font-black text-slate-800">{selectedSort.label}</span>
               </span>
+              <ChevronDown size={16} className={`shrink-0 text-[#087c35] transition ${sortOpen ? "rotate-180" : ""}`} />
+            </button>
+
+            {sortOpen && (
+              <div className="sort-menu" role="listbox" aria-label="Sort products">
+                <div className="border-b border-[#e4efe0] px-4 py-3">
+                  <p className="text-[10px] font-black uppercase tracking-[.16em] text-[#087c35]">Arrange products</p>
+                </div>
+                <div className="p-2">
+                  {sortOptions.map((option) => {
+                    const active = option.value === ordering;
+                    return (
+                      <button
+                        key={option.value}
+                        type="button"
+                        role="option"
+                        aria-selected={active}
+                        className={`sort-menu-item ${active ? "sort-menu-item-active" : ""}`}
+                        onClick={() => {
+                          onOrderingChange(option.value);
+                          setSortOpen(false);
+                        }}
+                      >
+                        <span className="min-w-0 flex-1 text-left">
+                          <span className="block text-sm font-bold">{option.label}</span>
+                          <span className={`mt-0.5 block text-[11px] ${active ? "text-[#087c35]/70" : "text-slate-400"}`}>{option.hint}</span>
+                        </span>
+                        <span className={`grid h-6 w-6 shrink-0 place-items-center rounded-full ${active ? "bg-[#087c35] text-white" : "border border-slate-200 text-transparent"}`}><Check size={13} strokeWidth={3} /></span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
             )}
+          </div>
+          <Link to="/cart" className="premium-nav-icon relative" aria-label={`Cart with ${cartCount} items`}>
+            <ShoppingCart size={19} />
+            {cartCount > 0 && <span className="cart-badge">{cartCount > 99 ? "99+" : cartCount}</span>}
           </Link>
         </div>
       </div>
 
-      {/* 🔹 Products */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-        {paginatedProducts.length ? (
-          paginatedProducts.map((product) => (
-            <div
-              key={product.id}
-              className="bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition overflow-hidden"
-            >
-              {/* Image */}
-              <div
-                className="relative aspect-square bg-gray-100 cursor-pointer"
-                onClick={() => setSelectedProduct(product)}
-              >
-                <img
-                  src={product.image}
-                  alt={product.name}
-                  className="w-full h-full object-cover hover:scale-105 transition"
-                />
-
-                {product.discount && (
-                  <span className="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-1 rounded-full">
-                    {product.discount}% ছাড়
-                  </span>
-                )}
-              </div>
-
-              {/* Info */}
-              <div className="p-3 space-y-2">
-                <h3 className="text-sm font-semibold text-gray-800 line-clamp-2">
-                  {product.name}
-                </h3>
-
-                <p className="text-xs text-gray-500 line-clamp-1">
-                  {product.description || "No description"}
-                </p>
-
-                {/* Price */}
-                <div className="flex justify-between items-center">
-                  <div>
-                    <span className="font-bold text-lg text-gray-900">
-                      ৳{product.discounted_price}
-                    </span>
-                    {product.price && (
-                      <span className="text-sm text-gray-400 line-through ml-2">
-                        ৳{product.price}
-                      </span>
-                    )}
-                  </div>
-
-                  <div className="flex">
-                    {renderStars(product.average_rating || 0)}
-                  </div>
-                </div>
-
-                {/* Location */}
-                <div className="flex items-center text-xs text-gray-500 gap-1">
-                  <FiMapPin />
-                  {product.seller_location || "লোকেশন নেই"}
-                  {product.verified && (
-                    <FiCheckCircle className="text-blue-500 ml-1" />
-                  )}
-                </div>
-
-                {/* Button */}
+      {error ? (
+        <div className="empty-state mt-8" role="alert">
+          <AlertCircle className="h-12 w-12 text-rose-500" />
+          <h3 className="mt-4 text-xl font-bold">Products are unavailable</h3>
+          <p className="mt-2 text-slate-600">{error}</p>
+          <button className="btn-primary mt-5" onClick={retry}>Try again</button>
+        </div>
+      ) : loading ? (
+        <div className="mt-8 grid grid-cols-1 gap-5 min-[420px]:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {Array.from({ length: 8 }, (_, index) => <ProductSkeleton key={index} />)}
+        </div>
+      ) : products.length === 0 ? (
+        <div className="empty-state mt-8">
+          <SearchX className="h-12 w-12 text-slate-400" />
+          <h3 className="mt-4 text-xl font-bold">No matching products</h3>
+          <p className="mt-2 text-slate-600">Try a broader search or another category.</p>
+        </div>
+      ) : (
+        <div className="mt-8 grid grid-cols-1 gap-5 min-[420px]:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {products.map((product) => {
+            const busy = loadingProductId === product.id;
+            const unavailable = !product.is_available;
+            return (
+              <article key={product.id} className="product-card group flex min-w-0 flex-col overflow-hidden">
                 <button
-                  disabled={loadingProductId === product.id}
-                  onClick={() => addToCart(product)}
-                  className={`w-full mt-2 flex items-center justify-center gap-2 text-sm px-3 py-2 rounded-md transition
-                    ${
-                      loadingProductId === product.id
-                        ? "bg-gray-400 cursor-not-allowed"
-                        : "bg-black text-white hover:bg-gray-800"
-                    }`}
+                  className="relative block aspect-[1.3/1] overflow-hidden bg-[#f1f5ee] text-left"
+                  onClick={() => setSelectedProduct(product)}
+                  aria-label={`View ${product.name} details`}
                 >
-                  <FiShoppingCart />
-                  {loadingProductId === product.id
-                    ? "যোগ করা হচ্ছে..."
-                    : "কার্টে যোগ করুন"}
+                  {product.image ? (
+                    <img src={imageUrl(product.image)} alt={product.name} className="h-full w-full object-cover transition duration-500 group-hover:scale-105" loading="lazy" decoding="async" />
+                  ) : (
+                    <span className="grid h-full place-items-center text-sm text-slate-400">No image</span>
+                  )}
+                  {product.discount > 0 && <span className="absolute left-3 top-3 rounded-full bg-[#087c35] px-3 py-1.5 text-[10px] font-black uppercase tracking-wide text-white shadow-lg">{product.discount}% off</span>}
+                  {unavailable && <span className="absolute inset-x-3 bottom-3 rounded-lg bg-slate-950/85 px-3 py-2 text-center text-xs font-bold text-white">Out of stock</span>}
                 </button>
-              </div>
-            </div>
-          ))
-        ) : (
-          <p className="col-span-full text-center py-20 text-gray-500">
-            কোনো পণ্য পাওয়া যায়নি 😔
-          </p>
-        )}
-      </div>
 
-      {/* 🔹 Pagination */}
-      {totalPages > 1 && (
-        <div className="flex justify-center mt-10">
-          <div className="flex gap-2 flex-wrap justify-center">
-            {[...Array(totalPages)].map((_, i) => (
-              <button
-                key={i}
-                onClick={() => setCurrentPage(i + 1)}
-                className={`px-3 py-1 border rounded-md text-sm transition
-                  ${
-                    currentPage === i + 1
-                      ? "bg-black text-white border-black"
-                      : "bg-white text-gray-700 hover:bg-gray-100"
-                  }`}
-              >
-                {i + 1}
-              </button>
-            ))}
-          </div>
+                <div className="flex flex-1 flex-col p-4">
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="truncate text-[10px] font-black uppercase tracking-[.13em] text-[#087c35]">{product.categories?.[0]?.name || "Local favourite"}</p>
+                    <div className="flex shrink-0 items-center gap-1 text-xs text-slate-500">
+                      <Star size={13} className="fill-[#9bd41e] text-[#78b800]" />
+                      <span className="font-bold text-slate-700">{Number(product.average_rating || 0).toFixed(1)}</span>
+                    </div>
+                  </div>
+                  <button className="mt-1.5 line-clamp-2 min-h-10 text-left text-[16px] font-extrabold leading-5 text-slate-950 hover:text-[#087c35]" onClick={() => setSelectedProduct(product)}>{product.name}</button>
+                  <p className="mt-1 truncate text-xs text-slate-500">by <span className="font-semibold text-slate-700">{product.seller_name || "Local Mart seller"}</span></p>
+                  <div className="mt-3 flex min-w-0 items-center gap-3 text-[11px] font-medium text-slate-500">
+                    <span className="flex shrink-0 items-center gap-1.5"><Truck size={13} className="text-[#087c35]" /> Shipping extra</span>
+                    <span className="flex min-w-0 items-center gap-1 truncate"><MapPin size={12} className="shrink-0 text-[#087c35]" />{product.seller_location || "Local seller"}</span>
+                  </div>
+
+                  <div className="mt-auto flex flex-wrap items-center justify-between gap-2.5 pt-4">
+                    <div className="flex flex-col">
+                      <strong className="text-[21px] font-black tracking-tight text-slate-950">{money.format(product.discounted_price)}</strong>
+                      {product.discount > 0 && <span className="text-[11px] text-slate-400 line-through">{money.format(product.price)}</span>}
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <button className="product-buy-button" disabled={busy || unavailable} onClick={() => addToCart(product)}>
+                        <ShoppingBag size={15} />{busy ? "Adding…" : unavailable ? "Sold out" : "Buy"}
+                      </button>
+                      <button className="product-ask-button" onClick={() => setSelectedProduct(product)} aria-label={`Ask about ${product.name}`}>
+                        <MessageCircle size={14} /> Ask
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </article>
+            );
+          })}
         </div>
       )}
 
-      {/* 🔹 Modal */}
-      {selectedProduct && (
-        <ProductDetailsModal
-          product={selectedProduct}
-          onClose={() => setSelectedProduct(null)}
-          addToCart={addToCart}
-          loading={loadingProductId}
-        />
+      {!loading && !error && totalPages > 1 && (
+        <nav className="mt-12 flex flex-wrap items-center justify-center gap-2" aria-label="Product pages">
+          <button className="pagination-arrow" disabled={!hasPrevious} onClick={() => changePage(page - 1)} aria-label="Previous page"><ArrowLeft size={17} /><span className="hidden sm:inline">Previous</span></button>
+          <div className="flex items-center gap-1.5">
+            {paginationItems(page, totalPages).map((item, index) => item ? (
+              <button
+                key={item}
+                type="button"
+                className={`pagination-number ${page === item ? "pagination-number-active" : ""}`}
+                onClick={() => changePage(item)}
+                aria-label={`Page ${item}`}
+                aria-current={page === item ? "page" : undefined}
+              >
+                {item}
+              </button>
+            ) : <span key={`ellipsis-${index}`} className="px-1 text-slate-400" aria-hidden="true">…</span>)}
+          </div>
+          <button className="pagination-arrow" disabled={!hasNext} onClick={() => changePage(page + 1)} aria-label="Next page"><span className="hidden sm:inline">Next</span><ArrowRight size={17} /></button>
+        </nav>
       )}
-    </div>
+
+      {selectedProduct && <ProductDetailsModal product={selectedProduct} onClose={() => setSelectedProduct(null)} addToCart={addToCart} loading={loadingProductId === selectedProduct.id} />}
+    </section>
   );
 };
 
