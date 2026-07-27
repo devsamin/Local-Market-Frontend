@@ -6,6 +6,7 @@ body { min-width: 320px; margin: 0; background: radial-gradient(circle at 10% 0%
 button, a, input, select, textarea { -webkit-tap-highlight-color: transparent; }
 button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 3px solid rgb(125 190 40 / .38); outline-offset: 2px; }
 button:disabled { cursor: not-allowed; opacity: .55; }
+.cart-display { font-family: "Arial Narrow", "Roboto Condensed", Impact, sans-serif; font-stretch: condensed; font-weight: 900; letter-spacing: -0.035em; }
 
 @layer components {
   .page-shell { @apply mx-auto w-full max-w-[1440px] px-4 sm:px-6 lg:px-10; }
